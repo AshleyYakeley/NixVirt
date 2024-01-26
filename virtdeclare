@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 import argparse #, libvirt
 
 parser = argparse.ArgumentParser(prog='virtdeclare',description='Control libvirt domains declaratively.')
