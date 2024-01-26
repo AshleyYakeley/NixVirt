@@ -1,0 +1,10 @@
+#!/usr/bin/env python3
+import argparse #, libvirt
+
+parser = argparse.ArgumentParser(prog='virtdeclare',description='Control libvirt domains declaratively.')
+parser.add_argument('-s', action='store', choices = ['running','stopped','absent'])
+parser.add_argument('-c', action='store', metavar='URI', help='connection URI')
+parser.add_argument('-d', action='store', metavar='PATH', help='XML domain definition file path')
+parser.add_argument('-n', action='store', metavar='ID', help='domain name or UUID')
+args = parser.parse_args()
+print(args.s, args.c, args.d, args.n)
