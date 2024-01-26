@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-import argparse #, libvirt
+import argparse, libvirt
 
 parser = argparse.ArgumentParser(prog='virtdeclare',description='Control libvirt domains declaratively.')
 parser.add_argument('-s', action='store', choices = ['running','stopped','absent'])
