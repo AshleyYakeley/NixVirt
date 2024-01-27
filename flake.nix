@@ -31,14 +31,20 @@
 
         nixosModules.default = { config, lib, pkgs, ... }:
         let
-            cfg = config.virtualisation.libvirtd;
+            cfg = config.virtualisation.libvirt;
         in
         {
-            options.virtualisation.libvirtd =
+            options.virtualisation.libvirt = with lib.types;
             {
+                enable = lib.mkOption
+                {
+                    type = bool;
+                    default = false;
+                    description = "Enable management of libvirt domains";
+                };
                 domains = lib.mkOption
                 {
-                    type = with lib.types; listOf (submodule
+                    type = listOf (submodule
                     {
                         options =
                         {
@@ -68,7 +74,7 @@
                         };
                     });
                     default = [];
-                    description = "libvirtd domains";
+                    description = "libvirt domains";
                 };
             };
 
@@ -80,7 +86,7 @@
                 '';
             in
             {
-                system.activationScripts.libvirtd-domains = lib.concatStrings (lib.lists.forEach cfg.domains mkCommands);
+                system.activationScripts.libvirt-domains = lib.concatStrings (lib.lists.forEach cfg.domains mkCommands);
             });
         };
     };
