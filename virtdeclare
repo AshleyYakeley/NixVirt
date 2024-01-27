@@ -1,10 +1,36 @@
 #!/usr/bin/python3
-import argparse, libvirt
+import argparse, uuid, libvirt
 
-parser = argparse.ArgumentParser(prog='virtdeclare',description='Control libvirt domains declaratively.')
-parser.add_argument('-s', action='store', choices = ['running','stopped','absent'])
-parser.add_argument('-c', action='store', metavar='URI', help='connection URI')
-parser.add_argument('-d', action='store', metavar='PATH', help='XML domain definition file path')
-parser.add_argument('-n', action='store', metavar='ID', help='domain name or UUID')
+# parse arguments
+parser = argparse.ArgumentParser(prog='virtdeclare',description='Control libvirt domains declaratively and idempotently.')
+parser.add_argument('--connect', action='store', required=True, metavar='URI', help='connection URI (e.g. qemu:///session)')
+specgroup = parser.add_mutually_exclusive_group(required=True)
+specgroup.add_argument('--define', action='store', metavar='PATH', help='XML domain definition file path')
+specgroup.add_argument('--name', action='store', metavar='ID', help='domain name or UUID')
+parser.add_argument('--state', action='store', choices = ['running','stopped'], required=True, help='state to put domain in')
+parser.add_argument('--auto', action='store_true', help='set autostart to match state')
 args = parser.parse_args()
-print(args.s, args.c, args.d, args.n)
+
+conn = libvirt.open(args.connect)
+
+if args.define:
+    print("def:", args.define)
+else:
+    try:
+        uuid = uuid.UUID(args.name).bytes
+        domain = conn.lookupByUUID(uuid)
+    except ValueError:
+        domain = conn.lookupByName(args.name)
+    match args.state:
+        case "running":
+            if not domain.isActive():
+                domain.create()
+        case "stopped":
+            if domain.isActive():
+                domain.destroy()
+    if args.auto:
+        match args.state:
+            case "running":
+                domain.setAutostart(True)
+            case "stopped":
+                domain.setAutostart(False)
