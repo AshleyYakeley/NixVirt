@@ -24,21 +24,29 @@ def log(domid,msg):
     if args.verbose:
         print ("domain " + str(uuid.UUID(bytes=domid)) + ": " + msg, file=sys.stderr)
 
+# fetch / define domain
 if args.define:
-    xml = lxml.etree.parse(args.define)
-    domid = uuid.UUID(xml.find("uuid").text).bytes
+    domxml = lxml.etree.parse(args.define)
+    domxmlstr = lxml.etree.canonicalize(domxml,strip_text=True)
+    domid = uuid.UUID(domxml.find("uuid").text).bytes
     try:
         olddomain = conn.lookupByUUID(domid)
     except libvirt.libvirtError:
         olddomain = None
     if olddomain:
-        oldxml = lxml.etree.fromstring(olddomain.XMLDesc())
-        if lxml.etree.canonicalize(oldxml,strip_text=True) == lxml.etree.canonicalize(xml,strip_text=True):
+        olddomxml = lxml.etree.fromstring(olddomain.XMLDesc())
+        olddomxmlstr = lxml.etree.canonicalize(olddomxml,strip_text=True)
+        if olddomxmlstr == domxmlstr:
             domain = olddomain
         else:
-            pass
+            if olddomain.isActive():
+                log (domid,"destroy")
+                olddomain.destroy()
+            log (domid,"define")
+            domain = conn.defineXML(domxmlstr)
     else:
-        pass
+        log (domid,"define")
+        domain = conn.defineXML(domxmlstr)
 else:
     try:
         domid = uuid.UUID(args.name).bytes
@@ -46,6 +54,7 @@ else:
     except ValueError:
         domain = conn.lookupByName(args.name)
 
+# set state
 match args.state:
     case "running":
         if not domain.isActive():
@@ -55,6 +64,8 @@ match args.state:
         if domain.isActive():
             log (domain.UUID(),"destroy")
             domain.destroy()
+
+# set autostart
 if args.auto:
     match args.state:
         case "running":
