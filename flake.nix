@@ -15,7 +15,7 @@
     outputs = { self, nixpkgs }:
     let
         pkgs = import nixpkgs {system = "x86_64-linux";};
-        pythonPkg = pkgs.python3.withPackages(ps: [ps.libvirt]);
+        pythonPkg = pkgs.python3.withPackages(ps:[ps.libvirt ps.lxml]);
         virtdeclareFile = pkgs.runCommand "virtdeclare" {}
             ''
             sed -e "1s|.*|\#\!${pythonPkg}/bin/python3|" ${./virtdeclare} > $out
