@@ -32,7 +32,7 @@
         packages.x86_64-linux.virtdeclare = pkgs.runCommand "virtdeclare" {}
             ''
             mkdir -p $out/bin
-            ln -s ${virtdeclareFile} $out/bin/
+            ln -s ${virtdeclareFile} $out/bin/virtdeclare
             '';
 
         homeModules.default = { config, lib, pkgs, ... }:
