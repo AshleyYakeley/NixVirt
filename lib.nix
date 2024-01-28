@@ -20,16 +20,16 @@ let
                 ([
                     (elem "type" {arch = domain.os.arch;machine = domain.os.machine;} domain.os.type)
                 ] ++
-                (map (x: elem "boot" {dev=x;} "") domain.os.boot) ++
+                (map (x: elem "boot" {dev=x;} []) domain.os.boot) ++
                 [
-                    (elem "bootmenu" {enable = yesno domain.os.bootmenu.enable;} "")
+                    (elem "bootmenu" {enable = yesno domain.os.bootmenu.enable;} [])
                 ]
                 )
             )
             (elem "features" {}
                 [
-                    (opt domain.features.acpi (elem "acpi" {} ""))
-                    (opt domain.features.apic (elem "apic" {} ""))
+                    (opt domain.features.acpi (elem "acpi" {} []))
+                    (opt domain.features.apic (elem "apic" {} []))
                 ]
             )
             (elem "cpu" {mode=domain.cpu.mode;check=domain.cpu.check;migratable=onoff domain.cpu.migratable;}
@@ -40,7 +40,7 @@ let
                             dies=toString domain.cpu.topology.dies;
                             cores=toString domain.cpu.topology.cores;
                             threads=toString domain.cpu.topology.threads;
-                        } ""
+                        } []
                     )
                 ]
             )
@@ -48,21 +48,36 @@ let
                 (map (t: elem "timer"
                     {
                         name = t.name;
-                    } "") domain.clock.timers)
+                    } []) domain.clock.timers)
             )
             (elem "on_poweroff" {} domain.on.poweroff)
             (elem "on_reboot" {} domain.on.reboot)
             (elem "on_crash" {} domain.on.crash)
             (elem "pm" {}
                 [
-                    (elem "suspend-to-mem" {enabled=yesno domain.pm.suspend-to-mem;} "")
-                    (elem "suspend-to-disk" {enabled=yesno domain.pm.suspend-to-disk;} "")
+                    (elem "suspend-to-mem" {enabled=yesno domain.pm.suspend-to-mem;} [])
+                    (elem "suspend-to-disk" {enabled=yesno domain.pm.suspend-to-disk;} [])
                 ]
             )
             (elem "devices" {}
-                [
-
-                ]
+                ([
+                    (elem "emulator" {} (toString domain.devices.emulator))
+                ] ++
+                map (d: elem "disk" {type=d.type;device=d.device;}
+                    [
+                        (elem "driver" {name=d.driver.name;type=d.driver.type;cache=d.driver.cache;} [])
+                        (elem "source" {file=toString d.source.file;} [])
+                        (elem "target" {dev=d.target.dev;bus=d.target.bus;} [])
+                        (elem "address"
+                            {
+                                type = d.address.type;
+                                controller = toString d.address.controller;
+                                bus = toString d.address.bus;
+                                target = toString d.address.target;
+                                unit = toString d.address.unit;
+                            } [])
+                    ]) domain.devices.disks
+                )
             )
         ]
     );
