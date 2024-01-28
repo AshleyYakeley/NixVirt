@@ -10,6 +10,7 @@ specgroup.add_argument('--name', action='store', metavar='ID', help='domain name
 parser.add_argument('--state', action='store', choices = ['running','stopped'], required=True, help='state to put domain in')
 parser.add_argument('--auto', action='store_true', help='set autostart to match state')
 parser.add_argument('-v', '--verbose', action='store_true', help='report actions to stderr')
+parser.add_argument('--check', action='store_true', help='don\'t perform actions, exit with 1 if any action would be performed')
 args = parser.parse_args()
 
 # Switch off annoying libvirt stderr messages
@@ -20,9 +21,17 @@ libvirt.registerErrorHandler(f=libvirt_callback, ctx=None)
 
 conn = libvirt.open(args.connect)
 
-def log(domid,msg):
+changed = 0
+
+def action(domid,msg):
     if args.verbose:
         print ("domain " + str(uuid.UUID(bytes=domid)) + ": " + msg, file=sys.stderr)
+    if args.check:
+        global changed
+        changed = 1
+        return False
+    else:
+        return True
 
 # fetch / define domain
 if args.define:
@@ -42,13 +51,18 @@ if args.define:
             if olddomain.isActive():
                 log (domid,"destroy")
                 olddomain.destroy()
-            log (domid,"undefine")
-            olddomain.undefine()
-            log (domid,"define")
-            domain = conn.defineXML(domxmlstr)
+            if action (domid,"undefine"):
+                olddomain.undefine()
+            if action (domid,"define"):
+                domain = conn.defineXML(domxmlstr)
+            else:
+                sys.exit(changed)
     else:
-        log (domid,"define")
-        domain = conn.defineXML(domxmlstr)
+        if action (domid,"define"):
+            domain = conn.defineXML(domxmlstr)
+        else:
+            sys.exit(changed)
+
 else:
     try:
         domid = uuid.UUID(args.name).bytes
@@ -60,19 +74,21 @@ else:
 match args.state:
     case "running":
         if not domain.isActive():
-            log (domain.UUID(),"create")
-            domain.create()
+            if action (domain.UUID(),"create"):
+                domain.create()
     case "stopped":
         if domain.isActive():
-            log (domain.UUID(),"destroy")
-            domain.destroy()
+            if action (domain.UUID(),"destroy"):
+                domain.destroy()
 
 # set autostart
 if args.auto:
     match args.state:
         case "running":
-            log (domain.UUID(),"setAutostart True")
-            domain.setAutostart(True)
+            if action (domain.UUID(),"setAutostart True"):
+                domain.setAutostart(True)
         case "stopped":
-            log (domain.UUID(),"setAutostart False")
-            domain.setAutostart(False)
+            if action (domain.UUID(),"setAutostart False"):
+                domain.setAutostart(False)
+
+sys.exit(changed)
