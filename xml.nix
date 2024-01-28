@@ -3,9 +3,9 @@ let
     indentLine = i: s:
         if i == 0 then s + "\n" else "  " + indentLine (i - 1) s;
 
-    quoteAttr = s: "'" + s + "'"; # TBD
+    escapeText = replaceStrings ["&" "<" ">" "'" "\""] ["&amp;" "&lt;" "&gt;" "&apos;" "&quot;"];
 
-    escapeText = s: s; # TBD
+    quoteAttr = s: "'" + escapeText s + "'";
 
     concat = concatStringsSep "";
 
