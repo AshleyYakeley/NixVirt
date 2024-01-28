@@ -42,6 +42,8 @@ if args.define:
             if olddomain.isActive():
                 log (domid,"destroy")
                 olddomain.destroy()
+            log (domid,"undefine")
+            olddomain.undefine()
             log (domid,"define")
             domain = conn.defineXML(domxmlstr)
     else:
