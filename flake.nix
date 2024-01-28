@@ -29,6 +29,12 @@
             program = "${virtdeclareFile}";
         };
 
+        packages.x86_64-linux.virtdeclare = pkgs.runCommand "virtdeclare" {}
+            ''
+            mkdir -t $out/bin
+            ln -s ${virtdeclareFile} $out/bin/
+            '';
+
         homeModules.default = { config, lib, pkgs, ... }:
         let
             cfg = config.virtualisation.libvirt;
