@@ -31,7 +31,7 @@
 
         packages.x86_64-linux.virtdeclare = pkgs.runCommand "virtdeclare" {}
             ''
-            mkdir -t $out/bin
+            mkdir -p $out/bin
             ln -s ${virtdeclareFile} $out/bin/
             '';
 
