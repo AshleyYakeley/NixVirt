@@ -21,8 +21,11 @@
             sed -e "1s|.*|\#\!${pythonPkg}/bin/python3|" ${./virtdeclare} > $out
             chmod 755 $out
             '';
+        lib = (import ./lib.nix) pkgs;
     in
     {
+        inherit lib;
+
         apps.x86_64-linux.virtdeclare =
         {
             type = "app";
@@ -35,7 +38,7 @@
             ln -s ${virtdeclareFile} $out/bin/virtdeclare
             '';
 
-        homeModules.default = { config, lib, pkgs, ... }:
+        homeModules.default = { config, lib, ... }:
         let
             cfg = config.virtualisation.libvirt;
         in
@@ -96,7 +99,7 @@
             });
         };
 
-        nixosModules.default = { config, lib, pkgs, ... }:
+        nixosModules.default = { config, lib, ... }:
         let
             cfg = config.virtualisation.libvirt;
         in
