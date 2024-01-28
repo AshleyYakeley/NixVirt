@@ -5,8 +5,6 @@ let
 
     quoteAttr = s: "'" + s + "'"; # TBD
 
-    attrs = aa: concatStringsSep "" (map (n: " " + n + "=" + quoteAttr (getAttr n aa)) (attrNames aa));
-
     escapeText = s: s; # TBD
 
     concat = concatStringsSep "";
@@ -19,15 +17,23 @@ let
     many = ee: i: concat (map (e: e i) ee);
 
     elem = etype: aa: body: i:
-        if isString body
+        let
+            attrs = concat (map (n: " " + n + "=" + quoteAttr (getAttr n aa)) (attrNames aa));
+            head = etype + attrs;
+        in
+        if isNull body
+        then indentLine i ("<" + head + "/>")
+        else if isString body
         then if body == ""
-            then indentLine i ("<" + etype + attrs aa + "/>")
-            else indentLine i ("<" + etype + attrs aa + ">" + escapeText body + "</" +etype + ">")
+            then indentLine i ("<" + head + "/>")
+            else indentLine i ("<" + head + ">" + escapeText body + "</" + etype + ">")
         else if isList body
-        then
-            indentLine i ("<" + etype + attrs aa + ">") +
-            many body (i + 1) +
-            indentLine i ("</" +etype + ">")
+        then if body == []
+            then indentLine i ("<" + head + "/>")
+            else
+                indentLine i ("<" + head + ">") +
+                many body (i + 1) +
+                indentLine i ("</" + etype + ">")
         else throw "XML: not text or list"
         ;
 
