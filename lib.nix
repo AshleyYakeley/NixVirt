@@ -6,103 +6,138 @@ let
     onoff = t: if t then "on" else "off";
     ifn = t: s: if t then s else null;
     optattr = v: a: ifn (builtins.hasAttr a v) a;
+    map1 = f: x: if builtins.isList x then builtins.map f x else [(f x)];
+    id = x: x;
 
-    domainXML = with builtins; with xml; domain: toText
-    (
-        elem "domain" {type = domain.type;}
+    sub = with builtins;
+        a: contents: subject:
+            xml.opt (hasAttr a subject) (contents (getAttr a subject));
+
+    elem = with builtins;
+        etype: attrs: contents: subject:
+            xml.elem etype
+                (map (a: a subject) attrs)
+                (if isList contents then map (c: c subject) contents else contents subject);
+
+    subelem = etype: attrs: contents: sub etype (elem etype attrs contents);
+
+    attr = atype: contents: subject: xml.attr atype (contents subject);
+
+    subattr = atype: contents: sub atype (attr atype contents);
+
+    many = contents: subject: xml.many (map contents subject);
+
+    submanyelem = etype: attrs: contents: sub etype (many (elem etype attrs contents));
+
+    process =  with builtins; elem "domain" [(subattr "type" id)]
         [
-            (elem "name" {} domain.name)
-            (elem "uuid" {} domain.uuid)
-            (elem "title" {} domain.title)
-            (elem "metadata" {} domain.metadata)
-            (elem "memory" {unit="KiB";} domain.memory)
-            (elem "currentMemory" {unit="KiB";} domain.currentMemory)
-            (elem "vcpu" {placement=domain.vcpu.placement;} (toString domain.vcpu.count))
-            (elem "os" {}
-                ([
-                    (elem "type" {arch = domain.os.arch;machine = domain.os.machine;} domain.os.type)
-                ] ++
-                (map (x: elem "boot" {dev=x;} []) domain.os.boot) ++
+            (subelem "name" [] id)
+            (subelem "uuid" [] id)
+            (subelem "title" [] id)
+            (subelem "metadata" [] id)
+            (subelem "memory" [] id)
+            (subelem "currentMemory" [] id)
+            (subelem "vcpu" [(subattr "placement" id)] (x: toString x.count))
+            (subelem "os" []
                 [
-                    (elem "bootmenu" {enable = yesno domain.os.bootmenu.enable;} [])
-                ]
-                )
-            )
-            (elem "features" {}
-                [
-                    (opt domain.features.acpi (elem "acpi" {} []))
-                    (opt domain.features.apic (elem "apic" {} []))
+                    (elem "type" [(subattr "arch" id) (subattr "machine" id)] (getAttr "type"))
+                    (submanyelem "boot" [(attr "dev" id)] [])
+                    (subelem "bootmenu" [(subattr "enable" yesno)] [])
                 ]
             )
-            (elem "cpu" {mode=domain.cpu.mode;check=domain.cpu.check;migratable=onoff domain.cpu.migratable;}
+            (subelem "features" []
                 [
-                    (elem "topology"
-                        {
-                            sockets=toString domain.cpu.topology.sockets;
-                            dies=toString domain.cpu.topology.dies;
-                            cores=toString domain.cpu.topology.cores;
-                            threads=toString domain.cpu.topology.threads;
-                        } []
+                    (subelem "acpi" [] [])
+                    (subelem "apic" [] [])
+                ]
+            )
+            (subelem "cpu"
+                [
+                    (subattr "mode" id)
+                    (subattr "check" id)
+                    (subattr "migratable" onoff)
+                ]
+                [
+                    (subelem "topology"
+                        [
+                            (subattr "sockets" toString)
+                            (subattr "dies" toString)
+                            (subattr "cores" toString)
+                            (subattr "threads" toString)
+                        ]
+                        []
                     )
                 ]
             )
-            (elem "clock" {offset=domain.clock.offset;}
-                (map (t: elem "timer"
-                    {
-                        name = t.name;
-                        ${optattr t "tickpolicy"} = t.tickpolicy;
-                        ${optattr t "present"} = yesno t.present;
-                    } []) domain.clock.timers)
-            )
-            (elem "on_poweroff" {} domain.on.poweroff)
-            (elem "on_reboot" {} domain.on.reboot)
-            (elem "on_crash" {} domain.on.crash)
-            (elem "pm" {}
+            (subelem "clock"
                 [
-                    (elem "suspend-to-mem" {enabled=yesno domain.pm.suspend-to-mem;} [])
-                    (elem "suspend-to-disk" {enabled=yesno domain.pm.suspend-to-disk;} [])
+                    (subattr "offset" id)
+                ]
+                [
+                    (submanyelem "timer"
+                        [
+                            (subattr "name" id)
+                            (subattr "tickpolicy" id)
+                            (subattr "present" yesno)
+                        ] [])
+                ]
+            )
+            (sub "on" (sub "poweroff" (elem "on_poweroff" [] id)))
+            (sub "on" (sub "reboot" (elem "on_reboot" [] id)))
+            (sub "on" (sub "crash" (elem "on_crash" [] id)))
+            (subelem "pm" []
+                [
+                    (subelem "suspend-to-mem" [(attr "enabled" yesno)] [])
+                    (subelem "suspend-to-disk" [(attr "enabled" yesno)] [])
                 ]
             )
             (let
-                addressElem = d: opt (d ? address) (elem "address"
-                    {
-                        type = d.address.type;
-                        ${optattr d.address "domain"} = d.address.domain;
-                        ${optattr d.address "bus"} = d.address.bus;
-                        ${optattr d.address "controller"} = d.address.controller;
-                        ${optattr d.address "port"} = d.address.port;
-                        ${optattr d.address "slot"} = d.address.slot;
-                        ${optattr d.address "function"} = d.address.function;
-                        ${optattr d.address "multifunction"} = onoff d.address.multifunction;
-                    }
-                    "");
-            in elem "devices" {}
-                ([
-                    (elem "emulator" {} (toString domain.devices.emulator))
-                ] ++
-                map (d: elem "disk" {type=d.type;device=d.device;}
+                addresselem = subelem "address"
                     [
-                        (elem "driver" {name=d.driver.name;type=d.driver.type;${optattr d.driver "cache"}=d.driver.cache;} [])
-                        (opt (d ? source) (elem "source" {file=toString d.source.file;} []))
-                        (elem "target" {dev=d.target.dev;bus=d.target.bus;} [])
-                        (elem "address"
-                            {
-                                type = d.address.type;
-                                controller = toString d.address.controller;
-                                bus = toString d.address.bus;
-                                target = toString d.address.target;
-                                unit = toString d.address.unit;
-                            } [])
-                    ]) domain.devices.disks ++
-                map (c: elem "controller" {type=c.type;index=toString c.index;${optattr c "model"}=c.model;}
-                    [
-                        (opt (c ? master) (elem "master" {startport=toString c.master.startport;} []))
-                        (addressElem c)
-                    ]) domain.devices.controllers
-                )
+                        (subattr "type" id)
+                        (subattr "controller" toString)
+                        (subattr "domain" toString)
+                        (subattr "bus" toString)
+                        (subattr "target" toString)
+                        (subattr "unit" toString)
+                        (subattr "slot" toString)
+                        (subattr "function" toString)
+                        (subattr "multifunction" onoff)
+                    ]
+                    [];
+            in subelem "devices" [(subattr "type" id)]
+                [
+                    (subelem "emulator" [] toString)
+                    (submanyelem "disk" [(subattr "type" id) (subattr "device" id)]
+                        [
+                            (subelem "driver"
+                                [
+                                    (subattr "name" id)
+                                    (subattr "type" id)
+                                    (subattr "cache" id)
+                                ] []
+                            )
+                            (subelem "source" [(subattr "file" toString)] [])
+                            (subelem "target" [(subattr "dev" id) (subattr "bus" id)] [])
+                            addresselem
+                        ]
+                    )
+                    (submanyelem "controller"
+                        [
+                            (subattr "type" id)
+                            (subattr "index" toString)
+                            (subattr "model" id)
+                        ]
+                        [
+                            (subelem "master" [(subattr "startport" toString)] [])
+                            addresselem
+                        ])
+                ]
             )
-        ]
-    );
+        ];
+
+    domainXML = domain: xml.toText (process domain);
+
 in
 {
     inherit xml;

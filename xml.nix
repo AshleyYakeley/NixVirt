@@ -5,8 +5,6 @@ let
 
     escapeText = replaceStrings ["&" "<" ">" "'" "\""] ["&amp;" "&lt;" "&gt;" "&apos;" "&quot;"];
 
-    quoteAttr = s: "'" + escapeText s + "'";
-
     concat = concatStringsSep "";
 
     none = i: "";
@@ -16,24 +14,30 @@ let
 
     many = ee: i: concat (map (e: e i) ee);
 
+    attr = n: v: i: " " + n + "='" + escapeText v + "'";
+
     elem = etype: aa: body: i:
         let
-            attrs = concat (map (n: " " + n + "=" + quoteAttr (getAttr n aa)) (attrNames aa));
-            head = etype + attrs;
+            head = "<" + etype + concat (map (a: a i) aa);
+            starttag = head + ">";
+            endtag = "</" + etype + ">";
+            onlytag = head + "/>";
         in
         if isNull body
-        then indentLine i ("<" + head + "/>")
+        then indentLine i onlytag
         else if isString body
         then if body == ""
-            then indentLine i ("<" + head + "/>")
-            else indentLine i ("<" + head + ">" + escapeText body + "</" + etype + ">")
+            then indentLine i onlytag
+            else indentLine i (starttag + escapeText body + endtag)
         else if isList body
-        then if body == []
-            then indentLine i ("<" + head + "/>")
+        then let
+            contents = many body (i + 1);
+            in if contents == ""
+            then indentLine i onlytag
             else
-                indentLine i ("<" + head + ">") +
-                many body (i + 1) +
-                indentLine i ("</" + etype + ">")
+                indentLine i starttag +
+                contents +
+                indentLine i endtag
         else throw "XML: not text or list"
         ;
 
@@ -43,6 +47,7 @@ in
     inherit none;
     inherit opt;
     inherit many;
+    inherit attr;
     inherit elem;
     inherit toText;
 }
