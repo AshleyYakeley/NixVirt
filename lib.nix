@@ -4,6 +4,8 @@ let
 
     yesno = t: if t then "yes" else "no";
     onoff = t: if t then "on" else "off";
+    ifn = t: s: if t then s else null;
+    optattr = v: a: ifn (builtins.hasAttr a v) a;
 
     domainXML = with builtins; with xml; domain: toText
     (
@@ -48,6 +50,8 @@ let
                 (map (t: elem "timer"
                     {
                         name = t.name;
+                        ${optattr t "tickpolicy"} = t.tickpolicy;
+                        ${optattr t "present"} = yesno t.present;
                     } []) domain.clock.timers)
             )
             (elem "on_poweroff" {} domain.on.poweroff)
@@ -59,14 +63,27 @@ let
                     (elem "suspend-to-disk" {enabled=yesno domain.pm.suspend-to-disk;} [])
                 ]
             )
-            (elem "devices" {}
+            (let
+                addressElem = d: opt (d ? address) (elem "address"
+                    {
+                        type = d.address.type;
+                        ${optattr d.address "domain"} = d.address.domain;
+                        ${optattr d.address "bus"} = d.address.bus;
+                        ${optattr d.address "controller"} = d.address.controller;
+                        ${optattr d.address "port"} = d.address.port;
+                        ${optattr d.address "slot"} = d.address.slot;
+                        ${optattr d.address "function"} = d.address.function;
+                        ${optattr d.address "multifunction"} = onoff d.address.multifunction;
+                    }
+                    "");
+            in elem "devices" {}
                 ([
                     (elem "emulator" {} (toString domain.devices.emulator))
                 ] ++
                 map (d: elem "disk" {type=d.type;device=d.device;}
                     [
-                        (elem "driver" {name=d.driver.name;type=d.driver.type;cache=d.driver.cache;} [])
-                        (elem "source" {file=toString d.source.file;} [])
+                        (elem "driver" {name=d.driver.name;type=d.driver.type;${optattr d.driver "cache"}=d.driver.cache;} [])
+                        (opt (d ? source) (elem "source" {file=toString d.source.file;} []))
                         (elem "target" {dev=d.target.dev;bus=d.target.bus;} [])
                         (elem "address"
                             {
@@ -76,7 +93,12 @@ let
                                 target = toString d.address.target;
                                 unit = toString d.address.unit;
                             } [])
-                    ]) domain.devices.disks
+                    ]) domain.devices.disks ++
+                map (c: elem "controller" {type=c.type;index=toString c.index;${optattr c "model"}=c.model;}
+                    [
+                        (opt (c ? master) (elem "master" {startport=toString c.master.startport;} []))
+                        (addressElem c)
+                    ]) domain.devices.controllers
                 )
             )
         ]
