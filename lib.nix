@@ -4,8 +4,6 @@ let
 
     yesno = t: if t then "yes" else "no";
     onoff = t: if t then "on" else "off";
-    ifn = t: s: if t then s else null;
-    optattr = v: a: ifn (builtins.hasAttr a v) a;
     map1 = f: x: if builtins.isList x then builtins.map f x else [(f x)];
     id = x: x;
 
@@ -29,15 +27,19 @@ let
 
     submanyelem = etype: attrs: contents: sub etype (many (elem etype attrs contents));
 
+    opt = contents: subject: xml.opt subject (contents subject);
+
+    suboptelem = etype: attrs: contents: sub etype (opt (elem etype attrs contents));
+
     process =  with builtins; elem "domain" [(subattr "type" id)]
         [
             (subelem "name" [] id)
             (subelem "uuid" [] id)
             (subelem "title" [] id)
             (subelem "metadata" [] id)
-            (subelem "memory" [] id)
-            (subelem "currentMemory" [] id)
-            (subelem "vcpu" [(subattr "placement" id)] (x: toString x.count))
+            (subelem "memory" [(subattr "unit" id)] (sub "count" toString))
+            (subelem "currentMemory" [(subattr "unit" id)] (sub "count" toString))
+            (subelem "vcpu" [(subattr "placement" id)] (sub "count" toString))
             (subelem "os" []
                 [
                     (elem "type" [(subattr "arch" id) (subattr "machine" id)] (getAttr "type"))
@@ -101,10 +103,22 @@ let
                         (subattr "target" toString)
                         (subattr "unit" toString)
                         (subattr "slot" toString)
+                        (subattr "port" toString)
                         (subattr "function" toString)
                         (subattr "multifunction" onoff)
                     ]
                     [];
+                targetelem = subelem "target"
+                    [
+                        (subattr "type" id)
+                        (subattr "name" id)
+                        (subattr "port" toString)
+                        (subattr "dev" id)
+                        (subattr "bus" id)
+                    ]
+                    [
+                        (subelem "model" [(subattr "name" toString)] [])
+                    ];
             in subelem "devices" [(subattr "type" id)]
                 [
                     (submanyelem "emulator" [] toString)
@@ -118,7 +132,8 @@ let
                                 ] []
                             )
                             (subelem "source" [(subattr "file" toString)] [])
-                            (subelem "target" [(subattr "dev" id) (subattr "bus" id)] [])
+                            targetelem
+                            (suboptelem "readonly" [] [])
                             addresselem
                         ]
                     )
@@ -142,6 +157,42 @@ let
                             (subelem "model" [(subattr "type" id)] [])
                             addresselem
                         ])
+                    (submanyelem "smartcard" [(subattr "mode" id) (subattr "type" id)] [addresselem])
+                    (submanyelem "serial" [(subattr "type" id)] [targetelem])
+                    (submanyelem "console" [(subattr "type" id)] [targetelem])
+                    (submanyelem "channel" [(subattr "type" id)]
+                        [
+                            (subelem "source" [(subattr "channel" id)] [])
+                            targetelem
+                            addresselem
+                        ])
+                    (submanyelem "input" [(subattr "type" id) (subattr "bus" id)] [])
+                    (submanyelem "graphics" [(subattr "type" id)]
+                        [
+                            (subelem "listen" [(subattr "type" id)] [])
+                            (subelem "image" [(subattr "compression" onoff)] [])
+                            (subelem "gl" [(subattr "enable" yesno)] [])
+                        ])
+                    (submanyelem "sound" [(subattr "model" id)] [addresselem])
+                    (submanyelem "audio" [(subattr "id" toString) (subattr "type" id)] [])
+                    (submanyelem "video" []
+                        [
+                            (subelem "model"
+                                [
+                                    (subattr "type" id)
+                                    (subattr "ram" toString)
+                                    (subattr "vram" toString)
+                                    (subattr "vgamem" toString)
+                                    (subattr "heads" toString)
+                                    (subattr "primary" yesno)
+                                ]
+                                [
+                                    (subelem "acceleration" [(subattr "accel3d" yesno)] [])
+                                ])
+                            addresselem
+                        ])
+                    (submanyelem "redirdev" [(subattr "bus" id) (subattr "type" id)] [addresselem])
+                    (submanyelem "memballoon" [(subattr "model" id)] [addresselem])
                 ]
             )
         ];
