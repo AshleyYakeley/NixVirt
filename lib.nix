@@ -25,7 +25,7 @@ let
 
     subattr = atype: contents: sub atype (attr atype contents);
 
-    many = contents: subject: xml.many (map contents subject);
+    many = contents: subject: xml.many (map1 contents subject);
 
     submanyelem = etype: attrs: contents: sub etype (many (elem etype attrs contents));
 
@@ -107,7 +107,7 @@ let
                     [];
             in subelem "devices" [(subattr "type" id)]
                 [
-                    (subelem "emulator" [] toString)
+                    (submanyelem "emulator" [] toString)
                     (submanyelem "disk" [(subattr "type" id) (subattr "device" id)]
                         [
                             (subelem "driver"
@@ -130,6 +130,16 @@ let
                         ]
                         [
                             (subelem "master" [(subattr "startport" toString)] [])
+                            addresselem
+                        ])
+                    (submanyelem "interface"
+                        [
+                            (subattr "type" id)
+                        ]
+                        [
+                            (subelem "mac" [(subattr "address" id)] [])
+                            (subelem "source" [(subattr "bridge" id)] [])
+                            (subelem "model" [(subattr "type" id)] [])
                             addresselem
                         ])
                 ]
