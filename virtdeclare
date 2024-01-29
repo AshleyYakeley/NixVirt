@@ -49,7 +49,7 @@ if args.define:
             domain = olddomain
         else:
             if olddomain.isActive():
-                log (domid,"destroy")
+                log (domid,"stop")
                 olddomain.destroy()
             if action (domid,"undefine"):
                 olddomain.undefine()
@@ -74,21 +74,21 @@ else:
 match args.state:
     case "running":
         if not domain.isActive():
-            if action (domain.UUID(),"create"):
+            if action (domain.UUID(),"start"):
                 domain.create()
     case "stopped":
         if domain.isActive():
-            if action (domain.UUID(),"destroy"):
+            if action (domain.UUID(),"stop"):
                 domain.destroy()
 
 # set autostart
 if args.auto:
     match args.state:
         case "running":
-            if action (domain.UUID(),"setAutostart True"):
+            if action (domain.UUID(),"set autostart true"):
                 domain.setAutostart(True)
         case "stopped":
-            if action (domain.UUID(),"setAutostart False"):
+            if action (domain.UUID(),"set autostart false"):
                 domain.setAutostart(False)
 
 sys.exit(changed)
