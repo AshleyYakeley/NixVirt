@@ -56,10 +56,17 @@ let
         (subelem "cpu"
             [
                 (subattr "mode" id)
+                (subattr "match" id)
                 (subattr "check" id)
                 (subattr "migratable" onoff)
             ]
             [
+                (subelem "model"
+                    [
+                        (subattr "fallback" toString)
+                    ]
+                    [(subelem name [] id)]
+                )
                 (subelem "topology"
                     [
                         (subattr "sockets" toString)
