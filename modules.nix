@@ -19,7 +19,7 @@ let
                 {
                     options =
                     {
-                        hypervisor = lib.mkOption
+                        connection = lib.mkOption
                         {
                             type = str;
                             default = if isHomeManager then "qemu:///session" else "qemu:///system";
@@ -51,9 +51,9 @@ let
 
         config = lib.mkIf cfg.enable
         (let
-            mkCommands = {hypervisor,definition,state,auto}:
+            mkCommands = {connection,definition,state,auto}:
             ''
-                ${virtdeclareFile} --connect ${hypervisor} --define ${definition} --state ${state} ${if auto then "--auto" else ""}
+                ${virtdeclareFile} --connect ${connection} --define ${definition} --state ${state} ${if auto then "--auto" else ""}
             '';
             script = lib.concatStrings (lib.lists.forEach cfg.domains mkCommands);
         in
