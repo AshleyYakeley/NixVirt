@@ -2,7 +2,7 @@
 import sys, argparse, uuid, libvirt, lxml.etree
 
 # parse arguments
-parser = argparse.ArgumentParser(prog='virtdeclare',description='Control libvirt domains declaratively and idempotently.')
+parser = argparse.ArgumentParser(prog='virtdeclare',description='Define and start/stop libvirt domains idempotently.')
 parser.add_argument('--connect', action='store', required=True, metavar='URI', help='connection URI (e.g. qemu:///session)')
 specgroup = parser.add_mutually_exclusive_group(required=True)
 specgroup.add_argument('--define', action='store', metavar='PATH', help='XML domain definition file path')
