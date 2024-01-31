@@ -129,7 +129,7 @@ let
                 [
                     (subattr "type" typeString)
                     (subattr "name" typeString)
-                    (subattr "chassis" typeString)
+                    (subattr "chassis" typeInt)
                     (subattr "port" typeInt)
                     (subattr "dev" typeString)
                     (subattr "bus" typeString)
