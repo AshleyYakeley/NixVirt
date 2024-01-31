@@ -51,6 +51,7 @@ let
             [
                 (suboptelem "acpi" [] [])
                 (suboptelem "apic" [] [])
+                (subelem "vmport" [(subattr "state" onoff)] [])
             ]
         )
         (subelem "cpu"
@@ -119,6 +120,7 @@ let
                 [
                     (subattr "type" id)
                     (subattr "name" id)
+                    (subattr "chassis" id)
                     (subattr "port" toString)
                     (subattr "dev" id)
                     (subattr "bus" id)
@@ -136,6 +138,7 @@ let
                                 (subattr "name" id)
                                 (subattr "type" id)
                                 (subattr "cache" id)
+                                (subattr "discard" id)
                             ] []
                         )
                         (subelem "source" [(subattr "file" toString)] [])
@@ -149,9 +152,11 @@ let
                         (subattr "type" id)
                         (subattr "index" toString)
                         (subattr "model" id)
+                        (subattr "ports" toString)
                     ]
                     [
                         (subelem "master" [(subattr "startport" toString)] [])
+                        targetelem
                         addresselem
                     ])
                 (submanyelem "interface"
@@ -173,8 +178,12 @@ let
                         targetelem
                         addresselem
                     ])
-                (submanyelem "input" [(subattr "type" id) (subattr "bus" id)] [])
-                (submanyelem "graphics" [(subattr "type" id)]
+                (submanyelem "input" [(subattr "type" id) (subattr "bus" id)] [addresselem])
+                (submanyelem "graphics"
+                    [
+                        (subattr "type" id)
+                        (subattr "autoport" yesno)
+                    ]
                     [
                         (subelem "listen" [(subattr "type" id)] [])
                         (subelem "image" [(subattr "compression" onoff)] [])
@@ -199,6 +208,12 @@ let
                         addresselem
                     ])
                 (submanyelem "redirdev" [(subattr "bus" id) (subattr "type" id)] [addresselem])
+                (submanyelem "watchdog" [(subattr "model" id) (subattr "action" id)] [])
+                (submanyelem "rng" [(subattr "model" id)]
+                    [
+                        (subelem "backend" [(subattr "model" id)] (sub "source" toString))
+                        addresselem
+                    ])
                 (submanyelem "memballoon" [(subattr "model" id)] [addresselem])
             ]
         )
