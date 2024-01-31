@@ -174,7 +174,13 @@ let
                     ]
                     [
                         (subelem "mac" [(subattr "address" typeString)] [])
-                        (subelem "source" [(subattr "bridge" typeString)] [])
+                        (subelem "source"
+                            [
+                                (subattr "bridge" typeString)
+                                (subattr "dev" typeString)
+                                (subattr "mode" typeString)
+                                (subattr "network" typeString)
+                            ] [addresselem])
                         (subelem "model" [(subattr "type" typeString)] [])
                         addresselem
                     ])
