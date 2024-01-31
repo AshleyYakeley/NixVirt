@@ -220,7 +220,7 @@ let
                 (submanyelem "watchdog" [(subattr "model" typeString) (subattr "action" typeString)] [])
                 (submanyelem "rng" [(subattr "model" typeString)]
                     [
-                        (subelem "backend" [(subattr "model" typeString)] (sub "source" typeInt))
+                        (subelem "backend" [(subattr "model" typeString)] (sub "source" typePath))
                         addresselem
                     ])
                 (submanyelem "memballoon" [(subattr "model" typeString)] [addresselem])
