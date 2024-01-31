@@ -31,49 +31,57 @@ let
 
     suboptelem = etype: attrs: contents: sub etype (opt (elem etype attrs contents));
 
-    process =  with builtins; elem "domain" [(subattr "type" id)]
+    checkType = tname: test: conv: x: if test x then conv x else builtins.abort ("expected " + tname + ", found " + builtins.typeOf x);
+
+    typeString = checkType "string" builtins.isString id;
+    typeInt = checkType "int" builtins.isInt builtins.toString;
+    typeBoolYesNo = checkType "bool" builtins.isBool yesno;
+    typeBoolOnOff = checkType "bool" builtins.isBool onoff;
+    typePath = checkType "path" builtins.isPath builtins.toString;
+
+    process = with builtins; elem "domain" [(subattr "type" typeString)]
     [
-        (subelem "name" [] id)
-        (subelem "uuid" [] id)
-        (subelem "title" [] id)
+        (subelem "name" [] typeString)
+        (subelem "uuid" [] typeString)
+        (subelem "title" [] typeString)
         (subelem "metadata" [] id)
-        (subelem "memory" [(subattr "unit" id)] (sub "count" toString))
-        (subelem "currentMemory" [(subattr "unit" id)] (sub "count" toString))
-        (subelem "vcpu" [(subattr "placement" id)] (sub "count" toString))
+        (subelem "memory" [(subattr "unit" typeString)] (sub "count" typeInt))
+        (subelem "currentMemory" [(subattr "unit" typeString)] (sub "count" typeInt))
+        (subelem "vcpu" [(subattr "placement" typeString)] (sub "count" typeInt))
         (subelem "os" []
             [
-                (elem "type" [(subattr "arch" id) (subattr "machine" id)] (getAttr "type"))
-                (submanyelem "boot" [(attr "dev" id)] [])
-                (subelem "bootmenu" [(subattr "enable" yesno)] [])
+                (elem "type" [(subattr "arch" typeString) (subattr "machine" typeString)] (getAttr "type"))
+                (submanyelem "boot" [(attr "dev" typeString)] [])
+                (subelem "bootmenu" [(subattr "enable" typeBoolYesNo)] [])
             ]
         )
         (subelem "features" []
             [
                 (suboptelem "acpi" [] [])
                 (suboptelem "apic" [] [])
-                (subelem "vmport" [(subattr "state" onoff)] [])
+                (subelem "vmport" [(subattr "state" typeBoolOnOff)] [])
             ]
         )
         (subelem "cpu"
             [
-                (subattr "mode" id)
-                (subattr "match" id)
-                (subattr "check" id)
-                (subattr "migratable" onoff)
+                (subattr "mode" typeString)
+                (subattr "match" typeString)
+                (subattr "check" typeString)
+                (subattr "migratable" typeBoolOnOff)
             ]
             [
                 (subelem "model"
                     [
-                        (subattr "fallback" toString)
+                        (subattr "fallback" typeInt)
                     ]
-                    [(subelem name [] id)]
+                    [(subelem name [] typeString)]
                 )
                 (subelem "topology"
                     [
-                        (subattr "sockets" toString)
-                        (subattr "dies" toString)
-                        (subattr "cores" toString)
-                        (subattr "threads" toString)
+                        (subattr "sockets" typeInt)
+                        (subattr "dies" typeInt)
+                        (subattr "cores" typeInt)
+                        (subattr "threads" typeInt)
                     ]
                     []
                 )
@@ -81,67 +89,67 @@ let
         )
         (subelem "clock"
             [
-                (subattr "offset" id)
+                (subattr "offset" typeString)
             ]
             [
                 (submanyelem "timer"
                     [
-                        (subattr "name" id)
-                        (subattr "tickpolicy" id)
-                        (subattr "present" yesno)
+                        (subattr "name" typeString)
+                        (subattr "tickpolicy" typeString)
+                        (subattr "present" typeBoolYesNo)
                     ] [])
             ]
         )
-        (subelem "on_poweroff" [] id)
-        (subelem "on_reboot" [] id)
-        (subelem "on_crash" [] id)
+        (subelem "on_poweroff" [] typeString)
+        (subelem "on_reboot" [] typeString)
+        (subelem "on_crash" [] typeString)
         (subelem "pm" []
             [
-                (subelem "suspend-to-mem" [(attr "enabled" yesno)] [])
-                (subelem "suspend-to-disk" [(attr "enabled" yesno)] [])
+                (subelem "suspend-to-mem" [(attr "enabled" typeBoolYesNo)] [])
+                (subelem "suspend-to-disk" [(attr "enabled" typeBoolYesNo)] [])
             ]
         )
         (let
             addresselem = subelem "address"
                 [
-                    (subattr "type" id)
-                    (subattr "controller" toString)
-                    (subattr "domain" toString)
-                    (subattr "bus" toString)
-                    (subattr "target" toString)
-                    (subattr "unit" toString)
-                    (subattr "slot" toString)
-                    (subattr "port" toString)
-                    (subattr "function" toString)
-                    (subattr "multifunction" onoff)
+                    (subattr "type" typeString)
+                    (subattr "controller" typeInt)
+                    (subattr "domain" typeInt)
+                    (subattr "bus" typeInt)
+                    (subattr "target" typeInt)
+                    (subattr "unit" typeInt)
+                    (subattr "slot" typeInt)
+                    (subattr "port" typeInt)
+                    (subattr "function" typeInt)
+                    (subattr "multifunction" typeBoolOnOff)
                 ]
                 [];
             targetelem = subelem "target"
                 [
-                    (subattr "type" id)
-                    (subattr "name" id)
-                    (subattr "chassis" id)
-                    (subattr "port" toString)
-                    (subattr "dev" id)
-                    (subattr "bus" id)
+                    (subattr "type" typeString)
+                    (subattr "name" typeString)
+                    (subattr "chassis" typeString)
+                    (subattr "port" typeInt)
+                    (subattr "dev" typeString)
+                    (subattr "bus" typeString)
                 ]
                 [
-                    (subelem "model" [(subattr "name" toString)] [])
+                    (subelem "model" [(subattr "name" typeString)] [])
                 ];
-        in subelem "devices" [(subattr "type" id)]
+        in subelem "devices" [(subattr "type" typeString)]
             [
-                (submanyelem "emulator" [] toString)
-                (submanyelem "disk" [(subattr "type" id) (subattr "device" id)]
+                (submanyelem "emulator" [] typePath)
+                (submanyelem "disk" [(subattr "type" typeString) (subattr "device" typeString)]
                     [
                         (subelem "driver"
                             [
-                                (subattr "name" id)
-                                (subattr "type" id)
-                                (subattr "cache" id)
-                                (subattr "discard" id)
+                                (subattr "name" typeString)
+                                (subattr "type" typeString)
+                                (subattr "cache" typeString)
+                                (subattr "discard" typeString)
                             ] []
                         )
-                        (subelem "source" [(subattr "file" toString)] [])
+                        (subelem "source" [(subattr "file" typePath)] [])
                         targetelem
                         (suboptelem "readonly" [] [])
                         addresselem
@@ -149,72 +157,72 @@ let
                 )
                 (submanyelem "controller"
                     [
-                        (subattr "type" id)
-                        (subattr "index" toString)
-                        (subattr "model" id)
-                        (subattr "ports" toString)
+                        (subattr "type" typeString)
+                        (subattr "index" typeInt)
+                        (subattr "model" typeString)
+                        (subattr "ports" typeInt)
                     ]
                     [
-                        (subelem "master" [(subattr "startport" toString)] [])
+                        (subelem "master" [(subattr "startport" typeInt)] [])
                         targetelem
                         addresselem
                     ])
                 (submanyelem "interface"
                     [
-                        (subattr "type" id)
+                        (subattr "type" typeString)
                     ]
                     [
-                        (subelem "mac" [(subattr "address" id)] [])
-                        (subelem "source" [(subattr "bridge" id)] [])
-                        (subelem "model" [(subattr "type" id)] [])
+                        (subelem "mac" [(subattr "address" typeString)] [])
+                        (subelem "source" [(subattr "bridge" typeString)] [])
+                        (subelem "model" [(subattr "type" typeString)] [])
                         addresselem
                     ])
-                (submanyelem "smartcard" [(subattr "mode" id) (subattr "type" id)] [addresselem])
-                (submanyelem "serial" [(subattr "type" id)] [targetelem])
-                (submanyelem "console" [(subattr "type" id)] [targetelem])
-                (submanyelem "channel" [(subattr "type" id)]
+                (submanyelem "smartcard" [(subattr "mode" typeString) (subattr "type" typeString)] [addresselem])
+                (submanyelem "serial" [(subattr "type" typeString)] [targetelem])
+                (submanyelem "console" [(subattr "type" typeString)] [targetelem])
+                (submanyelem "channel" [(subattr "type" typeString)]
                     [
-                        (subelem "source" [(subattr "channel" id)] [])
+                        (subelem "source" [(subattr "channel" typeString)] [])
                         targetelem
                         addresselem
                     ])
-                (submanyelem "input" [(subattr "type" id) (subattr "bus" id)] [addresselem])
+                (submanyelem "input" [(subattr "type" typeString) (subattr "bus" typeString)] [addresselem])
                 (submanyelem "graphics"
                     [
-                        (subattr "type" id)
-                        (subattr "autoport" yesno)
+                        (subattr "type" typeString)
+                        (subattr "autoport" typeBoolYesNo)
                     ]
                     [
-                        (subelem "listen" [(subattr "type" id)] [])
-                        (subelem "image" [(subattr "compression" onoff)] [])
-                        (subelem "gl" [(subattr "enable" yesno)] [])
+                        (subelem "listen" [(subattr "type" typeString)] [])
+                        (subelem "image" [(subattr "compression" typeBoolOnOff)] [])
+                        (subelem "gl" [(subattr "enable" typeBoolYesNo)] [])
                     ])
-                (submanyelem "sound" [(subattr "model" id)] [addresselem])
-                (submanyelem "audio" [(subattr "id" toString) (subattr "type" id)] [])
+                (submanyelem "sound" [(subattr "model" typeString)] [addresselem])
+                (submanyelem "audio" [(subattr "id" typeInt) (subattr "type" typeString)] [])
                 (submanyelem "video" []
                     [
                         (subelem "model"
                             [
-                                (subattr "type" id)
-                                (subattr "ram" toString)
-                                (subattr "vram" toString)
-                                (subattr "vgamem" toString)
-                                (subattr "heads" toString)
-                                (subattr "primary" yesno)
+                                (subattr "type" typeString)
+                                (subattr "ram" typeInt)
+                                (subattr "vram" typeInt)
+                                (subattr "vgamem" typeInt)
+                                (subattr "heads" typeInt)
+                                (subattr "primary" typeBoolYesNo)
                             ]
                             [
-                                (subelem "acceleration" [(subattr "accel3d" yesno)] [])
+                                (subelem "acceleration" [(subattr "accel3d" typeBoolYesNo)] [])
                             ])
                         addresselem
                     ])
-                (submanyelem "redirdev" [(subattr "bus" id) (subattr "type" id)] [addresselem])
-                (submanyelem "watchdog" [(subattr "model" id) (subattr "action" id)] [])
-                (submanyelem "rng" [(subattr "model" id)]
+                (submanyelem "redirdev" [(subattr "bus" typeString) (subattr "type" typeString)] [addresselem])
+                (submanyelem "watchdog" [(subattr "model" typeString) (subattr "action" typeString)] [])
+                (submanyelem "rng" [(subattr "model" typeString)]
                     [
-                        (subelem "backend" [(subattr "model" id)] (sub "source" toString))
+                        (subelem "backend" [(subattr "model" typeString)] (sub "source" typeInt))
                         addresselem
                     ])
-                (submanyelem "memballoon" [(subattr "model" id)] [addresselem])
+                (submanyelem "memballoon" [(subattr "model" typeString)] [addresselem])
             ]
         )
     ];
