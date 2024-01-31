@@ -54,7 +54,7 @@ if args.define:
         newDomDesc = domain.XMLDesc(flags=2)
         defchanged = oldDomDesc != newDomDesc
         vreport(domid,"changed" if defchanged else "unchanged")
-        if defchanged:
+        if defchanged and (setstate != "stopped"):
             stop(olddomain)
             if oldActive:
                 setstate = "running"
