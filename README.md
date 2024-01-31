@@ -20,9 +20,9 @@ Each set represents a domain, and has these attributes:
   * `definition` (path)  
   Path to a libvirt domain definition XML file.
 
-  * `state` (`"running"` or `"stopped"`)  
+  * `state` (`"running"`, `"stopped"`, `"ignore"`)  
   State to put the domain in.  
-  Default: `"stopped"`.
+  Default: `"ignore"`.
 
   * `auto`  (boolean)  
   Whether to set the auto-start property to match `state`.  

@@ -32,8 +32,8 @@ let
                         };
                         state = lib.mkOption
                         {
-                            type = types.enum [ "stopped" "running" ];
-                            default = "stopped";
+                            type = types.enum [ "stopped" "running" "ignore" ];
+                            default = "ignore";
                             description = "state to put the domain in";
                         };
                         auto = lib.mkOption
@@ -52,8 +52,12 @@ let
         config = lib.mkIf cfg.enable
         (let
             mkCommands = {connection,definition,state,auto}:
+            let
+                stateOption = if state != "ignore" then "--state ${state}" else "";
+                autoOption = if auto then "--auto" else "";
+            in
             ''
-                ${virtdeclareFile} --connect ${connection} --define ${definition} --state ${state} ${if auto then "--auto" else ""}
+                ${virtdeclareFile} --connect ${connection} --define ${definition} ${stateOption} ${autoOption}
             '';
             script = lib.concatStrings (lib.lists.forEach cfg.domains mkCommands);
         in
