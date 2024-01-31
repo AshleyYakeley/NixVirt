@@ -68,6 +68,7 @@ let
         }
         else
         {
+            virtualisation.libvirtd.enable = true;
             system.activationScripts.libvirt-domains = script;
         }
         );
