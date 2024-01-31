@@ -38,7 +38,7 @@ let
     typeInt = checkType "int" builtins.isInt builtins.toString;
     typeBoolYesNo = checkType "bool" builtins.isBool yesno;
     typeBoolOnOff = checkType "bool" builtins.isBool onoff;
-    typePath = checkType "path" builtins.isPath builtins.toString;
+    typePath = checkType "path or string" (x: builtins.isPath x || builtins.isString x) builtins.toString;
 
     process = with builtins; elem "domain" [(subattr "type" typeString)]
     [
