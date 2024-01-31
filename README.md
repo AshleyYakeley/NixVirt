@@ -7,7 +7,8 @@ NixVirt lets you declare virtual machines ([libvirt](https://libvirt.org/) domai
 A NixOS module with these options:
 
 * `virtualisation.libvirt.enable` (boolean)  
-Whether to use NixVirt.  
+Whether to use NixVirt.
+Switching this on will also switch on `virtualisation.libvirtd.enable`.  
 Default: `false`.
 
 * `virtualisation.libvirt.domains` (list of sets)  
@@ -32,7 +33,11 @@ Note that NixOS already has options under `virtualisation.libvirtd` for controll
 
 ### `homeModules.default`
 
-The same, as a Home Manager module, except that the default connection is `"qemu:///session"`.
+The same as above, as a Home Manager module, except:
+
+* The default connection is `"qemu:///session"`.
+
+* `virtualisation.libvirtd.enable` must already be switched on in NixOS.
 
 ### `apps.x86_64-linux.virtdeclare`
 
@@ -41,7 +46,7 @@ The modules use it to control domains.
 
 * A domain definition will replace any previous definition with that UUID.
 
-* Stopping a domain immediately terminates it (like switching the power off).
+* Stopping a domain immediately terminates it (like shutting the power off).
 
 * If an existing domain is redefined, and the definition differs, and the domain is running,
 and `--state stopped` is not specified, then `virtdeclare` will stop and restart the domain with the new definition.
