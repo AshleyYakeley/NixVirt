@@ -18,7 +18,7 @@ Each set represents a domain, and has these attributes:
   Default: `"qemu:///system"`.
 
   * `definition` (path)  
-  Path to a libvirt domain definition XML file.
+  Path to a [libvirt domain definition XML](https://libvirt.org/formatdomain.html) file.
 
   * `state` (`"running"`, `"stopped"`, `"ignore"`)  
   State to put the domain in.  
@@ -69,3 +69,15 @@ A package containing `virtdeclare`.
 ### `lib`
 
 Functions for creating libvirt domain XML from Nix sets; this is still under development.
+
+#### `lib.domainXML`
+
+Create domain XML for a given structure (returns a string).
+
+#### `lib.writeDomainXML`
+
+Write domain XML for a given structure (returns a path).
+
+#### `lib.xml`
+
+Various functions for creating XML text.
