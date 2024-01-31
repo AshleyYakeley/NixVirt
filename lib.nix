@@ -31,7 +31,8 @@ let
 
     suboptelem = etype: attrs: contents: sub etype (opt (elem etype attrs contents));
 
-    checkType = tname: test: conv: x: if test x then conv x else builtins.abort ("expected " + tname + ", found " + builtins.typeOf x);
+    checkType = tname: test: conv: x:
+        if test x then conv x else builtins.abort ("expected " + tname + ", found " + builtins.typeOf x + " (" + builtins.toString x ")");
 
     typeString = checkType "string" builtins.isString id;
     typeInt = checkType "int" builtins.isInt builtins.toString;
