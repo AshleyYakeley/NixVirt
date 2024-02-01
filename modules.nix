@@ -45,7 +45,7 @@ let
 
         config = lib.mkIf cfg.enable
         (let
-            mkCommands = {connection,definition,state,auto}:
+            mkCommands = {connection,definition,state}:
             let
                 stateOption = if state != "ignore" then "--state ${state}" else "";
             in
