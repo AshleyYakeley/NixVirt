@@ -40,7 +40,7 @@ The same as above, as a Home Manager module, except:
 `virtdeclare` is a command-line tool for defining and starting/stopping libvirt domains idempotently.
 The modules use it to control domains.
 
-* A domain definition will replace any previous definition with that UUID.
+* A domain definition will replace any previous definition with that UUID. The name of a definition can change, but libvirt will not allow two domains with the same name.
 
 * Stopping a domain immediately terminates it (like shutting the power off).
 

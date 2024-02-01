@@ -47,8 +47,14 @@ if args.define:
     except libvirt.libvirtError:
         olddomain = None
     if olddomain:
-        oldDomDesc = olddomain.XMLDesc(flags=2)
         oldActive = olddomain.isActive()
+        oldDomDesc = olddomain.XMLDesc(flags=2)
+        oldDomXML = lxml.etree.fromstring(oldDomDesc)
+        oldDomName = oldDomXML.find("name").text
+        newDomName = domxml.find("name").text
+        if oldDomName != newDomName:
+            vreport(olddomain.UUID(),"undefine")
+            olddomain.undefine()
         vreport(domid,"redefine")
         domain = conn.defineXML(domDef)
         newDomDesc = domain.XMLDesc(flags=2)
