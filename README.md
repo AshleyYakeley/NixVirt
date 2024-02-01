@@ -25,10 +25,6 @@ Each set represents a domain, and has these attributes:
   State to put the domain in.  
   Default: `"ignore"`.
 
-  * `auto`  (boolean)  
-  Whether to set the auto-start property to match `state`.  
-  Default: `true`.
-
 Note that NixOS already has options under `virtualisation.libvirtd` for controlling the libvirt daemon.
 
 ### `homeModules.default`

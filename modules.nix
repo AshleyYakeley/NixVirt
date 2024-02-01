@@ -36,12 +36,6 @@ let
                             default = "ignore";
                             description = "state to put the domain in";
                         };
-                        auto = lib.mkOption
-                        {
-                            type = bool;
-                            default = true;
-                            description = "set autostart to match state";
-                        };
                     };
                 });
                 default = [];
@@ -54,10 +48,9 @@ let
             mkCommands = {connection,definition,state,auto}:
             let
                 stateOption = if state != "ignore" then "--state ${state}" else "";
-                autoOption = if auto then "--auto" else "";
             in
             ''
-                ${virtdeclareFile} --connect ${connection} --define ${definition} ${stateOption} ${autoOption}
+                ${virtdeclareFile} --connect ${connection} --define ${definition} ${stateOption}
             '';
             script = lib.concatStrings (lib.lists.forEach cfg.domains mkCommands);
         in
@@ -69,7 +62,13 @@ let
         else
         {
             virtualisation.libvirtd.enable = true;
-            system.activationScripts.libvirt-domains = script;
+            systemd.services.NixVirt =
+            {
+                description = "Configure libvirt domains";
+                requires = [ "libvirtd.service" ];
+                after = [ "libvirtd.service" ];
+                inherit script;
+            };
         }
         );
     };
