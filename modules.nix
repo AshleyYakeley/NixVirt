@@ -62,7 +62,7 @@ let
         else
         {
             virtualisation.libvirtd.enable = true;
-            systemd.services.NixVirt =
+            systemd.services.nixvirt =
             {
                 description = "Configure libvirt domains";
                 requires = [ "libvirtd.service" ];
