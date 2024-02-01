@@ -64,6 +64,7 @@ let
             virtualisation.libvirtd.enable = true;
             systemd.services.nixvirt =
             {
+                serviceConfig.Type = "oneshot";
                 description = "Configure libvirt domains";
                 requires = [ "libvirtd.service" ];
                 after = [ "libvirtd.service" ];
