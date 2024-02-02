@@ -3,7 +3,7 @@ let
     module = isHomeManager: {config, lib, ...}:
     let
         cfg = config.virtualisation.libvirt;
-        mkObjectOption = {singular,plural}: lib.mkOption
+        mkObjectOption =  with lib.types; {singular,plural}: lib.mkOption
         {
             type = listOf (submodule
             {
