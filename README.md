@@ -2,7 +2,7 @@
 
 ## NixVirt
 
-NixVirt lets you declare virtual machines ([libvirt](https://libvirt.org/) domains) in Nix. NixVirt is a Nix flake with these outputs:
+NixVirt lets you declare virtual machines ([libvirt](https://libvirt.org/) domains) and associated objects in Nix. NixVirt is a Nix flake with these outputs:
 
 ### `nixosModules.default`
 
@@ -24,7 +24,21 @@ Each set represents a domain, and has these attributes:
   Path to a [libvirt domain definition XML](https://libvirt.org/formatdomain.html) file.
 
   * `active` (`true`, `false`, `null`)  
-  Running/stopped state to put the domain in (or null to ignore).  
+  State to put the domain in (running/stopped), or null to ignore.  
+  Default: `null`.
+
+* `virtualisation.libvirt.networks` (list of sets)  
+Each set represents a network, and has these attributes:
+
+  * `connection` (string)  
+  The hypervisor connection.  
+  Default: `"qemu:///system"`.
+
+  * `definition` (path)  
+  Path to a [libvirt network definition XML](https://libvirt.org/formatnetwork.html) file.
+
+  * `active` (`true`, `false`, `null`)  
+  State to put the network in, or null to ignore.  
   Default: `null`.
 
 Note that NixOS already has options under `virtualisation.libvirtd` for controlling the libvirt daemon.
@@ -33,7 +47,7 @@ Note that NixOS already has options under `virtualisation.libvirtd` for controll
 
 The same as above, as a Home Manager module, except:
 
-* The default connection is `"qemu:///session"`.
+* The default connection for objects is `"qemu:///session"`.
 
 * `virtualisation.libvirtd.enable` must already be switched on in NixOS.
 
