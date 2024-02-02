@@ -2,14 +2,18 @@
 import sys, argparse, uuid, libvirt, lxml.etree
 
 # parse arguments
-parser = argparse.ArgumentParser(prog='virtdeclare',description='Define and start/stop libvirt domains idempotently.')
+parser = argparse.ArgumentParser(prog='virtdeclare',description='Define and control libvirt objects idempotently.')
+parser.add_argument('-v', '--verbose', action='store_true', help='report actions to stderr')
 parser.add_argument('--connect', action='store', required=True, metavar='URI', help='connection URI (e.g. qemu:///session)')
-specgroup = parser.add_mutually_exclusive_group(required=True)
+subparsers = parser.add_subparsers(dest='objtype',description='object to control')
+
+parser_domain = subparsers.add_parser('domain', description='Define and start/stop libvirt domains idempotently.')
+specgroup = parser_domain.add_mutually_exclusive_group(required=True)
 specgroup.add_argument('--define', action='store', metavar='PATH', help='XML domain definition file path')
 specgroup.add_argument('--name', action='store', metavar='ID', help='domain name or UUID')
-parser.add_argument('--state', action='store', choices = ['running','stopped'], help='state to put domain in')
-parser.add_argument('--auto', action='store_true', help='set autostart to match state')
-parser.add_argument('-v', '--verbose', action='store_true', help='report actions to stderr')
+parser_domain.add_argument('--state', action='store', choices = ['active','inactive'], help='state to put domain in')
+parser_domain.add_argument('--auto', action='store_true', help='set autostart to match state')
+
 args = parser.parse_args()
 
 setstate = args.state
@@ -22,71 +26,73 @@ libvirt.registerErrorHandler(f=libvirt_callback, ctx=None)
 
 conn = libvirt.open(args.connect)
 
-def vreport(domid,msg):
+def vreport(objid,msg):
     if args.verbose:
-        print ("domain " + str(uuid.UUID(bytes=domid)) + ": " + msg, file=sys.stderr)
+        print (args.objtype + " " + str(uuid.UUID(bytes=objid)) + ": " + msg, file=sys.stderr)
 
-def start(domain):
-    if not domain.isActive():
-        vreport(domain.UUID(),"start")
-        domain.create()
+match args.objtype:
+    case "domain":
+        def start(domain):
+            if not domain.isActive():
+                vreport(domain.UUID(),"start")
+                domain.create()
 
-def stop(domain):
-    if domain.isActive():
-        vreport(domain.UUID(),"stop")
-        domain.destroy()
+        def stop(domain):
+            if domain.isActive():
+                vreport(domain.UUID(),"stop")
+                domain.destroy()
 
-# fetch / define domain
-if args.define:
-    with open(args.define,"r") as f:
-        domDef = f.read()
-    domxml = lxml.etree.fromstring(domDef)
-    domid = uuid.UUID(domxml.find("uuid").text).bytes
-    try:
-        olddomain = conn.lookupByUUID(domid)
-    except libvirt.libvirtError:
-        olddomain = None
-    if olddomain:
-        oldActive = olddomain.isActive()
-        oldDomDesc = olddomain.XMLDesc(flags=2)
-        oldDomXML = lxml.etree.fromstring(oldDomDesc)
-        oldDomName = oldDomXML.find("name").text
-        newDomName = domxml.find("name").text
-        if oldDomName != newDomName:
-            vreport(olddomain.UUID(),"undefine")
-            olddomain.undefine()
-        vreport(domid,"redefine")
-        domain = conn.defineXML(domDef)
-        newDomDesc = domain.XMLDesc(flags=2)
-        defchanged = oldDomDesc != newDomDesc
-        vreport(domid,"changed" if defchanged else "unchanged")
-        if defchanged and (setstate != "stopped"):
-            stop(olddomain)
-            if oldActive:
-                setstate = "running"
-    else:
-        vreport(domid,"define new")
-        domain = conn.defineXML(domDef)
-else:
-    try:
-        domid = uuid.UUID(args.name).bytes
-        domain = conn.lookupByUUID(domid)
-    except ValueError:
-        domain = conn.lookupByName(args.name)
+        # fetch / define domain
+        if args.define:
+            with open(args.define,"r") as f:
+                domDef = f.read()
+            domxml = lxml.etree.fromstring(domDef)
+            domid = uuid.UUID(domxml.find("uuid").text).bytes
+            try:
+                olddomain = conn.lookupByUUID(domid)
+            except libvirt.libvirtError:
+                olddomain = None
+            if olddomain:
+                oldActive = olddomain.isActive()
+                oldDomDesc = olddomain.XMLDesc(flags=2)
+                oldDomXML = lxml.etree.fromstring(oldDomDesc)
+                oldDomName = oldDomXML.find("name").text
+                newDomName = domxml.find("name").text
+                if oldDomName != newDomName:
+                    vreport(olddomain.UUID(),"undefine")
+                    olddomain.undefine()
+                vreport(domid,"redefine")
+                domain = conn.defineXML(domDef)
+                newDomDesc = domain.XMLDesc(flags=2)
+                defchanged = oldDomDesc != newDomDesc
+                vreport(domid,"changed" if defchanged else "unchanged")
+                if defchanged and (setstate != "inactive"):
+                    stop(olddomain)
+                    if oldActive:
+                        setstate = "active"
+            else:
+                vreport(domid,"define new")
+                domain = conn.defineXML(domDef)
+        else:
+            try:
+                domid = uuid.UUID(args.name).bytes
+                domain = conn.lookupByUUID(domid)
+            except ValueError:
+                domain = conn.lookupByName(args.name)
 
-# set state
-match setstate:
-    case "running":
-        start(domain)
-    case "stopped":
-        stop(domain)
+        # set state
+        match setstate:
+            case "active":
+                start(domain)
+            case "inactive":
+                stop(domain)
 
-# set autostart
-if args.auto:
-    match args.state:
-        case "running":
-            vreport(domain.UUID(),"set autostart true")
-            domain.setAutostart(True)
-        case "stopped":
-            vreport(domain.UUID(),"set autostart false")
-            domain.setAutostart(False)
+        # set autostart
+        if args.auto:
+            match args.state:
+                case "active":
+                    vreport(domain.UUID(),"set autostart true")
+                    domain.setAutostart(True)
+                case "inactive":
+                    vreport(domain.UUID(),"set autostart false")
+                    domain.setAutostart(False)

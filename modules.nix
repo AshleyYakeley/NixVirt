@@ -30,11 +30,11 @@ let
                             type = path;
                             description = "path to definition XML";
                         };
-                        state = lib.mkOption
+                        active = lib.mkOption
                         {
-                            type = types.enum ["stopped" "running" "ignore"];
-                            default = "ignore";
-                            description = "state to put the domain in";
+                            type = types.nullOr types.bool;
+                            default = null;
+                            description = "running/stopped state to put the domain in (or null for ignore)";
                         };
                     };
                 });
@@ -45,12 +45,14 @@ let
 
         config = lib.mkIf cfg.enable
         (let
-            mkCommands = {connection,definition,state}:
+            mkCommands = {connection,definition,active}:
             let
-                stateOption = if state != "ignore" then "--state ${state}" else "";
+                stateOption = if builtins.isNull active
+                    then ""
+                    else if active then "--state active" else "--state inactive";
             in
             ''
-                ${virtdeclareFile} --connect ${connection} --define ${definition} ${stateOption}
+                ${virtdeclareFile} --connect ${connection} domain --define ${definition} ${stateOption}
             '';
             script = lib.concatStrings (lib.lists.forEach cfg.domains mkCommands);
         in

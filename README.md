@@ -23,9 +23,9 @@ Each set represents a domain, and has these attributes:
   * `definition` (path)  
   Path to a [libvirt domain definition XML](https://libvirt.org/formatdomain.html) file.
 
-  * `state` (`"running"`, `"stopped"`, `"ignore"`)  
-  State to put the domain in.  
-  Default: `"ignore"`.
+  * `active` (`true`, `false`, `null`)  
+  Running/stopped state to put the domain in (or null to ignore).  
+  Default: `null`.
 
 Note that NixOS already has options under `virtualisation.libvirtd` for controlling the libvirt daemon.
 
@@ -39,30 +39,47 @@ The same as above, as a Home Manager module, except:
 
 ### `apps.x86_64-linux.virtdeclare`
 
-`virtdeclare` is a command-line tool for defining and starting/stopping libvirt domains idempotently.
-The modules use it to control domains.
+`virtdeclare` is a command-line tool for defining and controlling libvirt objects idempotently, used by the modules.
+
+```
+usage: virtdeclare [-h] [-v] --connect URI {domain} ...
+
+Define and control libvirt objects idempotently.
+
+options:
+  -h, --help     show this help message and exit
+  -v, --verbose  report actions to stderr
+  --connect URI  connection URI (e.g. qemu:///session)
+
+subcommands:
+  object to control
+
+  {domain}
+```
+
+Currently it only controls libvirt domains.
+
+#### Domains
 
 * A domain definition will replace any previous definition with that UUID. The name of a definition can change, but libvirt will not allow two domains with the same name.
 
 * Stopping a domain immediately terminates it (like shutting the power off).
 
 * If an existing domain is redefined, and the definition differs, and the domain is running,
-and `--state stopped` is not specified, then `virtdeclare` will stop and restart the domain with the new definition.
+and `--state inactive` is not specified, then `virtdeclare` will stop and restart the domain with the new definition.
 
 ```
-usage: virtdeclare [-h] --connect URI (--define PATH | --name ID) [--state {running,stopped}] [--auto] [-v]
+usage: virtdeclare domain [-h] (--define PATH | --name ID) [--state {active,inactive}] [--auto]
 
 Define and start/stop libvirt domains idempotently.
 
 options:
   -h, --help            show this help message and exit
-  --connect URI         connection URI (e.g. qemu:///session)
   --define PATH         XML domain definition file path
   --name ID             domain name or UUID
-  --state {running,stopped}
+  --state {active,inactive}
                         state to put domain in
   --auto                set autostart to match state
-  -v, --verbose         report actions to stderr
 ```
 
 ### `packages.x86_64-linux.virtdeclare`
