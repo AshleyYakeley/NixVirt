@@ -1,6 +1,6 @@
 virtdeclareFile:
 let
-    module = isHomeManager: { config, lib, ... }:
+    module = isHomeManager: {config, lib, ...}:
     let
         cfg = config.virtualisation.libvirt;
     in
@@ -32,7 +32,7 @@ let
                         };
                         state = lib.mkOption
                         {
-                            type = types.enum [ "stopped" "running" "ignore" ];
+                            type = types.enum ["stopped" "running" "ignore"];
                             default = "ignore";
                             description = "state to put the domain in";
                         };
@@ -66,8 +66,9 @@ let
             {
                 serviceConfig.Type = "oneshot";
                 description = "Configure libvirt domains";
-                requires = [ "libvirtd.service" ];
-                after = [ "libvirtd.service" ];
+                wantedBy = ["multi-user.target"];
+                requires = ["libvirtd.service"];
+                after = ["libvirtd.service"];
                 inherit script;
             };
         }
