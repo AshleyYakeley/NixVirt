@@ -34,6 +34,8 @@ class DomainType(ObjectType):
         return conn.lookupByName(name)
     def defineXML(self,defn):
         return conn.defineXML(defn)
+    def XMLDesc(vobj)
+        return vobj.XMLDesc(flags=2) # VIR_DOMAIN_XML_INACTIVE, https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainXMLFlags
 
 class NetworkType(ObjectType):
     def lookupByUUID(self,uuid):
@@ -42,6 +44,8 @@ class NetworkType(ObjectType):
         return conn.networkLookupByName(name)
     def defineXML(self,defn):
         return conn.networkDefineXML(defn)
+    def XMLDesc(vobj)
+        return vobj.XMLDesc(flags=1) # VIR_NETWORK_XML_INACTIVE, https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkXMLFlags
 
 match args.type:
     case "domain":
@@ -75,7 +79,7 @@ if args.define:
         found = None
     if found:
         foundActive = found.isActive()
-        foundDef = found.XMLDesc(flags=2)
+        foundDef = objType.XMLDesc(found)
         foundDefXML = lxml.etree.fromstring(foundDef)
         foundName = foundDefXML.find("name").text
         specName = specDefXML.find("name").text
@@ -84,7 +88,7 @@ if args.define:
             found.undefine()
         vreport(specUUID,"redefine")
         vobj = objType.defineXML(specDef)
-        newDef = vobj.XMLDesc(flags=2)
+        newDef = objType.XMLDesc(vobj)
         defchanged = foundDef != newDef
         vreport(specUUID,"changed" if defchanged else "unchanged")
         if defchanged and (setstate != "inactive"):
