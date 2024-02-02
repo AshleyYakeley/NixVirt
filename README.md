@@ -56,7 +56,7 @@ The same as above, as a Home Manager module, except:
 `virtdeclare` is a command-line tool for defining and controlling libvirt objects idempotently, used by the modules.
 
 ```
-usage: virtdeclare [-h] [-v] --connect URI --type {domain,network} (--define PATH | --name ID)
+usage: virtdeclare [-h] [-v] --connect URI --type {domain,network} (--define PATH | --uuid ID | --name ID)
                    [--state {active,inactive}] [--auto]
 
 Define and control libvirt objects idempotently.
@@ -68,7 +68,8 @@ options:
   --type {domain,network}
                         object type
   --define PATH         XML object definition file path
-  --name ID             object name or UUID
+  --uuid ID             object UUID
+  --name ID             object name
   --state {active,inactive}
                         state to put object in
   --auto                set autostart to match state

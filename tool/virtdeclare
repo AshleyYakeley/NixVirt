@@ -8,7 +8,8 @@ parser.add_argument('--connect', action='store', required=True, metavar='URI', h
 parser.add_argument('--type', action='store', required=True, choices = ['domain','network'], help='object type')
 specgroup = parser.add_mutually_exclusive_group(required=True)
 specgroup.add_argument('--define', action='store', metavar='PATH', help='XML object definition file path')
-specgroup.add_argument('--name', action='store', metavar='ID', help='object name or UUID')
+specgroup.add_argument('--uuid', action='store', metavar='ID', help='object UUID')
+specgroup.add_argument('--name', action='store', metavar='ID', help='object name')
 parser.add_argument('--state', action='store', choices = ['active','inactive'], help='state to put object in')
 parser.add_argument('--auto', action='store_true', help='set autostart to match state')
 
@@ -98,12 +99,11 @@ if args.define:
     else:
         vreport(specUUID,"define new")
         vobj = objType.defineXML(specDef)
+elif args.uuid:
+    specUUID = uuid.UUID(args.uuid).bytes
+    vobj = objType.lookupByUUID(specUUID)
 else:
-    try:
-        specUUID = uuid.UUID(args.name).bytes
-        vobj = objType.lookupByUUID(specUUID)
-    except ValueError:
-        vobj = objType.lookupByName(args.name)
+    vobj = objType.lookupByName(args.name)
 
 # set state
 match setstate:
