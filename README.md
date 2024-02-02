@@ -1,3 +1,5 @@
+> :warning:  NixVirt isn't fully working yet.
+
 ## NixVirt
 
 NixVirt lets you declare virtual machines ([libvirt](https://libvirt.org/) domains) in Nix. NixVirt is a Nix flake with these outputs:
