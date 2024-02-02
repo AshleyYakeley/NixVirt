@@ -16,11 +16,13 @@
     let
         pkgs = import nixpkgs {system = "x86_64-linux";};
         pythonPkg = pkgs.python3.withPackages(ps:[ps.libvirt ps.lxml]);
-        virtdeclareFile = pkgs.runCommand "virtdeclare" {}
+        setShebang = name: path: pkgs.runCommand name {}
             ''
-            sed -e "1s|.*|\#\!${pythonPkg}/bin/python3|" ${./virtdeclare} > $out
+            sed -e "1s|.*|\#\!${pythonPkg}/bin/python3|" ${path} > $out
             chmod 755 $out
             '';
+        virtdeclareFile = setShebang "virtdeclare" tool/virtdeclare;
+        virtpurgeFile = setShebang "virtpurge" tool/virtpurge;
         lib = (import ./lib.nix) pkgs;
         modules = (import ./modules.nix) virtdeclareFile;
     in
@@ -33,10 +35,17 @@
             program = "${virtdeclareFile}";
         };
 
+        apps.x86_64-linux.virtpurge =
+        {
+            type = "app";
+            program = "${virtpurgeFile}";
+        };
+
         packages.x86_64-linux.default = pkgs.runCommand "NixVirt" {}
             ''
             mkdir -p $out/bin
             ln -s ${virtdeclareFile} $out/bin/virtdeclare
+            ln -s ${virtpurgeFile} $out/bin/virtpurge
             '';
 
         homeModules.default = modules.homeModule;
