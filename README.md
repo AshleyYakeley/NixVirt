@@ -85,7 +85,7 @@ Currently `virtdeclare` only controls libvirt domains and networks.
 * If an existing object is redefined, and the definition differs, and the object is active,
 and `--state inactive` is not specified, then `virtdeclare` will deactivate and reactivate the object with the new definition.
 
-### `packages.x86_64-linux.virtdeclare`
+### `packages.x86_64-linux.default`
 
 A package containing `virtdeclare`.
 

@@ -33,7 +33,7 @@
             program = "${virtdeclareFile}";
         };
 
-        packages.x86_64-linux.virtdeclare = pkgs.runCommand "virtdeclare" {}
+        packages.x86_64-linux.default = pkgs.runCommand "NixVirt" {}
             ''
             mkdir -p $out/bin
             ln -s ${virtdeclareFile} $out/bin/virtdeclare
