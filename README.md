@@ -42,7 +42,7 @@ The same as above, as a Home Manager module, except:
 `virtdeclare` is a command-line tool for defining and controlling libvirt objects idempotently, used by the modules.
 
 ```
-usage: virtdeclare [-h] [-v] --connect URI --type {domain} (--define PATH | --name ID)
+usage: virtdeclare [-h] [-v] --connect URI --type {domain,network} (--define PATH | --name ID)
                    [--state {active,inactive}] [--auto]
 
 Define and control libvirt objects idempotently.
@@ -51,7 +51,8 @@ options:
   -h, --help            show this help message and exit
   -v, --verbose         report actions to stderr
   --connect URI         connection URI (e.g. qemu:///session)
-  --type {domain}       object type
+  --type {domain,network}
+                        object type
   --define PATH         XML object definition file path
   --name ID             object name or UUID
   --state {active,inactive}
@@ -59,16 +60,16 @@ options:
   --auto                set autostart to match state
 ```
 
-Currently `virtdeclare` only controls libvirt domains.
+Currently `virtdeclare` only controls libvirt domains and networks.
 
-#### Domains
+* A object definition will replace any previous definition with that UUID. The name of a definition can change, but libvirt will not allow two objects of the same type with the same name.
 
-* A domain definition will replace any previous definition with that UUID. The name of a definition can change, but libvirt will not allow two domains with the same name.
+* For domains, active means running.
 
-* Stopping a domain immediately terminates it (like shutting the power off).
+* Deactivating a domain immediately terminates it (like shutting the power off).
 
-* If an existing domain is redefined, and the definition differs, and the domain is running,
-and `--state inactive` is not specified, then `virtdeclare` will stop and restart the domain with the new definition.
+* If an existing object is redefined, and the definition differs, and the object is active,
+and `--state inactive` is not specified, then `virtdeclare` will deactivate and reactivate the object with the new definition.
 
 ### `packages.x86_64-linux.virtdeclare`
 

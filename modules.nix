@@ -3,6 +3,34 @@ let
     module = isHomeManager: {config, lib, ...}:
     let
         cfg = config.virtualisation.libvirt;
+        mkObjectOption = {singular,plural}: lib.mkOption
+        {
+            type = listOf (submodule
+            {
+                options =
+                {
+                    connection = lib.mkOption
+                    {
+                        type = str;
+                        default = if isHomeManager then "qemu:///session" else "qemu:///system";
+                        description = "hypervisor connection URI";
+                    };
+                    definition = lib.mkOption
+                    {
+                        type = path;
+                        description = "path to " + singular + " definition XML";
+                    };
+                    active = lib.mkOption
+                    {
+                        type = types.nullOr types.bool;
+                        default = null;
+                        description = "state to put the " + singular + " in (or null for ignore)";
+                    };
+                };
+            });
+            default = [];
+            description = "libvirt " + plural;
+        };
     in
     {
         options.virtualisation.libvirt = with lib.types;
@@ -11,35 +39,17 @@ let
             {
                 type = bool;
                 default = false;
-                description = "Enable management of libvirt domains";
+                description = "Enable management of libvirt objects";
             };
-            domains = lib.mkOption
+            domains = mkObjectOption
             {
-                type = listOf (submodule
-                {
-                    options =
-                    {
-                        connection = lib.mkOption
-                        {
-                            type = str;
-                            default = if isHomeManager then "qemu:///session" else "qemu:///system";
-                            description = "hypervisor connection URI";
-                        };
-                        definition = lib.mkOption
-                        {
-                            type = path;
-                            description = "path to definition XML";
-                        };
-                        active = lib.mkOption
-                        {
-                            type = types.nullOr types.bool;
-                            default = null;
-                            description = "running/stopped state to put the domain in (or null for ignore)";
-                        };
-                    };
-                });
-                default = [];
-                description = "libvirt domains";
+                singular = "domain";
+                plural = "domains";
+            };
+            networks = mkObjectOption
+            {
+                singular = "network";
+                plural = "networks";
             };
         };
 
@@ -54,7 +64,11 @@ let
             ''
                 ${virtdeclareFile} --connect ${connection} --type ${objtype} --define ${definition} ${stateOption}
             '';
-            script = lib.concatStrings (lib.lists.forEach cfg.domains (mkCommands "domain"));
+            script = lib.concatStrings
+            [
+                (lib.concatStrings (lib.lists.forEach cfg.networks (mkCommands "network")))
+                (lib.concatStrings (lib.lists.forEach cfg.domains (mkCommands "domain")))
+            ];
         in
         if isHomeManager
         then
@@ -67,7 +81,7 @@ let
             systemd.services.nixvirt =
             {
                 serviceConfig.Type = "oneshot";
-                description = "Configure libvirt domains";
+                description = "Configure libvirt objects";
                 wantedBy = ["multi-user.target"];
                 requires = ["libvirtd.service"];
                 after = ["libvirtd.service"];
