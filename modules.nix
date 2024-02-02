@@ -45,16 +45,16 @@ let
 
         config = lib.mkIf cfg.enable
         (let
-            mkCommands = {connection,definition,active}:
+            mkCommands = objtype: {connection,definition,active}:
             let
                 stateOption = if builtins.isNull active
                     then ""
                     else if active then "--state active" else "--state inactive";
             in
             ''
-                ${virtdeclareFile} --connect ${connection} domain --define ${definition} ${stateOption}
+                ${virtdeclareFile} --connect ${connection} --type ${objtype} --define ${definition} ${stateOption}
             '';
-            script = lib.concatStrings (lib.lists.forEach cfg.domains mkCommands);
+            script = lib.concatStrings (lib.lists.forEach cfg.domains (mkCommands "domain"));
         in
         if isHomeManager
         then

@@ -42,22 +42,24 @@ The same as above, as a Home Manager module, except:
 `virtdeclare` is a command-line tool for defining and controlling libvirt objects idempotently, used by the modules.
 
 ```
-usage: virtdeclare [-h] [-v] --connect URI {domain} ...
+usage: virtdeclare [-h] [-v] --connect URI --type {domain} (--define PATH | --name ID)
+                   [--state {active,inactive}] [--auto]
 
 Define and control libvirt objects idempotently.
 
 options:
-  -h, --help     show this help message and exit
-  -v, --verbose  report actions to stderr
-  --connect URI  connection URI (e.g. qemu:///session)
-
-subcommands:
-  object to control
-
-  {domain}
+  -h, --help            show this help message and exit
+  -v, --verbose         report actions to stderr
+  --connect URI         connection URI (e.g. qemu:///session)
+  --type {domain}       object type
+  --define PATH         XML object definition file path
+  --name ID             object name or UUID
+  --state {active,inactive}
+                        state to put object in
+  --auto                set autostart to match state
 ```
 
-Currently it only controls libvirt domains.
+Currently `virtdeclare` only controls libvirt domains.
 
 #### Domains
 
@@ -67,20 +69,6 @@ Currently it only controls libvirt domains.
 
 * If an existing domain is redefined, and the definition differs, and the domain is running,
 and `--state inactive` is not specified, then `virtdeclare` will stop and restart the domain with the new definition.
-
-```
-usage: virtdeclare domain [-h] (--define PATH | --name ID) [--state {active,inactive}] [--auto]
-
-Define and start/stop libvirt domains idempotently.
-
-options:
-  -h, --help            show this help message and exit
-  --define PATH         XML domain definition file path
-  --name ID             domain name or UUID
-  --state {active,inactive}
-                        state to put domain in
-  --auto                set autostart to match state
-```
 
 ### `packages.x86_64-linux.virtdeclare`
 

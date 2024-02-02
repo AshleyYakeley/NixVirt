@@ -5,14 +5,12 @@ import sys, argparse, uuid, libvirt, lxml.etree
 parser = argparse.ArgumentParser(prog='virtdeclare',description='Define and control libvirt objects idempotently.')
 parser.add_argument('-v', '--verbose', action='store_true', help='report actions to stderr')
 parser.add_argument('--connect', action='store', required=True, metavar='URI', help='connection URI (e.g. qemu:///session)')
-subparsers = parser.add_subparsers(dest='objtype',description='object to control')
-
-parser_domain = subparsers.add_parser('domain', description='Define and start/stop libvirt domains idempotently.')
-specgroup = parser_domain.add_mutually_exclusive_group(required=True)
-specgroup.add_argument('--define', action='store', metavar='PATH', help='XML domain definition file path')
-specgroup.add_argument('--name', action='store', metavar='ID', help='domain name or UUID')
-parser_domain.add_argument('--state', action='store', choices = ['active','inactive'], help='state to put domain in')
-parser_domain.add_argument('--auto', action='store_true', help='set autostart to match state')
+parser.add_argument('--type', action='store', required=True, choices = ['domain'], help='object type')
+specgroup = parser.add_mutually_exclusive_group(required=True)
+specgroup.add_argument('--define', action='store', metavar='PATH', help='XML object definition file path')
+specgroup.add_argument('--name', action='store', metavar='ID', help='object name or UUID')
+parser.add_argument('--state', action='store', choices = ['active','inactive'], help='state to put object in')
+parser.add_argument('--auto', action='store_true', help='set autostart to match state')
 
 args = parser.parse_args()
 
@@ -28,64 +26,64 @@ conn = libvirt.open(args.connect)
 
 def vreport(objid,msg):
     if args.verbose:
-        print (args.objtype + " " + str(uuid.UUID(bytes=objid)) + ": " + msg, file=sys.stderr)
+        print (args.type + " " + str(uuid.UUID(bytes=objid)) + ": " + msg, file=sys.stderr)
 
-match args.objtype:
+match args.type:
     case "domain":
-        def start(domain):
+        def activate(domain):
             if not domain.isActive():
-                vreport(domain.UUID(),"start")
+                vreport(domain.UUID(),"activate")
                 domain.create()
 
-        def stop(domain):
+        def deactivate(domain):
             if domain.isActive():
-                vreport(domain.UUID(),"stop")
+                vreport(domain.UUID(),"deactivate")
                 domain.destroy()
 
         # fetch / define domain
         if args.define:
             with open(args.define,"r") as f:
-                domDef = f.read()
-            domxml = lxml.etree.fromstring(domDef)
-            domid = uuid.UUID(domxml.find("uuid").text).bytes
+                specDef = f.read()
+            specDefXML = lxml.etree.fromstring(specDef)
+            specUUID = uuid.UUID(specDefXML.find("uuid").text).bytes
             try:
-                olddomain = conn.lookupByUUID(domid)
+                found = conn.lookupByUUID(specUUID)
             except libvirt.libvirtError:
-                olddomain = None
-            if olddomain:
-                oldActive = olddomain.isActive()
-                oldDomDesc = olddomain.XMLDesc(flags=2)
-                oldDomXML = lxml.etree.fromstring(oldDomDesc)
-                oldDomName = oldDomXML.find("name").text
-                newDomName = domxml.find("name").text
-                if oldDomName != newDomName:
-                    vreport(olddomain.UUID(),"undefine")
-                    olddomain.undefine()
-                vreport(domid,"redefine")
-                domain = conn.defineXML(domDef)
-                newDomDesc = domain.XMLDesc(flags=2)
-                defchanged = oldDomDesc != newDomDesc
-                vreport(domid,"changed" if defchanged else "unchanged")
+                found = None
+            if found:
+                foundActive = found.isActive()
+                foundDef = found.XMLDesc(flags=2)
+                foundDefXML = lxml.etree.fromstring(foundDef)
+                foundName = foundDefXML.find("name").text
+                specName = specDefXML.find("name").text
+                if foundName != specName:
+                    vreport(found.UUID(),"undefine")
+                    found.undefine()
+                vreport(specUUID,"redefine")
+                domain = conn.defineXML(specDef)
+                newDef = domain.XMLDesc(flags=2)
+                defchanged = foundDef != newDef
+                vreport(specUUID,"changed" if defchanged else "unchanged")
                 if defchanged and (setstate != "inactive"):
-                    stop(olddomain)
-                    if oldActive:
+                    deactivate(found)
+                    if foundActive:
                         setstate = "active"
             else:
-                vreport(domid,"define new")
-                domain = conn.defineXML(domDef)
+                vreport(specUUID,"define new")
+                domain = conn.defineXML(specDef)
         else:
             try:
-                domid = uuid.UUID(args.name).bytes
-                domain = conn.lookupByUUID(domid)
+                specUUID = uuid.UUID(args.name).bytes
+                domain = conn.lookupByUUID(specUUID)
             except ValueError:
                 domain = conn.lookupByName(args.name)
 
         # set state
         match setstate:
             case "active":
-                start(domain)
+                activate(domain)
             case "inactive":
-                stop(domain)
+                deactivate(domain)
 
         # set autostart
         if args.auto:
