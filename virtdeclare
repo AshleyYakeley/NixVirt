@@ -34,7 +34,7 @@ class DomainType(ObjectType):
         return conn.lookupByName(name)
     def defineXML(self,defn):
         return conn.defineXML(defn)
-    def XMLDesc(vobj):
+    def XMLDesc(self,vobj):
         return vobj.XMLDesc(flags=2) # VIR_DOMAIN_XML_INACTIVE, https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainXMLFlags
 
 class NetworkType(ObjectType):
@@ -44,7 +44,7 @@ class NetworkType(ObjectType):
         return conn.networkLookupByName(name)
     def defineXML(self,defn):
         return conn.networkDefineXML(defn)
-    def XMLDesc(vobj):
+    def XMLDesc(self,vobj):
         return vobj.XMLDesc(flags=1) # VIR_NETWORK_XML_INACTIVE, https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkXMLFlags
 
 match args.type:
