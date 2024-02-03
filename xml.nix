@@ -44,10 +44,5 @@ let
     toText = e: e 0;
 in
 {
-    inherit none;
-    inherit opt;
-    inherit many;
-    inherit attr;
-    inherit elem;
-    inherit toText;
+    inherit none opt many attr elemtoText;
 }

@@ -238,9 +238,7 @@ let
 
 in
 {
-    inherit xml;
-
-    inherit domainXML;
+    inherit xml domainXML;
 
     writeDomainXML = domain: pkgs.writeTextFile
     {
