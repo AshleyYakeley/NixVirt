@@ -15,16 +15,32 @@
     outputs = { self, nixpkgs }:
     let
         pkgs = import nixpkgs {system = "x86_64-linux";};
-        pythonPkg = pkgs.python3.withPackages(ps:[ps.libvirt ps.lxml]);
+
+        nixvirtPythonModulePackage = pkgs.runCommand "nixvirtPythonModulePackage" {}
+            ''
+            mkdir  -p $out/lib/python3.11/site-packages/
+            ln -s ${tool/nixvirt.py} $out/lib/python3.11/site-packages/nixvirt.py
+            '' // {pythonModule = pkgs.python3;} ;
+
+        pythonInterpreterPackage = pkgs.python3.withPackages(ps:
+            [
+                ps.libvirt
+                ps.lxml
+                nixvirtPythonModulePackage
+            ]);
+
         setShebang = name: path: pkgs.runCommand name {}
             ''
-            sed -e "1s|.*|\#\!${pythonPkg}/bin/python3|" ${path} > $out
+            sed -e "1s|.*|\#\!${pythonInterpreterPackage}/bin/python3|" ${path} > $out
             chmod 755 $out
             '';
+
         virtdeclareFile = setShebang "virtdeclare" tool/virtdeclare;
         virtpurgeFile = setShebang "virtpurge" tool/virtpurge;
+
         lib = (import ./lib.nix) pkgs;
-        modules = (import ./modules.nix) virtdeclareFile;
+
+        modules = (import ./modules.nix) {inherit virtdeclareFile virtpurgeFile;};
     in
     {
         inherit lib;

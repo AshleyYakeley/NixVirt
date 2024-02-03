@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-import sys, argparse, uuid, libvirt, lxml.etree
+import sys, argparse, uuid, libvirt, lxml.etree, nixvirt
 
 # parse arguments
 parser = argparse.ArgumentParser(prog='virtdeclare',description='Define and control libvirt objects idempotently.')
@@ -17,56 +17,7 @@ args = parser.parse_args()
 
 setstate = args.state
 
-# Switch off annoying libvirt stderr messages
-# https://stackoverflow.com/a/45543887
-def libvirt_callback(userdata, err):
-    pass
-libvirt.registerErrorHandler(f=libvirt_callback, ctx=None)
-
-conn = libvirt.open(args.connect)
-
-class ObjectType:
-    pass
-
-class DomainType(ObjectType):
-    def lookupByUUID(self,uuid):
-        return conn.lookupByUUID(uuid)
-    def lookupByName(self,name):
-        return conn.lookupByName(name)
-    def defineXML(self,defn):
-        return conn.defineXML(defn)
-    def XMLDesc(self,vobj):
-        return vobj.XMLDesc(flags=2) # VIR_DOMAIN_XML_INACTIVE, https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainXMLFlags
-
-class NetworkType(ObjectType):
-    def lookupByUUID(self,uuid):
-        return conn.networkLookupByUUID(uuid)
-    def lookupByName(self,name):
-        return conn.networkLookupByName(name)
-    def defineXML(self,defn):
-        return conn.networkDefineXML(defn)
-    def XMLDesc(self,vobj):
-        return vobj.XMLDesc(flags=1) # VIR_NETWORK_XML_INACTIVE, https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkXMLFlags
-
-match args.type:
-    case "domain":
-        objType = DomainType()
-    case "network":
-        objType = NetworkType()
-
-def vreport(objid,msg):
-    if args.verbose:
-        print (args.type + " " + str(uuid.UUID(bytes=objid)) + ": " + msg, file=sys.stderr)
-
-def activate(vobj):
-    if not vobj.isActive():
-        vreport(vobj.UUID(),"activate")
-        vobj.create()
-
-def deactivate(vobj):
-    if vobj.isActive():
-        vreport(vobj.UUID(),"deactivate")
-        vobj.destroy()
+oc = nixvirt.getObjectConnection(args.connect,args.type,args.verbose)
 
 # fetch / define object
 if args.define:
@@ -75,49 +26,46 @@ if args.define:
     specDefXML = lxml.etree.fromstring(specDef)
     specUUID = uuid.UUID(specDefXML.find("uuid").text).bytes
     try:
-        found = objType.lookupByUUID(specUUID)
+        found = oc.fromUUID(specUUID)
     except libvirt.libvirtError:
         found = None
     if found:
         foundActive = found.isActive()
-        foundDef = objType.XMLDesc(found)
+        foundDef = found.XMLDesc()
         foundDefXML = lxml.etree.fromstring(foundDef)
         foundName = foundDefXML.find("name").text
         specName = specDefXML.find("name").text
         if foundName != specName:
-            vreport(found.UUID(),"undefine")
             found.undefine()
-        vreport(specUUID,"redefine")
-        vobj = objType.defineXML(specDef)
-        newDef = objType.XMLDesc(vobj)
-        defchanged = foundDef != newDef
-        vreport(specUUID,"changed" if defchanged else "unchanged")
+        oc.vreport(specUUID,"redefine")
+        subject = oc.fromXML(specDef)
+        subjectDef = subject.XMLDesc()
+        defchanged = foundDef != subjectDef
+        oc.vreport(specUUID,"changed" if defchanged else "unchanged")
         if defchanged and (setstate != "inactive"):
-            deactivate(found)
+            found.deactivate()
             if foundActive:
                 setstate = "active"
     else:
-        vreport(specUUID,"define new")
-        vobj = objType.defineXML(specDef)
+        oc.vreport(specUUID,"define new")
+        subject = oc.fromXML(specDef)
 elif args.uuid:
     specUUID = uuid.UUID(args.uuid).bytes
-    vobj = objType.lookupByUUID(specUUID)
+    subject = oc.fromUUID(specUUID)
 else:
-    vobj = objType.lookupByName(args.name)
+    subject = oc.fromName(args.name)
 
 # set state
 match setstate:
     case "active":
-        activate(vobj)
+        subject.activate()
     case "inactive":
-        deactivate(vobj)
+        subject.deactivate()
 
 # set autostart
 if args.auto:
     match args.state:
         case "active":
-            vreport(vobj.UUID(),"set autostart true")
-            vobj.setAutostart(True)
+            subject.setAutostart(True)
         case "inactive":
-            vreport(vobj.UUID(),"set autostart false")
-            vobj.setAutostart(False)
+            subject.setAutostart(False)

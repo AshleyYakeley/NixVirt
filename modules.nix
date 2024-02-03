@@ -1,4 +1,4 @@
-virtdeclareFile:
+{ virtdeclareFile, virtpurgeFile }:
 let
     module = isHomeManager: {config, lib, ...}:
     let
