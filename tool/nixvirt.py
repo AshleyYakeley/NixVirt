@@ -21,6 +21,12 @@ class ObjectConnection:
     def fromUUID(self,uuid):
         return self.fromLVObject(self.lookupByUUID(uuid))
 
+    def fromUUIDOrNone(self,uuid):
+        try:
+            return self.fromUUID(uuid)
+        except libvirt.libvirtError:
+            return None
+
     def fromName(self,name):
         return self.fromLVObject(self.lookupByName(name))
 

@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-import sys, argparse, uuid, libvirt, lxml.etree, nixvirt
+import sys, argparse, uuid, lxml.etree, nixvirt
 
 # parse arguments
 parser = argparse.ArgumentParser(prog='virtdeclare',description='Define and control libvirt objects idempotently.')
@@ -25,10 +25,7 @@ if args.define:
         specDef = f.read()
     specDefXML = lxml.etree.fromstring(specDef)
     specUUID = uuid.UUID(specDefXML.find("uuid").text).bytes
-    try:
-        found = oc.fromUUID(specUUID)
-    except libvirt.libvirtError:
-        found = None
+    found = oc.fromUUIDOrNone(specUUID)
     if found:
         foundActive = found.isActive()
         foundDef = found.XMLDesc()
