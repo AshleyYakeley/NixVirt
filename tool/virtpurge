@@ -15,4 +15,4 @@ oc = nixvirt.getObjectConnection(args.connect,args.type,args.verbose)
 with open(args.keep,"r") as f:
     keepText = f.read()
 
-print("keep: ",f)
+print("keep: ",f, file=sys.stderr)
