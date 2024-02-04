@@ -4,7 +4,22 @@ NixVirt lets you declare virtual machines ([libvirt](https://libvirt.org/) domai
 
 ## Flake
 
-NixVirt is a Nix flake with these outputs:
+NixVirt is a Nix flake, which you can obtain here or from FlakeHub. [![FlakeHub](https://img.shields.io/endpoint?url=https://flakehub.com/f/AshleyYakeley/NixVirt/badge)](https://flakehub.com/flake/AshleyYakeley/NixVirt)
+
+Add NixVirt to your own `flake.nix`:
+
+```nix
+{
+  inputs.NixVirt.url = "https://flakehub.com/f/AshleyYakeley/NixVirt/*.tar.gz";
+
+  outputs = { self, NixVirt }:
+  {
+    # Use in your outputs
+  };
+}
+```
+
+These are the available outputs:
 
 ### `nixosModules.default`
 
