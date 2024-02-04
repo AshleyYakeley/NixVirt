@@ -93,7 +93,7 @@ class VObject:
         lvobj.setAutostart(a)
 
     def XMLDesc(self):
-        return oc.XMLDesc(lvobj)
+        return self.oc.XMLDesc(lvobj)
 
     def undefine(self):
         self.vreport("undefine")
