@@ -1,8 +1,10 @@
-> :warning:  NixVirt isn't fully working yet.
+# NixVirt
 
-## NixVirt
+NixVirt lets you declare virtual machines ([libvirt](https://libvirt.org/) domains) and associated objects in Nix.
 
-NixVirt lets you declare virtual machines ([libvirt](https://libvirt.org/) domains) and associated objects in Nix. NixVirt is a Nix flake with these outputs:
+## Flake
+
+NixVirt is a Nix flake with these outputs:
 
 ### `nixosModules.default`
 
