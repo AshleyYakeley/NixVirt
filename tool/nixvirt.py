@@ -90,11 +90,11 @@ class VObject:
 
     def setAutostart(self,a):
         self.vreport("set autostart true" if a else "set autostart false")
-        lvobj.setAutostart(a)
+        self.lvobj.setAutostart(a)
 
     def XMLDesc(self):
-        return self.oc.XMLDesc(lvobj)
+        return self.oc.XMLDesc(self.lvobj)
 
     def undefine(self):
         self.vreport("undefine")
-        lvobj.undefine()
+        self.lvobj.undefine()
