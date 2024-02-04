@@ -22,7 +22,7 @@
             ln -s ${tool/nixvirt.py} $out/lib/python3.11/site-packages/nixvirt.py
             '' // {pythonModule = pkgs.python3;} ;
 
-        pythonInterpreterPackage = pkgs.python3.withPackages(ps:
+        pythonInterpreterPackage = pkgs.python311.withPackages(ps:
             [
                 ps.libvirt
                 ps.lxml
