@@ -15,6 +15,9 @@ class ObjectConnection:
         if self.verbose:
             print (self.type + " " + str(uuid.UUID(bytes=objid)) + ": " + msg, file=sys.stderr)
 
+    def getAll(self):
+        return map(lambda lvobj: VObject(self,lvobj), self.getAllLV())
+
     def fromLVObject(self,lvobj):
         return VObject(self,lvobj) if lvobj else None
 

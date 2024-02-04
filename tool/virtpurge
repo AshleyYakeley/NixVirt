@@ -12,14 +12,23 @@ args = parser.parse_args()
 
 oc = nixvirt.getObjectConnection(args.connect,args.type,args.verbose)
 
-lvobjs = oc.getAllLV()
+allObjects = oc.getAll()
 
-uuids = map (lambda lvobj: lvobj.UUID(), lvobjs)
+allUUIDs = set(map(lambda lvobj: lvobj.UUID(), lvobjs))
 
 with open(args.keep,"r") as f:
-    keepText = f.read()
+    keepFiles = f.readlines()
 
-for uuid in uuids:
-    print("keep: ",uuid, file=sys.stderr)
+def getFileUUID(path):
+    with open(path,"r") as f:
+        specDef = f.read()
+    specDefXML = lxml.etree.fromstring(specDef)
+    return uuid.UUID(specDefXML.find("uuid").text).bytes
 
-sys.exit(3)
+keepUUIDs = set(map(getFileUUID,keepFiles))
+
+for object in allObjects:
+    if object.uuid in keepUUIDs:
+        pass
+    else:
+        object.undefine()
