@@ -238,11 +238,14 @@ let
 
 in
 {
-    inherit xml domainXML;
-
-    writeDomainXML = domain: pkgs.writeTextFile
+    inherit xml;
+    domain =
     {
-        name = "NixVirt-domain-" + domain.name;
-        text = domainXML domain;
+        getXML = domainXML;
+        writeXML = obj: pkgs.writeTextFile
+        {
+            name = "NixVirt-domain-" + obj.name;
+            text = domainXML obj;
+        };
     };
 }

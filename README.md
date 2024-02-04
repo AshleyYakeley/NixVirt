@@ -26,7 +26,7 @@ Each set represents a domain, and has these attributes:
   State to put the domain in (running/stopped), or null to ignore.  
   Default: `null`.
 
-  Any libvirt domain not defined in this set will be removed.
+  Any libvirt domain not defined in this list will be removed.
 
 * `virtualisation.libvirt.<connection>.networks` (list of sets)  
 Each set represents a network, and has these attributes:
@@ -38,7 +38,7 @@ Each set represents a network, and has these attributes:
   State to put the network in, or null to ignore.  
   Default: `null`.
 
-  Any libvirt network not defined in this set will be removed.
+  Any libvirt network not defined in this list will be removed.
 
 Note that NixOS already has options under `virtualisation.libvirtd` for controlling the libvirt daemon.
 
