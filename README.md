@@ -92,13 +92,13 @@ A package containing `virtdeclare` and `virtpurge`.
 
 ### `lib`
 
-Functions for creating libvirt domain XML from Nix sets; this is still under development.
+Functions for creating libvirt object definition XML from Nix sets; this is still under development.
 
-#### `lib.domainXML`
+#### `lib.domain.getXML`
 
 Create domain XML for a given structure (returns a string).
 
-#### `lib.writeDomainXML`
+#### `lib.domain.writeXML`
 
 Write domain XML for a given structure (returns a path).
 
