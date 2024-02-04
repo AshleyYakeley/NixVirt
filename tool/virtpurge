@@ -14,8 +14,6 @@ oc = nixvirt.getObjectConnection(args.connect,args.type,args.verbose)
 
 allObjects = oc.getAll()
 
-allUUIDs = set(map(lambda lvobj: lvobj.UUID(), lvobjs))
-
 with open(args.keep,"r") as f:
     keepFiles = f.readlines()
 
