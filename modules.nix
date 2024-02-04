@@ -59,7 +59,8 @@ let
 
         config = lib.mkIf cfg.enable
         (let
-            concatStrMap = f: x: with builtins; concatStringsSep "" (map f x);
+            concatStr = builtins.concatStringsSep "";
+            concatStrMap = f: x: concatStr (builtins.map f x);
 
             scriptForObject = connection: objtype: {definition, active}:
                 let
@@ -91,8 +92,11 @@ let
             scriptForConnection = with builtins; connection:
             let
                 opts = getAttr connection cfg.connections;
-                objTypes = ["network" "domain"];
-            in concatStrMap (objtype: scriptForType connection objtype (getAttr objtype opts)) objTypes;
+            in concatStr
+            [
+                (scriptForType connection "domain" (getAttr "domains" opts))
+                (scriptForType connection "network" (getAttr "networks" opts))
+            ];
 
             script = concatStrMap scriptForConnection (builtins.attrNames cfg.connections);
         in
