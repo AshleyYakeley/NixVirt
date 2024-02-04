@@ -17,7 +17,8 @@ allObjects = oc.getAll()
 with open(args.keep,"r") as f:
     keepFiles = f.readlines()
 
-def getFileUUID(path):
+def getFileUUID(line):
+    path = line.rstrip('\n')
     with open(path,"r") as f:
         specDef = f.read()
     specDefXML = lxml.etree.fromstring(specDef)
