@@ -19,7 +19,7 @@ uuids = map (lambda lvobj: lvobj.UUID(), lvobjs)
 with open(args.keep,"r") as f:
     keepText = f.read()
 
-print("all: ",uuids, file=sys.stderr)
-#print("keep: ",f, file=sys.stderr)
+for uuid in uuids:
+    print("keep: ",uuid, file=sys.stderr)
 
 sys.exit(3)
