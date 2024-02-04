@@ -37,6 +37,8 @@ class DomainConnection(ObjectConnection):
     def __init__(self,uri,verbose):
         ObjectConnection.__init__(self,uri,verbose)
         self.type = "domain"
+    def getAllLV(self):
+        return self.conn.listAllDomains()
     def lookupByUUID(self,uuid):
         return self.conn.lookupByUUID(uuid)
     def lookupByName(self,name):
@@ -50,6 +52,8 @@ class NetworkConnection(ObjectConnection):
     def __init__(self,uri,verbose):
         ObjectConnection.__init__(self,uri,verbose)
         self.type = "network"
+    def getAllLV(self):
+        return self.conn.listAllNetworks()
     def lookupByUUID(self,uuid):
         return self.conn.networkLookupByUUID(uuid)
     def lookupByName(self,name):

@@ -6,13 +6,20 @@ parser = argparse.ArgumentParser(prog='virtpurge',description='Delete unwanted l
 parser.add_argument('-v', '--verbose', action='store_true', help='report actions to stderr')
 parser.add_argument('--connect', action='store', required=True, metavar='URI', help='connection URI (e.g. qemu:///session)')
 parser.add_argument('--type', action='store', required=True, choices = ['domain','network'], help='object type')
-#parser.add_argument('--keep', action='store', required=True, metavar='PATH', help='path to list of files to keep')
+parser.add_argument('--keep', action='store', required=True, metavar='PATH', help='path to list of files to keep')
 
 args = parser.parse_args()
 
 oc = nixvirt.getObjectConnection(args.connect,args.type,args.verbose)
 
+lvobjs = oc.getAllLV()
+
+uuids = map (lambda lvobj: lvobj.UUID(), lvobjs)
+
 with open(args.keep,"r") as f:
     keepText = f.read()
 
-print("keep: ",f, file=sys.stderr)
+print("all: ",uuids, file=sys.stderr)
+#print("keep: ",f, file=sys.stderr)
+
+sys.exit(3)
