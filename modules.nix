@@ -3,18 +3,13 @@ let
     module = isHomeManager: {config, lib, ...}:
     let
         cfg = config.virtualisation.libvirt;
+        defaultConnectionURI = if isHomeManager then "qemu:///session" else "qemu:///system";
         mkObjectOption =  with lib.types; {singular,plural}: lib.mkOption
         {
-            type = listOf (submodule
+            type = nullOr (listOf (submodule
             {
                 options =
                 {
-                    connection = lib.mkOption
-                    {
-                        type = str;
-                        default = if isHomeManager then "qemu:///session" else "qemu:///system";
-                        description = "hypervisor connection URI";
-                    };
                     definition = lib.mkOption
                     {
                         type = path;
@@ -22,13 +17,13 @@ let
                     };
                     active = lib.mkOption
                     {
-                        type = types.nullOr types.bool;
+                        type = nullOr bool;
                         default = null;
                         description = "state to put the " + singular + " in (or null for ignore)";
                     };
                 };
-            });
-            default = [];
+            }));
+            default = null;
             description = "libvirt " + plural;
         };
     in
@@ -41,34 +36,65 @@ let
                 default = false;
                 description = "Enable management of libvirt objects";
             };
-            domains = mkObjectOption
+            connections = lib.mkOption
             {
-                singular = "domain";
-                plural = "domains";
-            };
-            networks = mkObjectOption
-            {
-                singular = "network";
-                plural = "networks";
+                type = attrsOf
+                (submodule
+                {
+                    domains = mkObjectOption
+                    {
+                        singular = "domain";
+                        plural = "domains";
+                    };
+                    networks = mkObjectOption
+                    {
+                        singular = "network";
+                        plural = "networks";
+                    };
+                });
+                default = {};
+                description = "set of objects, keyed by hypervisor connection URI (e.g. \"" + defaultConnectionURI + "\")";
             };
         };
 
         config = lib.mkIf cfg.enable
         (let
-            mkCommands = objtype: {connection,definition,active}:
-            let
-                stateOption = if builtins.isNull active
-                    then ""
-                    else if active then "--state active" else "--state inactive";
-            in
-            ''
+            concatStrMap = f: x: with builtins; concatStringsSep "" (map f x);
+
+            scriptForObject = connection: objtype: {active,definition}:
+                let
+                    stateOption = if builtins.isNull active
+                        then ""
+                        else if active then "--state active" else "--state inactive";
+                in
+                ''
                 ${virtdeclareFile} --connect ${connection} --type ${objtype} --define ${definition} ${stateOption}
-            '';
-            script = lib.concatStrings
-            [
-                (lib.concatStrings (lib.lists.forEach cfg.networks (mkCommands "network")))
-                (lib.concatStrings (lib.lists.forEach cfg.domains (mkCommands "domain")))
-            ];
+                '';
+
+            fileForObject = {active, ...}:
+                ''
+                echo ${definition} >> $f
+                '';
+
+            scriptForType = connection: objtype: optList:
+                if builtins.isNull optList then "" else
+                    concatStrMap (scriptForObject connection objtype) optList +
+                    ''
+                    f=$(mktemp)
+                    '' +
+                    concatStrMap fileForObject optList +
+                    ''
+                    ${virtpurgeFile} --connect ${connection} --type ${objtype} --keep $f
+                    rm $f
+                    '';
+
+            scriptForConnection = with builtins; connection:
+            let
+                opts = getAttr connection cfg.connections;
+                objTypes = ["network" "domain"];
+            in concatStrMap (objtype: scriptForType connection objtype (getAttr objtype opts)) objTypes;
+
+            script = concatStrMap scriptForConnection (builtins.attrNames cfg.connections);
         in
         if isHomeManager
         then
