@@ -20,7 +20,7 @@
             ''
             mkdir  -p $out/lib/python3.11/site-packages/
             ln -s ${tool/nixvirt.py} $out/lib/python3.11/site-packages/nixvirt.py
-            '' // {pythonModule = pkgs.python3;} ;
+            '' // {pythonModule = pkgs.python311;} ;
 
         pythonInterpreterPackage = pkgs.python311.withPackages(ps:
             [
