@@ -61,7 +61,7 @@ let
         (let
             concatStrMap = f: x: with builtins; concatStringsSep "" (map f x);
 
-            scriptForObject = connection: objtype: {active,definition}:
+            scriptForObject = connection: objtype: {definition, active}:
                 let
                     stateOption = if builtins.isNull active
                         then ""
@@ -71,7 +71,7 @@ let
                 ${virtdeclareFile} --connect ${connection} --type ${objtype} --define ${definition} ${stateOption}
                 '';
 
-            fileForObject = {active, ...}:
+            fileForObject = {definition, ...}:
                 ''
                 echo ${definition} >> $f
                 '';
