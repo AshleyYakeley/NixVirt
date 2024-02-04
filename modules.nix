@@ -39,19 +39,22 @@ let
             connections = lib.mkOption
             {
                 type = attrsOf
-                (submodule
-                {
-                    domains = mkObjectOption
+                    (submodule
                     {
-                        singular = "domain";
-                        plural = "domains";
-                    };
-                    networks = mkObjectOption
-                    {
-                        singular = "network";
-                        plural = "networks";
-                    };
-                });
+                        options =
+                        {
+                            domains = mkObjectOption
+                            {
+                                singular = "domain";
+                                plural = "domains";
+                            };
+                            networks = mkObjectOption
+                            {
+                                singular = "network";
+                                plural = "networks";
+                            };
+                        };
+                    });
                 default = {};
                 description = "set of objects, keyed by hypervisor connection URI (e.g. \"" + defaultConnectionURI + "\")";
             };
