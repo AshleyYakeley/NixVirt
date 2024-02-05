@@ -198,4 +198,4 @@ let
         ];
 
 in
-domain: xml.toText (process domain);
+domain: xml.toText (process domain)
