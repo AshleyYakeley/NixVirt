@@ -11,6 +11,6 @@ let
     };
 in
 {
-    xml = import generate-xml//xml.nix;
+    xml = import generate-xml/xml.nix;
     domain = objtype "domain" (import generate-xml/domain.nix);
 }
