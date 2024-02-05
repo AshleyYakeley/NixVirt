@@ -2,13 +2,16 @@ let
     xml = import ./xml.nix;
     generate = import ./generate.nix;
 
+    # https://libvirt.org/formatdomain.html
     process = with builtins; with generate;
         elem "domain" [(subattr "type" typeString)]
         [
             (subelem "name" [] typeString)
             (subelem "uuid" [] typeString)
             (subelem "title" [] typeString)
+            (subelem "description" [] typeString)
             (subelem "metadata" [] id)
+
             (subelem "memory" [(subattr "unit" typeString)] (sub "count" typeInt))
             (subelem "currentMemory" [(subattr "unit" typeString)] (sub "count" typeInt))
             (subelem "vcpu" [(subattr "placement" typeString)] (sub "count" typeInt))
@@ -198,4 +201,4 @@ let
         ];
 
 in
-domain: xml.toText (process domain)
+obj: xml.toText (process obj)
