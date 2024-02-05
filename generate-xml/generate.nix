@@ -1,6 +1,6 @@
 let
     xml = import ./xml.nix;
-in
+in rec
 {
     yesno = t: if t then "yes" else "no";
     onoff = t: if t then "on" else "off";
