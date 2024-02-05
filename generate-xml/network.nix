@@ -33,7 +33,7 @@ let
             (subelem "bridge"
                 [
                     (subattr "name" typeString)
-                    (subattr "stp" typeBoolYesNo)
+                    (subattr "stp" typeBoolOnOff)
                     (subattr "delay" typeInt)
                     (subattr "macTableManager" typeString)
                     (subattr "zone" typeString)
@@ -50,6 +50,24 @@ let
                     (subattr "dev" typeString)
                 ]
                 [
+                    (subelem "nat"
+                        [
+                            (subattr "ipv6" typeBoolYesNo)
+                        ]
+                        [
+                            (subelem "address"
+                                [
+                                    (subattr "start" typeString)
+                                    (subattr "end" typeString)
+                                ]
+                                [])
+                            (subelem "port"
+                                [
+                                    (subattr "start" typeInt)
+                                    (subattr "end" typeInt)
+                                ]
+                                [])
+                        ])
                     (subelem "interface"
                         [
                             (subattr "dev" typeString)
@@ -59,6 +77,15 @@ let
                         [
                             (subattr "dev" typeString)
                         ] [])
+                    (subelem "address"
+                        [
+                            (subattr "type" typeString)
+                            (subattr "domain" typeInt)
+                            (subattr "bus" typeInt)
+                            (subattr "slot" typeInt)
+                            (subattr "function" typeInt)
+                        ]
+                        [])
                 ])
             bandwidthElem
             (subelem "vlan"
