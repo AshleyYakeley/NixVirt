@@ -67,5 +67,7 @@
         homeModules.default = modules.homeModule;
 
         nixosModules.default = modules.nixosModule;
+
+        checks.x86_64-linux = (import checks/checks.nix) pkgs lib;
     };
 }
