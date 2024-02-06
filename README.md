@@ -31,7 +31,7 @@ Switching this on will also switch on `virtualisation.libvirtd.enable`.
 Default: `false`.
 
 * `virtualisation.libvirt.<connection>` (set)  
-`<connection>` is the hypervisor connection URI, typically `"qemu:///system"` (or `"qemu:///session"` for Home Manager).  
+`<connection>` is the hypervisor connection URI, typically `"qemu:///system"`.  
 
 * `virtualisation.libvirt.<connection>.domains` (list of sets)  
 Each set represents a libvirt domain, and has these attributes:
@@ -64,6 +64,7 @@ Note that NixOS already has options under `virtualisation.libvirtd` for controll
 ### `homeModules.default`
 
 The same as above, as a Home Manager module, except that `virtualisation.libvirtd.enable` must already be switched on in NixOS.
+You may want to use `"qemu:///session"` for the connection.
 
 ### `apps.x86_64-linux.virtdeclare`
 
@@ -91,7 +92,7 @@ options:
 
 Currently `virtdeclare` only controls libvirt domains and networks.
 
-* A object definition will replace any previous definition with that UUID. The name of a definition can change, but libvirt will not allow two objects of the same type with the same name.
+* An object definition will replace any previous definition with that UUID. The name of a definition can change, but libvirt will not allow two objects of the same type with the same name.
 
 * For domains, active means running.
 
