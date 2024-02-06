@@ -121,6 +121,14 @@ Create domain XML for a given structure (returns a string).
 
 Write domain XML for a given structure (returns a path).
 
+#### `lib.network.getXML`
+
+Create network XML for a given structure (returns a string).
+
+#### `lib.network.writeXML`
+
+Write network XML for a given structure (returns a path).
+
 #### `lib.xml`
 
 Various functions for creating XML text.
