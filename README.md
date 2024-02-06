@@ -34,28 +34,30 @@ Default: `false`.
 `<connection>` is the hypervisor connection URI, typically `"qemu:///system"` (or `"qemu:///session"` for Home Manager).  
 
 * `virtualisation.libvirt.<connection>.domains` (list of sets)  
-Each set represents a domain, and has these attributes:
+Each set represents a libvirt domain, and has these attributes:
 
   * `definition` (path)  
-  Path to a [libvirt domain definition XML](https://libvirt.org/formatdomain.html) file.
+  Path to a [domain definition XML](https://libvirt.org/formatdomain.html) file.
+  You can obtain this for your existing domains with `virsh dumpxml`.
 
   * `active` (`true`, `false`, `null`)  
   State to put the domain in (running/stopped), or null to ignore.  
   Default: `null`.
 
-  Any libvirt domain not defined in this list will be removed.
+  :warning: If this option is specified and not null, any libvirt domain not defined in the list will be removed.
 
 * `virtualisation.libvirt.<connection>.networks` (list of sets)  
-Each set represents a network, and has these attributes:
+Each set represents a libvirt network, and has these attributes:
 
   * `definition` (path)  
-  Path to a [libvirt network definition XML](https://libvirt.org/formatnetwork.html) file.
+  Path to a [network definition XML](https://libvirt.org/formatnetwork.html) file.
+  You can obtain this for your existing networks with `virsh net-dumpxml`.
 
   * `active` (`true`, `false`, `null`)  
   State to put the network in, or null to ignore.  
   Default: `null`.
 
-  Any libvirt network not defined in this list will be removed.
+  :warning: If this option is specified and not null, any libvirt network not defined in the list will be removed.
 
 Note that NixOS already has options under `virtualisation.libvirtd` for controlling the libvirt daemon.
 
