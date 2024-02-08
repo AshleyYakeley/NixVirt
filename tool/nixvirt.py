@@ -72,13 +72,13 @@ class PoolConnection(ObjectConnection):
         ObjectConnection.__init__(self,uri,verbose)
         self.type = "pool"
     def getAllLV(self):
-        return self.conn.listAllPools()
+        return self.conn.listAllStoragePools()
     def lookupByUUID(self,uuid):
-        return self.conn.poolLookupByUUID(uuid)
+        return self.conn.storagePoolLookupByUUID(uuid)
     def lookupByName(self,name):
-        return self.conn.poolLookupByName(name)
+        return self.conn.storagePoolLookupByName(name)
     def defineXML(self,defn):
-        return self.conn.poolDefineXML(defn) # https://libvirt.org/formatstorage.html
+        return self.conn.storagePoolDefineXML(defn) # https://libvirt.org/formatstorage.html
     def XMLDesc(self,lvobj):
         return lvobj.XMLDesc(flags=1) # VIR_STORAGE_XML_INACTIVE, https://libvirt.org/html/libvirt-libvirt-storage.html#virStorageXMLFlags
 
