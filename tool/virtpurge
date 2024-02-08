@@ -5,7 +5,7 @@ import sys, argparse, uuid, libvirt, lxml.etree, os, nixvirt
 parser = argparse.ArgumentParser(prog='virtpurge',description='Delete unwanted libvirt objects idempotently.')
 parser.add_argument('-v', '--verbose', action='store_true', help='report actions to stderr')
 parser.add_argument('--connect', action='store', required=True, metavar='URI', help='connection URI (e.g. qemu:///session)')
-parser.add_argument('--type', action='store', required=True, choices = ['domain','network'], help='object type')
+parser.add_argument('--type', action='store', required=True, choices = nixvirt.objectTypes, help='object type')
 parser.add_argument('--keep', action='store', required=True, metavar='PATH', help='path to file of list of paths to files of XML definitions of libvirt objects to keep')
 
 args = parser.parse_args()

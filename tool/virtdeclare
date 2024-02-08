@@ -5,7 +5,7 @@ import sys, argparse, uuid, lxml.etree, nixvirt
 parser = argparse.ArgumentParser(prog='virtdeclare',description='Define and control libvirt objects idempotently.')
 parser.add_argument('-v', '--verbose', action='store_true', help='report actions to stderr')
 parser.add_argument('--connect', action='store', required=True, metavar='URI', help='connection URI (e.g. qemu:///session)')
-parser.add_argument('--type', action='store', required=True, choices = ['domain','network'], help='object type')
+parser.add_argument('--type', action='store', required=True, choices = nixvirt.objectTypes, help='object type')
 specgroup = parser.add_mutually_exclusive_group(required=True)
 specgroup.add_argument('--define', action='store', metavar='PATH', help='XML object definition file path')
 specgroup.add_argument('--uuid', action='store', metavar='ID', help='object UUID')

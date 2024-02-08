@@ -53,6 +53,11 @@ let
                                 singular = "network";
                                 plural = "networks";
                             };
+                            pools = mkObjectOption
+                            {
+                                singular = "pool";
+                                plural = "pools";
+                            };
                         };
                     });
                 default = {};
@@ -99,6 +104,7 @@ let
             [
                 (scriptForType connection "domain" (getAttr "domains" opts))
                 (scriptForType connection "network" (getAttr "networks" opts))
+                (scriptForType connection "pool" (getAttr "pools" opts))
             ];
 
             script = concatStrMap scriptForConnection (builtins.attrNames cfg.connections);

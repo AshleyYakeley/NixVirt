@@ -66,12 +66,32 @@ class NetworkConnection(ObjectConnection):
     def XMLDesc(self,lvobj):
         return lvobj.XMLDesc(flags=1) # VIR_NETWORK_XML_INACTIVE, https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkXMLFlags
 
+# https://libvirt.org/html/libvirt-libvirt-storage.html
+class PoolConnection(ObjectConnection):
+    def __init__(self,uri,verbose):
+        ObjectConnection.__init__(self,uri,verbose)
+        self.type = "pool"
+    def getAllLV(self):
+        return self.conn.listAllPools()
+    def lookupByUUID(self,uuid):
+        return self.conn.poolLookupByUUID(uuid)
+    def lookupByName(self,name):
+        return self.conn.poolLookupByName(name)
+    def defineXML(self,defn):
+        return self.conn.poolDefineXML(defn) # https://libvirt.org/formatstorage.html
+    def XMLDesc(self,lvobj):
+        return lvobj.XMLDesc(flags=1) # VIR_STORAGE_XML_INACTIVE, https://libvirt.org/html/libvirt-libvirt-storage.html#virStorageXMLFlags
+
+objectTypes = ['domain','network','pool']
+
 def getObjectConnection(uri,type,verbose):
     match type:
         case "domain":
             return DomainConnection(uri,verbose)
         case "network":
             return NetworkConnection(uri,verbose)
+        case "pool":
+            return PoolConnection(uri,verbose)
 
 class VObject:
     def __init__(self,oc,lvobj):

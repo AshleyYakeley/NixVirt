@@ -14,4 +14,5 @@ in
     xml = import generate-xml/xml.nix;
     domain = objtype "domain" (import generate-xml/domain.nix);
     network = objtype "network" (import generate-xml/network.nix);
+    pool = objtype "pool" (import generate-xml/pool.nix);
 }

@@ -59,6 +59,19 @@ Each set represents a libvirt network, and has these attributes:
 
   :warning: If this option is specified and not null, any libvirt network not defined in the list will be removed.
 
+* `virtualisation.libvirt.<connection>.pools` (list of sets)  
+Each set represents a libvirt storage pool, and has these attributes:
+
+  * `definition` (path)  
+  Path to a [pool definition XML](https://libvirt.org/formatstorage.html) file.
+  You can obtain this for your existing pools with `virsh pool-dumpxml`.
+
+  * `active` (`true`, `false`, `null`)  
+  State to put the pool in, or null to ignore.  
+  Default: `null`.
+
+  :warning: If this option is specified and not null, any libvirt pool not defined in the list will be removed.
+
 Note that NixOS already has options under `virtualisation.libvirtd` for controlling the libvirt daemon.
 
 ### `homeModules.default`
@@ -129,6 +142,14 @@ Create network XML for a given structure (returns a string).
 #### `lib.network.writeXML`
 
 Write network XML for a given structure (returns a path).
+
+#### `lib.pool.getXML`
+
+Create pool XML for a given structure (returns a string).
+
+#### `lib.pool.writeXML`
+
+Write pool XML for a given structure (returns a path).
 
 #### `lib.xml`
 
