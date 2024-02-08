@@ -123,5 +123,6 @@ class VObject:
         return self.oc.XMLDesc(self.lvobj)
 
     def undefine(self):
+        self.deactivate()
         self.vreport("undefine")
         self.lvobj.undefine()
