@@ -71,6 +71,7 @@ Each set represents a libvirt storage pool, and has these attributes:
   Default: `null`.
 
   :warning: If this option is specified and not null, any libvirt pool not defined in the list will be removed.
+  However, removing a pool does not delete the files or other storage holding the volumes it contained.
 
 Note that NixOS already has options under `virtualisation.libvirtd` for controlling the libvirt daemon.
 
