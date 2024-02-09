@@ -44,7 +44,8 @@ Each set represents a libvirt domain, and has these attributes:
   State to put the domain in (running/stopped), or null to ignore.  
   Default: `null`.
 
-  :warning: If this option is specified and not null, any libvirt domain not defined in the list will be removed.
+  :warning: If this option is specified and not null, any libvirt domain not defined in the list will be deleted.
+  Deleting a domain will not delete its volumes, NVRAM, or TPM state.
 
 * `virtualisation.libvirt.<connection>.networks` (list of sets)  
 Each set represents a libvirt network, and has these attributes:
@@ -57,7 +58,7 @@ Each set represents a libvirt network, and has these attributes:
   State to put the network in, or null to ignore.  
   Default: `null`.
 
-  :warning: If this option is specified and not null, any libvirt network not defined in the list will be removed.
+  :warning: If this option is specified and not null, any libvirt network not defined in the list will be deleted.
 
 * `virtualisation.libvirt.<connection>.pools` (list of sets)  
 Each set represents a libvirt storage pool, and has these attributes:
@@ -70,8 +71,8 @@ Each set represents a libvirt storage pool, and has these attributes:
   State to put the pool in, or null to ignore.  
   Default: `null`.
 
-  :warning: If this option is specified and not null, any libvirt pool not defined in the list will be removed.
-  However, removing a pool does not delete the files or other storage holding the volumes it contained.
+  :warning: If this option is specified and not null, any libvirt pool not defined in the list will be deleted.
+  However, deleting a pool does not delete the files or other storage holding the volumes it contained.
 
 Note that NixOS already has options under `virtualisation.libvirtd` for controlling the libvirt daemon.
 
@@ -117,7 +118,7 @@ and `--state inactive` is not specified, then `virtdeclare` will deactivate and 
 
 ### `apps.x86_64-linux.virtpurge`
 
-`virtpurge` is a command-line tool for removing unused libvirt objects, used by the modules.
+`virtpurge` is a command-line tool for deleting unused libvirt objects, used by the modules.
 Its behaviour is subject to change and should not be relied upon.
 
 ### `packages.x86_64-linux.default`

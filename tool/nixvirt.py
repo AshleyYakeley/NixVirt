@@ -36,6 +36,9 @@ class ObjectConnection:
     def fromXML(self,defn):
         return self.fromLVObject(self.defineXML(defn))
 
+    def undefine(self,lvobj):
+        lvobj.undefine()
+
 class DomainConnection(ObjectConnection):
     def __init__(self,uri,verbose):
         ObjectConnection.__init__(self,uri,verbose)
@@ -50,6 +53,8 @@ class DomainConnection(ObjectConnection):
         return self.conn.defineXML(defn)
     def XMLDesc(self,lvobj):
         return lvobj.XMLDesc(flags=2) # VIR_DOMAIN_XML_INACTIVE, https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainXMLFlags
+    def undefine(self,lvobj):
+        self.lvobj.undefine(flags=72) # VIR_DOMAIN_UNDEFINE_KEEP_NVRAM, VIR_DOMAIN_UNDEFINE_KEEP_TPM, https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainUndefineFlagsValues
 
 class NetworkConnection(ObjectConnection):
     def __init__(self,uri,verbose):
@@ -125,4 +130,4 @@ class VObject:
     def undefine(self):
         self.deactivate()
         self.vreport("undefine")
-        self.lvobj.undefine()
+        self.oc.undefine(self.lvobj)
