@@ -1,73 +1,75 @@
 {
-    description = "LibVirt domain management";
+  description = "LibVirt domain management";
 
-    inputs =
+  inputs =
     {
-        nixpkgs =
+      nixpkgs =
         {
-            type = "github";
-            owner = "NixOS";
-            repo = "nixpkgs";
-            ref = "nixos-23.11";
+          type = "github";
+          owner = "NixOS";
+          repo = "nixpkgs";
+          ref = "nixos-23.11";
         };
     };
 
-    outputs = { self, nixpkgs }:
+  outputs = { self, nixpkgs }:
     let
-        pkgs = import nixpkgs {system = "x86_64-linux";};
+      pkgs = import nixpkgs { system = "x86_64-linux"; };
 
-        nixvirtPythonModulePackage = pkgs.runCommand "nixvirtPythonModulePackage" {}
-            ''
-            mkdir  -p $out/lib/python3.11/site-packages/
-            ln -s ${tool/nixvirt.py} $out/lib/python3.11/site-packages/nixvirt.py
-            '' // {pythonModule = pkgs.python311;} ;
+      nixvirtPythonModulePackage = pkgs.runCommand "nixvirtPythonModulePackage" { }
+        ''
+          mkdir  -p $out/lib/python3.11/site-packages/
+          ln -s ${tool/nixvirt.py} $out/lib/python3.11/site-packages/nixvirt.py
+        '' // { pythonModule = pkgs.python311; };
 
-        pythonInterpreterPackage = pkgs.python311.withPackages(ps:
-            [
-                ps.libvirt
-                ps.lxml
-                nixvirtPythonModulePackage
-            ]);
+      pythonInterpreterPackage = pkgs.python311.withPackages (ps:
+        [
+          ps.libvirt
+          ps.lxml
+          nixvirtPythonModulePackage
+        ]);
 
-        setShebang = name: path: pkgs.runCommand name {}
-            ''
-            sed -e "1s|.*|\#\!${pythonInterpreterPackage}/bin/python3|" ${path} > $out
-            chmod 755 $out
-            '';
+      setShebang = name: path: pkgs.runCommand name { }
+        ''
+          sed -e "1s|.*|\#\!${pythonInterpreterPackage}/bin/python3|" ${path} > $out
+          chmod 755 $out
+        '';
 
-        virtdeclareFile = setShebang "virtdeclare" tool/virtdeclare;
-        virtpurgeFile = setShebang "virtpurge" tool/virtpurge;
+      virtdeclareFile = setShebang "virtdeclare" tool/virtdeclare;
+      virtpurgeFile = setShebang "virtpurge" tool/virtpurge;
 
-        lib = (import ./lib.nix) pkgs;
+      lib = (import ./lib.nix) pkgs;
 
-        modules = (import ./modules.nix) {inherit virtdeclareFile virtpurgeFile;};
+      modules = (import ./modules.nix) { inherit virtdeclareFile virtpurgeFile; };
     in
     {
-        inherit lib;
+      inherit lib;
 
-        apps.x86_64-linux.virtdeclare =
+      apps.x86_64-linux.virtdeclare =
         {
-            type = "app";
-            program = "${virtdeclareFile}";
+          type = "app";
+          program = "${virtdeclareFile}";
         };
 
-        apps.x86_64-linux.virtpurge =
+      apps.x86_64-linux.virtpurge =
         {
-            type = "app";
-            program = "${virtpurgeFile}";
+          type = "app";
+          program = "${virtpurgeFile}";
         };
 
-        packages.x86_64-linux.default = pkgs.runCommand "NixVirt" {}
-            ''
-            mkdir -p $out/bin
-            ln -s ${virtdeclareFile} $out/bin/virtdeclare
-            ln -s ${virtpurgeFile} $out/bin/virtpurge
-            '';
+      formatter.x86_64-linux = pkgs.nixpkgs-fmt;
 
-        homeModules.default = modules.homeModule;
+      packages.x86_64-linux.default = pkgs.runCommand "NixVirt" { }
+        ''
+          mkdir -p $out/bin
+          ln -s ${virtdeclareFile} $out/bin/virtdeclare
+          ln -s ${virtpurgeFile} $out/bin/virtpurge
+        '';
 
-        nixosModules.default = modules.nixosModule;
+      homeModules.default = modules.homeModule;
 
-        checks.x86_64-linux = (import checks/checks.nix) pkgs lib;
+      nixosModules.default = modules.nixosModule;
+
+      checks.x86_64-linux = (import checks/checks.nix) pkgs lib;
     };
 }
