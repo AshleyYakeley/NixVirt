@@ -57,6 +57,8 @@
             program = "${virtpurgeFile}";
         };
 
+        formatter.x86_64-linux = pkgs.nixpkgs-fmt;
+
         packages.x86_64-linux.default = pkgs.runCommand "NixVirt" {}
             ''
             mkdir -p $out/bin
