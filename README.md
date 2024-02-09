@@ -4,7 +4,7 @@ NixVirt lets you declare virtual machines ([libvirt](https://libvirt.org/) domai
 
 ## Flake
 
-NixVirt is a Nix flake, which you can obtain here or from FlakeHub. [![FlakeHub](https://img.shields.io/endpoint?url=https://flakehub.com/f/AshleyYakeley/NixVirt/badge)](https://flakehub.com/flake/AshleyYakeley/NixVirt)
+NixVirt is a Nix flake, which you can obtain from FlakeHub. [![FlakeHub](https://img.shields.io/endpoint?url=https://flakehub.com/f/AshleyYakeley/NixVirt/badge)](https://flakehub.com/flake/AshleyYakeley/NixVirt)
 
 Add NixVirt to your own `flake.nix`:
 

@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.2.0] - 2024-02-08
 
 * added support for storage pools
 * fixed defect preventing removal of active objects
