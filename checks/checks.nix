@@ -2,7 +2,7 @@ pkgs: lib:
 let
   test = xlib: dirpath:
     let
-      found = xlib.writeXML (import "${dirpath}/input.nix");
+      found = xlib.writeXML ((import "${dirpath}/input.nix") lib.xml);
       expected = "${dirpath}/expected.xml";
     in
     pkgs.runCommand "check" { }

@@ -1,3 +1,4 @@
+xml:
 {
   name = "empty";
 }
