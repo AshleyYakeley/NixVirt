@@ -37,10 +37,6 @@ xml:
       nvram = { path = "/Storage/OVMF/OVMF_VARS_4M.fd"; };
       boot = [ "cdrom" "hd" ];
       bootmenu = { enable = true; };
-      /*
-        <loader readonly='yes' type='pflash'>/home/ashley/OVMF/OVMF_CODE_4M.secboot.fd</loader>
-        <nvram>/home/ashley/OVMF/OVMF_VARS_4M.fd</nvram>
-      */
     };
   features =
     {
@@ -214,56 +210,6 @@ xml:
             model = "pcie-root-port";
             address = pci_address 0 2 4;
           }
-          /*
-            {
-                type = "pci";
-                index = 7;
-                model = "pcie-root-port";
-                address = pci_address 0 2 6;
-            }
-            {
-                type = "pci";
-                index = 8;
-                model = "pcie-root-port";
-                address = pci_address 0 2 7;
-            }
-            {
-                type = "pci";
-                index = 9;
-                model = "pcie-root-port";
-                address = pci_address 0 3 0 // {multifunction = true;};
-            }
-            {
-                type = "pci";
-                index = 10;
-                model = "pcie-root-port";
-                address = pci_address 0 3 1;
-            }
-            {
-                type = "pci";
-                index = 11;
-                model = "pcie-root-port";
-                address = pci_address 0 3 2;
-            }
-            {
-                type = "pci";
-                index = 12;
-                model = "pcie-root-port";
-                address = pci_address 0 3 3;
-            }
-            {
-                type = "pci";
-                index = 13;
-                model = "pcie-root-port";
-                address = pci_address 0 3 4;
-            }
-            {
-                type = "pci";
-                index = 14;
-                model = "pcie-root-port";
-                address = pci_address 0 3 5;
-            }
-            */
         ];
       interface =
         {
