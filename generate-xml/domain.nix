@@ -18,6 +18,8 @@ let
         (subelem "os" [ ]
           [
             (elem "type" [ (subattr "arch" typeString) (subattr "machine" typeString) ] (getAttr "type"))
+            (subelem "loader" [ (subattr "readonly" typeBoolYesNo) (subattr "type" typeString) ] (getAttr "path"))
+            (subelem "nvram" [ ] (getAttr "path"))
             (submanyelem "boot" [ (attr "dev" typeString) ] [ ])
             (subelem "bootmenu" [ (subattr "enable" typeBoolYesNo) ] [ ])
           ]
@@ -118,7 +120,7 @@ let
                       (subattr "discard" typeString)
                     ] [ ]
                   )
-                  (subelem "source" [ (subattr "file" typePath) ] [ ])
+                  (subelem "source" [ (subattr "file" typePath) (subattr "startupPolicy" typeString) ] [ ])
                   targetelem
                   (suboptelem "readonly" [ ] [ ])
                   addresselem
@@ -162,6 +164,10 @@ let
                   addresselem
                 ])
               (submanyelem "input" [ (subattr "type" typeString) (subattr "bus" typeString) ] [ addresselem ])
+              (submanyelem "tpm" [ (subattr "model" typeString) ]
+                [
+                  (subelem "backend" [ (subattr "type" typeString) (subattr "version" typeString) ] [ ])
+                ])
               (submanyelem "graphics"
                 [
                   (subattr "type" typeString)

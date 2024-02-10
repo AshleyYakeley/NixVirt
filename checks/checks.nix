@@ -14,5 +14,6 @@ in
 {
   network-empty = test lib.network network/empty;
   domain-empty = test lib.domain domain/empty;
+  domain-win11 = test lib.domain domain/win11;
   pool-empty = test lib.pool pool/empty;
 }
