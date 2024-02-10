@@ -10,7 +10,7 @@ let
         (subelem "uuid" [ ] typeString)
         (subelem "title" [ ] typeString)
         (subelem "description" [ ] typeString)
-        (subelem "metadata" [ ] id)
+        (subelemraw "metadata" [ ])
 
         (subelem "memory" [ (subattr "unit" typeString) ] (sub "count" typeInt))
         (subelem "currentMemory" [ (subattr "unit" typeString) ] (sub "count" typeInt))
@@ -20,14 +20,14 @@ let
             (elem "type" [ (subattr "arch" typeString) (subattr "machine" typeString) ] (getAttr "type"))
             (subelem "loader" [ (subattr "readonly" typeBoolYesNo) (subattr "type" typeString) ] (getAttr "path"))
             (subelem "nvram" [ ] (getAttr "path"))
-            (submanyelem "boot" [ (attr "dev" typeString) ] [ ])
+            (subelem "boot" [ (subattr "dev" typeString) ] [ ])
             (subelem "bootmenu" [ (subattr "enable" typeBoolYesNo) ] [ ])
           ]
         )
         (subelem "features" [ ]
           [
-            (suboptelem "acpi" [ ] [ ])
-            (suboptelem "apic" [ ] [ ])
+            (subelem "acpi" [ ] [ ])
+            (subelem "apic" [ ] [ ])
             (subelem "vmport" [ (subattr "state" typeBoolOnOff) ] [ ])
           ]
         )
@@ -61,7 +61,7 @@ let
             (subattr "offset" typeString)
           ]
           [
-            (submanyelem "timer"
+            (subelem "timer"
               [
                 (subattr "name" typeString)
                 (subattr "tickpolicy" typeString)
@@ -74,8 +74,8 @@ let
         (subelem "on_crash" [ ] typeString)
         (subelem "pm" [ ]
           [
-            (subelem "suspend-to-mem" [ (attr "enabled" typeBoolYesNo) ] [ ])
-            (subelem "suspend-to-disk" [ (attr "enabled" typeBoolYesNo) ] [ ])
+            (subelem "suspend-to-mem" [ (subattr "enabled" typeBoolYesNo) ] [ ])
+            (subelem "suspend-to-disk" [ (subattr "enabled" typeBoolYesNo) ] [ ])
           ]
         )
         (
@@ -109,8 +109,8 @@ let
           in
           subelem "devices" [ (subattr "type" typeString) ]
             [
-              (submanyelem "emulator" [ ] typePath)
-              (submanyelem "disk" [ (subattr "type" typeString) (subattr "device" typeString) ]
+              (subelem "emulator" [ ] typePath)
+              (subelem "disk" [ (subattr "type" typeString) (subattr "device" typeString) ]
                 [
                   (subelem "driver"
                     [
@@ -122,11 +122,11 @@ let
                   )
                   (subelem "source" [ (subattr "file" typePath) (subattr "startupPolicy" typeString) ] [ ])
                   targetelem
-                  (suboptelem "readonly" [ ] [ ])
+                  (subelem "readonly" [ ] [ ])
                   addresselem
                 ]
               )
-              (submanyelem "controller"
+              (subelem "controller"
                 [
                   (subattr "type" typeString)
                   (subattr "index" typeInt)
@@ -138,7 +138,7 @@ let
                   targetelem
                   addresselem
                 ])
-              (submanyelem "interface"
+              (subelem "interface"
                 [
                   (subattr "type" typeString)
                 ]
@@ -154,21 +154,21 @@ let
                   (subelem "model" [ (subattr "type" typeString) ] [ ])
                   addresselem
                 ])
-              (submanyelem "smartcard" [ (subattr "mode" typeString) (subattr "type" typeString) ] [ addresselem ])
-              (submanyelem "serial" [ (subattr "type" typeString) ] [ targetelem ])
-              (submanyelem "console" [ (subattr "type" typeString) ] [ targetelem ])
-              (submanyelem "channel" [ (subattr "type" typeString) ]
+              (subelem "smartcard" [ (subattr "mode" typeString) (subattr "type" typeString) ] [ addresselem ])
+              (subelem "serial" [ (subattr "type" typeString) ] [ targetelem ])
+              (subelem "console" [ (subattr "type" typeString) ] [ targetelem ])
+              (subelem "channel" [ (subattr "type" typeString) ]
                 [
                   (subelem "source" [ (subattr "channel" typeString) ] [ ])
                   targetelem
                   addresselem
                 ])
-              (submanyelem "input" [ (subattr "type" typeString) (subattr "bus" typeString) ] [ addresselem ])
-              (submanyelem "tpm" [ (subattr "model" typeString) ]
+              (subelem "input" [ (subattr "type" typeString) (subattr "bus" typeString) ] [ addresselem ])
+              (subelem "tpm" [ (subattr "model" typeString) ]
                 [
                   (subelem "backend" [ (subattr "type" typeString) (subattr "version" typeString) ] [ ])
                 ])
-              (submanyelem "graphics"
+              (subelem "graphics"
                 [
                   (subattr "type" typeString)
                   (subattr "autoport" typeBoolYesNo)
@@ -178,9 +178,9 @@ let
                   (subelem "image" [ (subattr "compression" typeBoolOnOff) ] [ ])
                   (subelem "gl" [ (subattr "enable" typeBoolYesNo) ] [ ])
                 ])
-              (submanyelem "sound" [ (subattr "model" typeString) ] [ addresselem ])
-              (submanyelem "audio" [ (subattr "id" typeInt) (subattr "type" typeString) ] [ ])
-              (submanyelem "video" [ ]
+              (subelem "sound" [ (subattr "model" typeString) ] [ addresselem ])
+              (subelem "audio" [ (subattr "id" typeInt) (subattr "type" typeString) ] [ ])
+              (subelem "video" [ ]
                 [
                   (subelem "model"
                     [
@@ -196,14 +196,14 @@ let
                     ])
                   addresselem
                 ])
-              (submanyelem "redirdev" [ (subattr "bus" typeString) (subattr "type" typeString) ] [ addresselem ])
-              (submanyelem "watchdog" [ (subattr "model" typeString) (subattr "action" typeString) ] [ ])
-              (submanyelem "rng" [ (subattr "model" typeString) ]
+              (subelem "redirdev" [ (subattr "bus" typeString) (subattr "type" typeString) ] [ addresselem ])
+              (subelem "watchdog" [ (subattr "model" typeString) (subattr "action" typeString) ] [ ])
+              (subelem "rng" [ (subattr "model" typeString) ]
                 [
                   (subelem "backend" [ (subattr "model" typeString) ] (sub "source" typePath))
                   addresselem
                 ])
-              (submanyelem "memballoon" [ (subattr "model" typeString) ] [ addresselem ])
+              (subelem "memballoon" [ (subattr "model" typeString) ] [ addresselem ])
             ]
         )
       ];

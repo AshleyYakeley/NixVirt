@@ -35,13 +35,13 @@ xml:
           path = "/Storage/OVMF/OVMF_CODE_4M.secboot.fd";
         };
       nvram = { path = "/Storage/OVMF/OVMF_VARS_4M.fd"; };
-      boot = [ "cdrom" "hd" ];
+      boot = [{ dev = "cdrom"; } { dev = "hd"; }];
       bootmenu = { enable = true; };
     };
   features =
     {
-      acpi = true;
-      apic = true;
+      acpi = { };
+      apic = { };
     };
   cpu =
     {
@@ -71,8 +71,8 @@ xml:
   on_crash = "destroy";
   pm =
     {
-      suspend-to-mem = false;
-      suspend-to-disk = false;
+      suspend-to-mem = { enabled = false; };
+      suspend-to-disk = { enabled = false; };
     };
   devices =
     let

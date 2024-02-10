@@ -28,7 +28,7 @@ let
         (subelem "uuid" [ ] typeString)
         (subelem "title" [ ] typeString)
         (subelem "description" [ ] typeString)
-        (subelem "metadata" [ ] id)
+        (subelemraw "metadata" [ ])
 
         (subelem "bridge"
           [
