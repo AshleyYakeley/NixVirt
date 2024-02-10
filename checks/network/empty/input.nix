@@ -1,4 +1,4 @@
-xml:
+{ xml, ... }:
 {
   name = "empty";
 }

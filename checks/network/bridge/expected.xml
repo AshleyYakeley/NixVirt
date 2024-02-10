@@ -1,0 +1,16 @@
+<network>
+  <name>test-bridge</name>
+  <uuid>d2102492-5797-429b-aa31-96b1b0d6f8e8</uuid>
+  <bridge name='virbr0'/>
+  <forward mode='nat'>
+    <nat>
+      <port start='1024' end='65535'/>
+    </nat>
+  </forward>
+  <mac address='52:54:00:01:02:03'/>
+  <ip address='192.168.74.1' netmask='255.255.255.0'>
+    <dhcp>
+      <range start='192.168.74.2' end='192.168.74.254'/>
+    </dhcp>
+  </ip>
+</network>

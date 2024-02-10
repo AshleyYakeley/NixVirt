@@ -1,4 +1,4 @@
-xml:
+{ xml, ... }:
 {
   type = "kvm";
   name = "Win11";
