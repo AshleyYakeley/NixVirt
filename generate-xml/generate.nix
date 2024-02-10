@@ -6,11 +6,20 @@ let
   onoff = t: if t then "on" else "off";
   map1 = f: x: if builtins.isList x then builtins.map f x else [ (f x) ];
   id = x: x;
+
+  typeCheck = tname: test: x:
+    if test x then x else builtins.abort ("NixVirt: expected " + tname + ", found " + builtins.typeOf x);
+
+  typeConvert = tname: test: conv: x: conv (typeCheck tname test x);
+
 in
 rec
 {
   sub = with builtins;
-    a: contents: subject:
+    a: contents: x:
+      let
+        subject = typeCheck "set" builtins.isAttrs x;
+      in
       xml.opt (hasAttr a subject) (contents (getAttr a subject));
 
   elem = with builtins;
@@ -27,12 +36,9 @@ rec
 
   subelem = etype: attrs: contents: sub etype (many (elem etype attrs contents));
 
-  checkType = tname: test: conv: x:
-    if test x then conv x else builtins.abort ("expected " + tname + ", found " + builtins.typeOf x + " (" + builtins.toString x + ")");
-
-  typeString = checkType "string" builtins.isString id;
-  typeInt = checkType "int" builtins.isInt builtins.toString;
-  typeBoolYesNo = checkType "bool" builtins.isBool yesno;
-  typeBoolOnOff = checkType "bool" builtins.isBool onoff;
-  typePath = checkType "path or string" (x: builtins.isPath x || builtins.isString x) builtins.toString;
+  typeString = typeConvert "string" builtins.isString id;
+  typeInt = typeConvert "int" builtins.isInt builtins.toString;
+  typeBoolYesNo = typeConvert "bool" builtins.isBool yesno;
+  typeBoolOnOff = typeConvert "bool" builtins.isBool onoff;
+  typePath = typeConvert "path or string" (x: builtins.isPath x || builtins.isString x) builtins.toString;
 }

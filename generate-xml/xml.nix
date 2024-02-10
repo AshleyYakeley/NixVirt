@@ -40,7 +40,7 @@ let
         indentLine i starttag +
         contents +
         indentLine i endtag
-    else throw ("XML: expected null, text or list, found " + builtins.typeOf body)
+    else throw ("NixVirt.XML: expected null, text, or list; found " + builtins.typeOf body)
   ;
 
   toText = e: e 0;
