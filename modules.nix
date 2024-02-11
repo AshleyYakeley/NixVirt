@@ -115,7 +115,7 @@ let
           if isHomeManager
           then
             {
-              home.activation.NixVirt = script;
+              home.activation.NixVirt = lib.hm.dag.entryAfter [ "writeBoundary" ] script;
             }
           else
             {
