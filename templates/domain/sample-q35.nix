@@ -1,9 +1,8 @@
-packages: { name, uuid, hdpath, mac_address, cdpath ? null }:
+packages: { name, uuid, memory ? { count = 2; unit = "GiB"; }, hdpath, mac_address, cdpath ? null }:
 {
   type = "kvm";
-  inherit name uuid;
+  inherit name uuid memory;
 
-  memory = { count = 6; unit = "GiB"; };
   os =
     {
       type = "hvm";
