@@ -9,7 +9,7 @@
         [
           (elem "os-state" [ ] "installation")
           (elem "media-id" [ ] "http://microsoft.com/win/11:0")
-          (elem "media" [ ] "/SourceMedia/Win11_23H2_EnglishInternational_x64v2.iso")
+          (elem "media" [ ] "/Source/Win11_23H2_EnglishInternational_x64v2.iso")
         ])
       (elem "libosinfo:libosinfo" [ (attr "xmlns:libosinfo" "http://libosinfo.org/xmlns/libvirt/domain/1.0") ]
         [
@@ -32,9 +32,13 @@
         {
           readonly = true;
           type = "pflash";
-          path = "/Storage/OVMF/OVMF_CODE_4M.secboot.fd";
+          path = "/Source/OVMF/OVMF_CODE_4M.secboot.fd";
         };
-      nvram = { path = "/Storage/OVMF/OVMF_VARS_4M.fd"; };
+      nvram =
+        {
+          template = "/Source/OVMF/OVMF_VARS_4M.fd";
+          path = "/Storage/nvram.fd";
+        };
       boot = [{ dev = "cdrom"; } { dev = "hd"; }];
       bootmenu = { enable = true; };
     };

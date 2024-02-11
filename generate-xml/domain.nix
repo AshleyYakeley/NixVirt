@@ -19,7 +19,13 @@ let
           [
             (elem "type" [ (subattr "arch" typeString) (subattr "machine" typeString) ] (getAttr "type"))
             (subelem "loader" [ (subattr "readonly" typeBoolYesNo) (subattr "type" typeString) ] (getAttr "path"))
-            (subelem "nvram" [ ] (getAttr "path"))
+            (subelem "nvram"
+              [
+                (subattr "template" typeString)
+                (subattr "type" typeString)
+                (subattr "format" typeString)
+              ]
+              (getAttr "path"))
             (subelem "boot" [ (subattr "dev" typeString) ] [ ])
             (subelem "bootmenu" [ (subattr "enable" typeBoolYesNo) ] [ ])
           ]
