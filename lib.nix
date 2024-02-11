@@ -12,7 +12,7 @@ let
 in
 {
   xml = import generate-xml/xml.nix;
-  domain = objtype "domain" (import generate-xml/domain.nix);
+  domain = objtype "domain" (import generate-xml/domain.nix) // { templates = import ./templates/domain.nix; };
   network = objtype "network" (import generate-xml/network.nix) // { templates = import ./templates/network.nix; };
   pool = objtype "pool" (import generate-xml/pool.nix);
 }
