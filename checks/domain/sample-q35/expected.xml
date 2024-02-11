@@ -21,12 +21,12 @@
     <disk type='file' device='disk'>
       <driver name='qemu' type='qcow2' discard='unmap'/>
       <source file='/Storage/MyHD.qcow2'/>
-      <target dev='sda'/>
+      <target dev='vda'/>
     </disk>
     <disk type='file' device='cdrom'>
       <driver name='qemu' type='raw'/>
       <source/>
-      <target dev='sdb'/>
+      <target dev='hdc'/>
       <readonly/>
     </disk>
     <interface type='bridge'>
