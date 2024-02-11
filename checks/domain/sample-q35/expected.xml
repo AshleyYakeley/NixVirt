@@ -26,7 +26,7 @@
     <disk type='file' device='cdrom'>
       <driver name='qemu' type='raw'/>
       <source/>
-      <target dev='hdc'/>
+      <target dev='sdc'/>
       <readonly/>
     </disk>
     <interface type='bridge'>

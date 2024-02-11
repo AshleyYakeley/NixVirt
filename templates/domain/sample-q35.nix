@@ -51,7 +51,7 @@ packages: { name, uuid, memory ? { count = 2; unit = "GiB"; }, hdpath, mac_addre
                 type = "raw";
               };
             source = if builtins.isNull cdpath then null else { file = cdpath; };
-            target = { dev = "hdc"; };
+            target = { dev = "sdc"; };
             readonly = true;
           }
         ];
