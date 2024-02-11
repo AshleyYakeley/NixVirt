@@ -17,8 +17,9 @@ rec
 {
   sub = with builtins;
     a: contents: x:
+      if builtins.isNull x then xml.none else
       let
-        subject = typeCheck "set" builtins.isAttrs x;
+        subject = typeCheck "set or null" builtins.isAttrs x;
       in
       xml.opt (hasAttr a subject) (contents (getAttr a subject));
 

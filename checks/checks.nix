@@ -14,7 +14,10 @@ in
 {
   network-empty = test lib.network network/empty;
   network-bridge = test lib.network network/bridge;
+
   domain-empty = test lib.domain domain/empty;
+  domain-sample-q35 = test lib.domain domain/sample-q35;
   domain-win11 = test lib.domain domain/win11;
+
   pool-empty = test lib.pool pool/empty;
 }
