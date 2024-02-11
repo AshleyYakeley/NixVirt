@@ -115,7 +115,7 @@ let
           if isHomeManager
           then
             {
-              home.activation.libvirt-domains = script;
+              home.activation.NixVirt = script;
             }
           else
             {
