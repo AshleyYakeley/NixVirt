@@ -105,6 +105,8 @@ packages: { name, uuid, memory ? { count = 2; unit = "GiB"; }, hdpath, mac_addre
         [
           { bus = "usb"; type = "spicevmc"; }
           { bus = "usb"; type = "spicevmc"; }
+          { bus = "usb"; type = "spicevmc"; }
+          { bus = "usb"; type = "spicevmc"; }
         ];
       rng =
         {
