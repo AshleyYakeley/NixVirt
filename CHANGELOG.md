@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+* fixed defect in Home Manager module where domains were defined before swtpm package was available
+
 ## [0.2.0] - 2024-02-08
 
 * added support for storage pools
