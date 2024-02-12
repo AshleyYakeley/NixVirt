@@ -1,4 +1,4 @@
-packages: { name, uuid, memory ? { count = 2; unit = "GiB"; }, hdpath, mac_address, cdpath ? null, ... }:
+packages: { name, uuid, memory ? { count = 2; unit = "GiB"; }, storage_vol_path, mac_address, install_vol_path ? null, ... }:
 {
   type = "kvm";
   inherit name uuid memory;
@@ -39,7 +39,7 @@ packages: { name, uuid, memory ? { count = 2; unit = "GiB"; }, hdpath, mac_addre
                 type = "qcow2";
                 discard = "unmap";
               };
-            source = { file = hdpath; };
+            source = { file = storage_vol_path; };
             target = { dev = "vda"; };
           }
           {
@@ -50,7 +50,7 @@ packages: { name, uuid, memory ? { count = 2; unit = "GiB"; }, hdpath, mac_addre
                 name = "qemu";
                 type = "raw";
               };
-            source = if builtins.isNull cdpath then null else { file = cdpath; };
+            source = if builtins.isNull install_vol_path then null else { file = install_vol_path; };
             target = { dev = "sdc"; };
             readonly = true;
           }

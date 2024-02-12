@@ -17,6 +17,7 @@ in
 
   domain-empty = test lib.domain domain/empty;
   domain-sample-q35 = test lib.domain domain/sample-q35;
+  domain-sample-windows = test lib.domain domain/sample-windows;
   domain-win11 = test lib.domain domain/win11;
 
   pool-empty = test lib.pool pool/empty;

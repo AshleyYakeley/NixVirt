@@ -3,7 +3,7 @@ let
   generate = import ./generate.nix;
 
   # https://libvirt.org/formatstorage.html
-  process = with builtins; with generate;
+  process = with generate;
     elem "pool" [ (subattr "type" typeString) ]
       [
         (subelem "name" [ ] typeString)

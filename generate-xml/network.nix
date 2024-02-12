@@ -2,7 +2,7 @@ let
   xml = import ./xml.nix;
   generate = import ./generate.nix;
 
-  bandwidthElem = with builtins; with generate;
+  bandwidthElem = with generate;
     subelem "bandwidth" [ ]
       [
         (subelem "inbound"
@@ -21,7 +21,7 @@ let
       ];
 
   # https://libvirt.org/formatnetwork.html
-  process = with builtins; with generate;
+  process = with generate;
     elem "network" [ (subattr "ipv6" typeBoolYesNo) (subattr "trustGuestRxFilters" typeBoolYesNo) ]
       [
         (subelem "name" [ ] typeString)

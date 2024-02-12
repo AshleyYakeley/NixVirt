@@ -3,7 +3,7 @@ let
   generate = import ./generate.nix;
 
   # https://libvirt.org/formatdomain.html
-  process = with builtins; with generate;
+  process = with generate;
     elem "domain" [ (subattr "type" typeString) ]
       [
         (subelem "name" [ ] typeString)
@@ -17,15 +17,15 @@ let
         (subelem "vcpu" [ (subattr "placement" typeString) ] (sub "count" typeInt))
         (subelem "os" [ ]
           [
-            (elem "type" [ (subattr "arch" typeString) (subattr "machine" typeString) ] (getAttr "type"))
-            (subelem "loader" [ (subattr "readonly" typeBoolYesNo) (subattr "type" typeString) ] (getAttr "path"))
+            (elem "type" [ (subattr "arch" typeString) (subattr "machine" typeString) ] (sub "type" typeString))
+            (subelem "loader" [ (subattr "readonly" typeBoolYesNo) (subattr "type" typeString) ] (sub "path" typePath))
             (subelem "nvram"
               [
-                (subattr "template" typeString)
+                (subattr "template" typePath)
                 (subattr "type" typeString)
                 (subattr "format" typeString)
               ]
-              (getAttr "path"))
+              (sub "path" typePath))
             (subelem "boot" [ (subattr "dev" typeString) ] [ ])
             (subelem "bootmenu" [ (subattr "enable" typeBoolYesNo) ] [ ])
           ]
