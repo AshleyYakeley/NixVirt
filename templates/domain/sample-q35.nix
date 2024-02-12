@@ -1,4 +1,4 @@
-packages: { name, uuid, memory ? { count = 2; unit = "GiB"; }, hdpath, mac_address, cdpath ? null }:
+packages: { name, uuid, memory ? { count = 2; unit = "GiB"; }, hdpath, mac_address, cdpath ? null, ... }:
 {
   type = "kvm";
   inherit name uuid memory;
@@ -67,12 +67,10 @@ packages: { name, uuid, memory ? { count = 2; unit = "GiB"; }, hdpath, mac_addre
           {
             type = "unix";
             target = { type = "virtio"; name = "org.qemu.guest_agent.0"; };
-            address = { type = "virtio-serial"; controller = 0; bus = 0; port = 1; };
           }
           {
             type = "spicevmc";
             target = { type = "virtio"; name = "com.redhat.spice.0"; };
-            address = { type = "virtio-serial"; controller = 0; bus = 0; port = 2; };
           }
         ];
       input =
