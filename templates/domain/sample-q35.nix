@@ -75,6 +75,7 @@ packages: { name, uuid, memory ? { count = 2; unit = "GiB"; }, hdpath, mac_addre
         ];
       input =
         [
+          { type = "tablet"; bus = "usb"; }
           { type = "mouse"; bus = "ps2"; }
           { type = "keyboard"; bus = "ps2"; }
         ];
