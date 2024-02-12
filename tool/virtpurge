@@ -10,24 +10,29 @@ parser.add_argument('--keep', action='store', required=True, metavar='PATH', hel
 
 args = parser.parse_args()
 
-oc = nixvirt.getObjectConnection(args.connect,args.type,args.verbose)
+try:
+    oc = nixvirt.getObjectConnection(args.connect,args.type,args.verbose)
 
-allObjects = oc.getAll()
+    allObjects = oc.getAll()
 
-with open(args.keep,"r") as f:
-    keepFiles = f.readlines()
+    with open(args.keep,"r") as f:
+        keepFiles = f.readlines()
 
-def getFileUUID(line):
-    path = line.rstrip('\n')
-    with open(path,"r") as f:
-        specDef = f.read()
-    specDefXML = lxml.etree.fromstring(specDef)
-    return uuid.UUID(specDefXML.find("uuid").text).bytes
+    def getFileUUID(line):
+        path = line.rstrip('\n')
+        with open(path,"r") as f:
+            specDef = f.read()
+        specDefXML = lxml.etree.fromstring(specDef)
+        return uuid.UUID(specDefXML.find("uuid").text).bytes
 
-keepUUIDs = set(map(getFileUUID,keepFiles))
+    keepUUIDs = set(map(getFileUUID,keepFiles))
 
-for object in allObjects:
-    if object.uuid in keepUUIDs:
-        pass
-    else:
-        object.undefine()
+    for object in allObjects:
+        if object.uuid in keepUUIDs:
+            pass
+        else:
+            object.undefine()
+
+except libvirt.libvirtError as err:
+    print ("virtpurge: error:", err, file=sys.stderr)
+    sys.exit(1)
