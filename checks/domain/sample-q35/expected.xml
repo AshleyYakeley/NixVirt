@@ -36,11 +36,9 @@
     </interface>
     <channel type='unix'>
       <target type='virtio' name='org.qemu.guest_agent.0'/>
-      <address type='virtio-serial' controller='0' bus='0' port='1'/>
     </channel>
     <channel type='spicevmc'>
       <target type='virtio' name='com.redhat.spice.0'/>
-      <address type='virtio-serial' controller='0' bus='0' port='2'/>
     </channel>
     <input type='mouse' bus='ps2'/>
     <input type='keyboard' bus='ps2'/>
