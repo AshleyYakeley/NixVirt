@@ -34,11 +34,11 @@
       <source bridge='virbr0'/>
       <model type='virtio'/>
     </interface>
-    <channel type='unix'>
-      <target type='virtio' name='org.qemu.guest_agent.0'/>
-    </channel>
     <channel type='spicevmc'>
       <target type='virtio' name='com.redhat.spice.0'/>
+    </channel>
+    <channel type='unix'>
+      <target type='virtio' name='org.qemu.guest_agent.0'/>
     </channel>
     <input type='tablet' bus='usb'/>
     <input type='mouse' bus='ps2'/>

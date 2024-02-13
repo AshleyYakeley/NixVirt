@@ -73,10 +73,6 @@ packages:
       channel =
         [
           {
-            type = "unix";
-            target = { type = "virtio"; name = "org.qemu.guest_agent.0"; };
-          }
-          {
             type = "spicevmc";
             target = { type = "virtio"; name = "com.redhat.spice.0"; };
           }
@@ -115,10 +111,5 @@ packages:
           { bus = "usb"; type = "spicevmc"; }
           { bus = "usb"; type = "spicevmc"; }
         ];
-      rng =
-        {
-          model = "virtio";
-          backend = { model = "random"; source = /dev/urandom; };
-        };
     };
 }

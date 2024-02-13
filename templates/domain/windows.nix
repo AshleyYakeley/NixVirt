@@ -89,29 +89,21 @@ base //
           readonly = true;
         }
       ];
-    channel =
-      [
-        {
-          type = "spicevmc";
-          target =
-            {
-              type = "virtio";
-              name = "com.redhat.spice.0";
-            };
-        }
-        {
-          type = "spiceport";
-          source =
-            {
-              channel = "org.spice-space.webdav.0";
-            };
-          target =
-            {
-              type = "virtio";
-              name = "org.spice-space.webdav.0";
-            };
-        }
-      ];
+    channel = base.devices.channel ++
+    [
+      {
+        type = "spiceport";
+        source =
+          {
+            channel = "org.spice-space.webdav.0";
+          };
+        target =
+          {
+            type = "virtio";
+            name = "org.spice-space.webdav.0";
+          };
+      }
+    ];
     tpm =
       {
         model = "tpm-crb";
