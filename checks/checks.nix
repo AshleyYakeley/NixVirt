@@ -16,8 +16,8 @@ in
   network-bridge = test lib.network network/bridge;
 
   domain-empty = test lib.domain domain/empty;
-  domain-sample-q35 = test lib.domain domain/sample-q35;
-  domain-sample-windows = test lib.domain domain/sample-windows;
+  domain-base = test lib.domain domain/template-base;
+  domain-windows = test lib.domain domain/template-windows;
   domain-win11 = test lib.domain domain/win11;
 
   pool-empty = test lib.pool pool/empty;

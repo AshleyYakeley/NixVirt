@@ -1,4 +1,4 @@
-lib: lib.domain.templates.sample-windows { qemu = "QEMU_PATH"; }
+lib: lib.domain.templates.windows { qemu = "QEMU_PATH"; }
 {
   name = "test-windows";
   uuid = "a8bdda9a-6c4a-49bf-bf2d-0dc9792e7b18";

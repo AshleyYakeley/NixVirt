@@ -11,7 +11,7 @@ packages:
 , ...
 }:
 let
-  base = import ./sample-q35.nix packages
+  base = import ./base.nix packages
     {
       inherit name uuid memory storage_vol_path mac_address install_vol_path;
     };

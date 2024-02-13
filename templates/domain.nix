@@ -1,4 +1,4 @@
 {
-  sample-q35 = import domain/sample-q35.nix;
-  sample-windows = import domain/sample-windows.nix;
+  base = import domain/base.nix;
+  windows = import domain/windows.nix;
 }

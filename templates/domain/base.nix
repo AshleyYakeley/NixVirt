@@ -1,4 +1,12 @@
-packages: { name, uuid, memory ? { count = 2; unit = "GiB"; }, storage_vol_path, mac_address, install_vol_path ? null, ... }:
+packages:
+{ name
+, uuid
+, memory ? { count = 2; unit = "GiB"; }
+, storage_vol_path
+, mac_address
+, install_vol_path ? null
+, ...
+}:
 {
   type = "kvm";
   inherit name uuid memory;
@@ -7,7 +15,7 @@ packages: { name, uuid, memory ? { count = 2; unit = "GiB"; }, storage_vol_path,
     {
       type = "hvm";
       arch = "x86_64";
-      machine = "pc-q35-8.1";
+      machine = "q35";
       boot = [{ dev = "cdrom"; } { dev = "hd"; }];
     };
   features =
