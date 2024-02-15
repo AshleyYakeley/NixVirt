@@ -12,16 +12,20 @@ let
 
   typeConvert = tname: test: conv: x: conv (typeCheck tname test x);
 
+  attrOrNull = a: subject:
+    if builtins.hasAttr a subject then builtins.getAttr a subject else null;
+
 in
 rec
 {
   sub = with builtins;
     a: contents: x:
-      if builtins.isNull x then xml.none else
+      if isNull x then xml.none else
       let
-        subject = typeCheck "set or null" builtins.isAttrs x;
+        subject = typeCheck "set or null" isAttrs x;
+        val = attrOrNull a subject;
       in
-      xml.opt (hasAttr a subject) (contents (getAttr a subject));
+      xml.opt (!(isNull val)) (contents val);
 
   elem = with builtins;
     etype: attrs: contents: subject:
