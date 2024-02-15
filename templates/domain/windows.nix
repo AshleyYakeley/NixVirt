@@ -1,4 +1,5 @@
 # https://www.microsoft.com/en-us/windows/windows-11-specifications
+# https://sysguides.com/install-a-windows-11-virtual-machine-on-kvm#10-110-enable-trusted-platform-module-tpm
 packages:
 { name
 , uuid
@@ -37,7 +38,32 @@ base //
         path = nvram_path;
       };
   };
-  clock = base.clock // { offset = "localtime"; };
+  features = base.features //
+  {
+    hyperv =
+      {
+        mode = "custom";
+        relaxed = { state = true; };
+        vapic = { state = true; };
+        spinlocks = { state = true; retries = 8191; };
+        vpindex = { state = true; };
+        runtime = { state = true; };
+        synic = { state = true; };
+        stimer = { state = true; direct = { state = true; }; };
+        reset = { state = true; };
+        vendor_id = { state = true; value = "KVM Hv"; };
+        frequencies = { state = true; };
+        reenlightenment = { state = true; };
+        tlbflush = { state = true; };
+        ipi = { state = true; };
+      };
+  };
+  cpu = { mode = "host-passthrough"; };
+  clock = base.clock //
+  {
+    offset = "localtime";
+    timer = base.clock.timer ++ [{ name = "hypervclock"; present = true; }];
+  };
   pm =
     {
       suspend-to-mem = { enabled = false; };
@@ -54,17 +80,14 @@ base //
             {
               name = "qemu";
               type = "qcow2";
-              cache = "writeback";
+              cache = "none";
+              discard = "unmap";
             };
           source =
             {
               file = storage_vol_path;
             };
-          target =
-            {
-              bus = "sata";
-              dev = "sda";
-            };
+          target = { dev = "vda"; };
         }
         {
           type = "file";

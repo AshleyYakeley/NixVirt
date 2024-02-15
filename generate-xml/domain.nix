@@ -34,6 +34,26 @@ let
           [
             (subelem "acpi" [ ] [ ])
             (subelem "apic" [ ] [ ])
+            (subelem "hyperv" [ (subattr "mode" typeString) ]
+              [
+                (subelem "relaxed" [ (subattr "state" typeBoolOnOff) ] [ ])
+                (subelem "vapic" [ (subattr "state" typeBoolOnOff) ] [ ])
+                (subelem "spinlocks" [ (subattr "state" typeBoolOnOff) (subattr "retries" typeInt) ] [ ])
+                (subelem "vpindex" [ (subattr "state" typeBoolOnOff) ] [ ])
+                (subelem "runtime" [ (subattr "state" typeBoolOnOff) ] [ ])
+                (subelem "synic" [ (subattr "state" typeBoolOnOff) ] [ ])
+                (subelem "stimer" [ (subattr "state" typeBoolOnOff) ]
+                  [
+                    (subelem "direct" [ (subattr "state" typeBoolOnOff) ] [ ])
+                  ])
+                (subelem "reset" [ (subattr "state" typeBoolOnOff) ] [ ])
+                (subelem "vendor_id" [ (subattr "state" typeBoolOnOff) (subattr "value" typeString) ] [ ])
+                (subelem "frequencies" [ (subattr "state" typeBoolOnOff) ] [ ])
+                (subelem "reenlightenment" [ (subattr "state" typeBoolOnOff) ] [ ])
+                (subelem "tlbflush" [ (subattr "state" typeBoolOnOff) ] [ ])
+                (subelem "ipi" [ (subattr "state" typeBoolOnOff) ] [ ])
+                (subelem "evmcs" [ (subattr "state" typeBoolOnOff) ] [ ])
+              ])
             (subelem "vmport" [ (subattr "state" typeBoolOnOff) ] [ ])
           ]
         )
