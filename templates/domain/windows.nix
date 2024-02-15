@@ -10,12 +10,14 @@ packages:
 , ovmf_code_path
 , ovmf_vars_path
 , nvram_path
+, virtio_net ? false
+, virtio_drive ? false
 , ...
 }:
 let
   base = import ./base.nix packages
     {
-      inherit name uuid memory storage_vol_path mac_address install_vol_path;
+      inherit name uuid memory storage_vol_path mac_address install_vol_path virtio_net;
     };
 in
 base //
@@ -86,7 +88,8 @@ base //
             {
               file = storage_vol_path;
             };
-          target = { dev = "sda"; bus = "sata"; };
+          target = if virtio_drive then { dev = "vda"; bus = "virtio"; } else
+          { dev = "sda"; bus = "sata"; };
         }
         {
           type = "file";

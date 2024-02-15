@@ -5,6 +5,7 @@ packages:
 , storage_vol_path
 , mac_address
 , install_vol_path ? null
+, virtio_net ? false
 , ...
 }:
 {
@@ -68,6 +69,7 @@ packages:
         {
           type = "bridge";
           mac = { address = mac_address; };
+          model = if virtio_net then { type = "virtio"; } else null;
           source = { bridge = "virbr0"; };
         };
       channel =

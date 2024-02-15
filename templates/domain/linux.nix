@@ -11,6 +11,7 @@ let
   base = import ./base.nix packages
     {
       inherit name uuid memory storage_vol_path mac_address install_vol_path;
+      virtio_net = true;
     };
 in
 base //
