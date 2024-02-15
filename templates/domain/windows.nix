@@ -58,7 +58,6 @@ base //
         ipi = { state = true; };
       };
   };
-  cpu = { mode = "host-passthrough"; };
   clock = base.clock //
   {
     offset = "localtime";

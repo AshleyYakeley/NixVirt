@@ -23,6 +23,7 @@ packages:
       acpi = { };
       apic = { };
     };
+  cpu = { mode = "host-passthrough"; };
   clock =
     {
       offset = "utc";
