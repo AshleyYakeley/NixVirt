@@ -19,9 +19,6 @@
     <timer name='pit' tickpolicy='delay'/>
     <timer name='hpet' present='no'/>
   </clock>
-  <on_poweroff>destroy</on_poweroff>
-  <on_reboot>destroy</on_reboot>
-  <on_crash>destroy</on_crash>
   <pm>
     <suspend-to-mem enabled='no'/>
     <suspend-to-disk enabled='no'/>
@@ -42,7 +39,6 @@
     <interface type='bridge'>
       <mac address='52:54:00:02:08:5c'/>
       <source bridge='virbr0'/>
-      <model type='virtio'/>
     </interface>
     <channel type='spicevmc'>
       <target type='virtio' name='com.redhat.spice.0'/>
