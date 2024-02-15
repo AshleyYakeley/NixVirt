@@ -1,3 +1,4 @@
+# https://www.microsoft.com/en-us/windows/windows-11-specifications
 packages:
 { name
 , uuid
@@ -18,6 +19,7 @@ let
 in
 base //
 {
+  vcpu.count = 2;
   os = base.os //
   {
     loader =
