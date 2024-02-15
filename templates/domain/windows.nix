@@ -7,8 +7,6 @@ packages:
 , storage_vol_path
 , mac_address
 , install_vol_path ? null
-, ovmf_code_path
-, ovmf_vars_path
 , nvram_path
 , virtio_net ? false
 , virtio_drive ? false
@@ -29,14 +27,11 @@ base //
       {
         readonly = true;
         type = "pflash";
-        # path = "${packages.OVMF.fd}/FV/OVMF_CODE.ms.fd";
-        # unavailable, see https://github.com/NixOS/nixpkgs/issues/288184
-        path = ovmf_code_path;
+        path = "${packages.OVMF.fd}/FV/OVMF_CODE_4M.ms.fd";
       };
     nvram =
       {
-        # template = "${packages.OVMF.fd}/FV/OVMF_VARS.ms.fd";
-        template = ovmf_vars_path;
+        template = "${packages.OVMF.fd}/FV/OVMF_VARS_4M.ms.fd";
         path = nvram_path;
       };
   };

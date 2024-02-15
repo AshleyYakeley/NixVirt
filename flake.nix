@@ -6,9 +6,9 @@
       nixpkgs =
         {
           type = "github";
-          owner = "NixOS";
+          owner = "shlevy";
           repo = "nixpkgs";
-          ref = "nixos-23.11";
+          ref = "ovmf-ms";
         };
     };
 
