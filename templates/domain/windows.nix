@@ -1,5 +1,5 @@
 # https://www.microsoft.com/en-us/windows/windows-11-specifications
-# https://sysguides.com/install-a-windows-11-virtual-machine-on-kvm#10-110-enable-trusted-platform-module-tpm
+# https://sysguides.com/install-a-windows-11-virtual-machine-on-kvm
 packages:
 { name
 , uuid
