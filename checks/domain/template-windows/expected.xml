@@ -47,7 +47,7 @@
     <disk type='file' device='disk'>
       <driver name='qemu' type='qcow2' cache='none' discard='unmap'/>
       <source file='/Storage/MyHD.qcow2'/>
-      <target dev='vda'/>
+      <target dev='sda' bus='sata'/>
     </disk>
     <disk type='file' device='cdrom'>
       <driver name='qemu' type='raw'/>

@@ -86,7 +86,7 @@ base //
             {
               file = storage_vol_path;
             };
-          target = { dev = "vda"; };
+          target = { dev = "sda"; bus = "sata"; };
         }
         {
           type = "file";
