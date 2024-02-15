@@ -68,7 +68,6 @@ packages:
           type = "bridge";
           mac = { address = mac_address; };
           source = { bridge = "virbr0"; };
-          model = { type = "virtio"; };
         };
       channel =
         [

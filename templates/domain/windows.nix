@@ -38,9 +38,6 @@ base //
       };
   };
   clock = base.clock // { offset = "localtime"; };
-  on_poweroff = "destroy";
-  on_reboot = "destroy";
-  on_crash = "destroy";
   pm =
     {
       suspend-to-mem = { enabled = false; };
