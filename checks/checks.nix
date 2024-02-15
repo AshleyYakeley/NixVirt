@@ -1,5 +1,11 @@
-pkgs: lib:
+pkgs: mklib:
 let
+  lib = mklib
+    {
+      writeTextFile = pkgs.writeTextFile;
+      qemu = "QEMU_PATH";
+      OVMFFull.fd = "OVMFFull_FD_PATH";
+    };
   test = xlib: dirpath:
     let
       found = xlib.writeXML ((import "${dirpath}/input.nix") lib);

@@ -38,12 +38,12 @@
       virtdeclareFile = setShebang "virtdeclare" tool/virtdeclare;
       virtpurgeFile = setShebang "virtpurge" tool/virtpurge;
 
-      lib = (import ./lib.nix) pkgs;
+      mklib = import ./lib.nix;
 
       modules = (import ./modules.nix) { inherit virtdeclareFile virtpurgeFile; };
     in
     {
-      inherit lib;
+      lib = mklib pkgs;
 
       apps.x86_64-linux.virtdeclare =
         {
@@ -70,6 +70,6 @@
 
       nixosModules.default = modules.nixosModule;
 
-      checks.x86_64-linux = (import checks/checks.nix) pkgs lib;
+      checks.x86_64-linux = (import checks/checks.nix) pkgs mklib;
     };
 }
