@@ -1,7 +1,7 @@
 lib: lib.domain.templates.windows
 {
   qemu = "QEMU_PATH";
-  OVMF.fd = "OVMF_FD_PATH";
+  OVMFFull.fd = "OVMFFull_FD_PATH";
 }
 {
   name = "test-windows";

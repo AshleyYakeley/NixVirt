@@ -5,8 +5,8 @@
   <vcpu>2</vcpu>
   <os>
     <type arch='x86_64' machine='q35'>hvm</type>
-    <loader readonly='yes' type='pflash'>OVMF_FD_PATH/FV/OVMF_CODE_4M.ms.fd</loader>
-    <nvram template='OVMF_FD_PATH/FV/OVMF_VARS_4M.ms.fd'>/Storage/MyNVRAM.fd</nvram>
+    <loader readonly='yes' type='pflash'>OVMFFull_FD_PATH/FV/OVMF_CODE.ms.fd</loader>
+    <nvram template='OVMFFull_FD_PATH/FV/OVMF_VARS.ms.fd'>/Storage/MyNVRAM.fd</nvram>
     <boot dev='cdrom'/>
     <boot dev='hd'/>
   </os>

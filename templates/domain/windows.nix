@@ -27,11 +27,11 @@ base //
       {
         readonly = true;
         type = "pflash";
-        path = "${packages.OVMF.fd}/FV/OVMF_CODE_4M.ms.fd";
+        path = "${packages.OVMFFull.fd}/FV/OVMF_CODE.ms.fd";
       };
     nvram =
       {
-        template = "${packages.OVMF.fd}/FV/OVMF_VARS_4M.ms.fd";
+        template = "${packages.OVMFFull.fd}/FV/OVMF_VARS.ms.fd";
         path = nvram_path;
       };
   };
