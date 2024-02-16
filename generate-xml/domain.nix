@@ -29,8 +29,8 @@ let
             (subelem "boot" [ (subattr "dev" typeString) ] [ ])
             (subelem "bootmenu" [ (subattr "enable" typeBoolYesNo) ] [ ])
 
-            (subelem "kernel" [ ] (sub "path" typeString))
-            (subelem "initrd" [ ] (sub "path" typeString))
+            (subelem "kernel" [ ] (sub "path" typePath))
+            (subelem "initrd" [ ] (sub "path" typePath))
             (subelem "cmdline" [ ] (sub "options" typeString))
 
           ]
@@ -173,9 +173,9 @@ let
                       (subattr "discard" typeString)
                     ] [ ]
                   )
-                  (subelem "binary" [ (subattr "path" typeString) ] [ ])
-                  (subelem "source" [ (subattr "dir" typeString) (subattr "name" typeString) ] [ ])
-                  (subelem "target" [ (subattr "dir" typeString) ] [ ])
+                  (subelem "binary" [ (subattr "path" typePath) ] [ ])
+                  (subelem "source" [ (subattr "dir" typePath) (subattr "name" typeString) ] [ ])
+                  (subelem "target" [ (subattr "dir" typePath) ] [ ])
                   (subelem "readonly" [ ] [ ])
                   addresselem
                 ]
