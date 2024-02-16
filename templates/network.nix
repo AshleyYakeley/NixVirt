@@ -1,4 +1,4 @@
-pkgs:
+stuff:
 {
   bridge = { name ? "default", uuid, bridge_name ? "virbr0", mac_address, subnet_byte }:
     let

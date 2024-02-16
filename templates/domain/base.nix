@@ -1,4 +1,4 @@
-packages:
+{ packages, ... }:
 { name
 , uuid
 , memory ? { count = 2; unit = "GiB"; }

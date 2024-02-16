@@ -1,17 +1,17 @@
-pkgs: mklib:
+packages: mklib:
 let
   lib = mklib
     {
-      writeTextFile = pkgs.writeTextFile;
+      writeTextFile = packages.writeTextFile;
       qemu = "QEMU_PATH";
       OVMFFull.fd = "OVMFFull_FD_PATH";
     };
   test = xlib: dirpath:
     let
-      found = xlib.writeXML ((import "${dirpath}/input.nix") lib);
+      found = xlib.writeXML (import "${dirpath}/input.nix" lib);
       expected = "${dirpath}/expected.xml";
     in
-    pkgs.runCommand "check" { }
+    packages.runCommand "check" { }
       ''
         diff -u ${expected} ${found}
         echo "pass" > $out

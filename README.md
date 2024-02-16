@@ -201,3 +201,7 @@ Write pool XML for a given structure (returns a path).
 #### `lib.xml`
 
 Various functions for creating XML text.
+
+#### `lib.guest-install.virtio-win.iso`
+
+ISO disc image of `virtio-win`, for installing paravirtualised drivers, etc., inside Windows guests.

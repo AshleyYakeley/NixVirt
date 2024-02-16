@@ -1,6 +1,6 @@
 # https://www.microsoft.com/en-us/windows/windows-11-specifications
 # https://sysguides.com/install-a-windows-11-virtual-machine-on-kvm
-packages:
+stuff@{ packages, guest-install, ... }:
 { name
 , uuid
 , memory ? { count = 4; unit = "GiB"; }
@@ -10,10 +10,11 @@ packages:
 , nvram_path
 , virtio_net ? false
 , virtio_drive ? false
+, install_virtio ? false
 , ...
 }:
 let
-  base = import ./base.nix packages
+  base = import ./base.nix stuff
     {
       inherit name uuid memory storage_vol_path mac_address install_vol_path virtio_net;
     };
@@ -89,25 +90,27 @@ base //
         {
           type = "file";
           device = "cdrom";
-          driver =
-            {
-              name = "qemu";
-              type = "raw";
-            };
+          driver = { name = "qemu"; type = "raw"; };
           source =
             if builtins.isNull install_vol_path then null else
             {
               file = install_vol_path;
               startupPolicy = "mandatory";
             };
-          target =
-            {
-              bus = "sata";
-              dev = "hdc";
-            };
+          target = { bus = "sata"; dev = "hdc"; };
           readonly = true;
         }
-      ];
+      ] ++ (if install_virtio then
+        [
+          {
+            type = "file";
+            device = "cdrom";
+            driver = { name = "qemu"; type = "raw"; };
+            source = { file = install_vol_path; };
+            target = { bus = "sata"; dev = "hdc"; };
+            readonly = true;
+          }
+        ] else [ ]);
     channel = base.devices.channel ++
     [
       {

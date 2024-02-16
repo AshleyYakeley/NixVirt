@@ -14,22 +14,22 @@
 
   outputs = { self, nixpkgs }:
     let
-      pkgs = import nixpkgs { system = "x86_64-linux"; };
+      packages = import nixpkgs { system = "x86_64-linux"; };
 
-      nixvirtPythonModulePackage = pkgs.runCommand "nixvirtPythonModulePackage" { }
+      nixvirtPythonModulePackage = packages.runCommand "nixvirtPythonModulePackage" { }
         ''
           mkdir  -p $out/lib/python3.11/site-packages/
           ln -s ${tool/nixvirt.py} $out/lib/python3.11/site-packages/nixvirt.py
-        '' // { pythonModule = pkgs.python311; };
+        '' // { pythonModule = packages.python311; };
 
-      pythonInterpreterPackage = pkgs.python311.withPackages (ps:
+      pythonInterpreterPackage = packages.python311.withPackages (ps:
         [
           ps.libvirt
           ps.lxml
           nixvirtPythonModulePackage
         ]);
 
-      setShebang = name: path: pkgs.runCommand name { }
+      setShebang = name: path: packages.runCommand name { }
         ''
           sed -e "1s|.*|\#\!${pythonInterpreterPackage}/bin/python3|" ${path} > $out
           chmod 755 $out
@@ -43,7 +43,7 @@
       modules = (import ./modules.nix) { inherit virtdeclareFile virtpurgeFile; };
     in
     {
-      lib = mklib pkgs;
+      lib = mklib packages;
 
       apps.x86_64-linux.virtdeclare =
         {
@@ -57,9 +57,9 @@
           program = "${virtpurgeFile}";
         };
 
-      formatter.x86_64-linux = pkgs.nixpkgs-fmt;
+      formatter.x86_64-linux = packages.nixpkgs-fmt;
 
-      packages.x86_64-linux.default = pkgs.runCommand "NixVirt" { }
+      packages.x86_64-linux.default = packages.runCommand "NixVirt" { }
         ''
           mkdir -p $out/bin
           ln -s ${virtdeclareFile} $out/bin/virtdeclare
@@ -70,6 +70,6 @@
 
       nixosModules.default = modules.nixosModule;
 
-      checks.x86_64-linux = (import checks/checks.nix) pkgs mklib;
+      checks.x86_64-linux = (import checks/checks.nix) packages mklib;
     };
 }
