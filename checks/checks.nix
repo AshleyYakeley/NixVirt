@@ -1,6 +1,7 @@
 packages: mklib:
 let
-  lib = mklib
+  lib = mklib packages;
+  testlib = mklib
     {
       writeTextFile = packages.writeTextFile;
       runCommand = name: args: script: "BUILD " + name;
@@ -9,7 +10,7 @@ let
     };
   test = xlib: dirpath:
     let
-      found = xlib.writeXML (import "${dirpath}/input.nix" lib);
+      found = xlib.writeXML (import "${dirpath}/input.nix" testlib);
       expected = "${dirpath}/expected.xml";
     in
     packages.runCommand "check" { }
@@ -19,13 +20,15 @@ let
       '';
 in
 {
-  network-empty = test lib.network network/empty;
-  network-bridge = test lib.network network/bridge;
+  network-empty = test testlib.network network/empty;
+  network-bridge = test testlib.network network/bridge;
 
-  domain-empty = test lib.domain domain/empty;
-  domain-linux = test lib.domain domain/template-linux;
-  domain-windows = test lib.domain domain/template-windows;
-  domain-win11 = test lib.domain domain/win11;
+  domain-empty = test testlib.domain domain/empty;
+  domain-linux = test testlib.domain domain/template-linux;
+  domain-windows = test testlib.domain domain/template-windows;
+  domain-win11 = test testlib.domain domain/win11;
 
-  pool-empty = test lib.pool pool/empty;
+  pool-empty = test testlib.pool pool/empty;
+
+  virtio-iso = lib.guest-install.virtio-win.iso;
 }
