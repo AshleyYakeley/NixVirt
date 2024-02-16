@@ -1,4 +1,4 @@
-{ virtdeclareFile, virtpurgeFile }:
+{ packages, virtdeclareFile, virtpurgeFile }:
 let
   module = isHomeManager: { config, lib, ... }:
     let
@@ -119,7 +119,11 @@ let
             }
           else
             {
-              virtualisation.libvirtd.enable = true;
+              virtualisation.libvirtd =
+                {
+                  enable = true;
+                  package = lib.mkDefault packages.libvirt;
+                };
               systemd.services.nixvirt =
                 {
                   serviceConfig.Type = "oneshot";

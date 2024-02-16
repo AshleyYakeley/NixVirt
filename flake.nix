@@ -40,7 +40,7 @@
 
       mklib = import ./lib.nix;
 
-      modules = import ./modules.nix { inherit virtdeclareFile virtpurgeFile; };
+      modules = import ./modules.nix { inherit packages virtdeclareFile virtpurgeFile; };
     in
     {
       lib = mklib packages;

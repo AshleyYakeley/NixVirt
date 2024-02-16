@@ -27,7 +27,8 @@ A NixOS module with these options:
 
 * `virtualisation.libvirt.enable` (boolean)  
 Whether to use NixVirt.
-Switching this on will also switch on `virtualisation.libvirtd.enable`.  
+Switching this on will also switch on `virtualisation.libvirtd.enable`,
+and set by default `virtualisation.libvirtd.package` to match libvirt version.  
 Default: `false`.
 
 * `virtualisation.libvirt.<connection>` (set)  
