@@ -55,6 +55,12 @@
       <target dev='hdc' bus='sata'/>
       <readonly/>
     </disk>
+    <disk type='file' device='cdrom'>
+      <driver name='qemu' type='raw'/>
+      <source file='BUILD virtio-win.iso'/>
+      <target dev='hdc' bus='sata'/>
+      <readonly/>
+    </disk>
     <interface type='bridge'>
       <mac address='52:54:00:02:08:5c'/>
       <source bridge='virbr0'/>

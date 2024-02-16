@@ -3,6 +3,7 @@ let
   lib = mklib
     {
       writeTextFile = packages.writeTextFile;
+      runCommand = name: args: script: "BUILD " + name;
       qemu = "QEMU_PATH";
       OVMFFull.fd = "OVMFFull_FD_PATH";
     };

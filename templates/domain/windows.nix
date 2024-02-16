@@ -106,7 +106,7 @@ base //
             type = "file";
             device = "cdrom";
             driver = { name = "qemu"; type = "raw"; };
-            source = { file = install_vol_path; };
+            source = { file = "${guest-install.virtio-win.iso}"; };
             target = { bus = "sata"; dev = "hdc"; };
             readonly = true;
           }

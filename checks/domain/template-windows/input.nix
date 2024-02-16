@@ -7,4 +7,5 @@ lib: lib.domain.templates.windows
   mac_address = "52:54:00:02:08:5c";
   install_vol_path = /Source/Win11_23H2_EnglishInternational_x64v2.iso;
   nvram_path = /Storage/MyNVRAM.fd;
+  install_virtio = true;
 }
