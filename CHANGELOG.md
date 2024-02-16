@@ -4,6 +4,8 @@
 
 * fixed defect in Home Manager module where domains were defined before swtpm package was available
 * clean up virtdeclare & virtpurge error reporting
+* improve XML generation
+* provide templates for network and domains
 
 ## [0.2.0] - 2024-02-08
 
