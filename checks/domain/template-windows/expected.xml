@@ -58,7 +58,7 @@
     <disk type='file' device='cdrom'>
       <driver name='qemu' type='raw'/>
       <source file='BUILD virtio-win.iso'/>
-      <target dev='hdc' bus='sata'/>
+      <target dev='hdd' bus='sata'/>
       <readonly/>
     </disk>
     <interface type='bridge'>
