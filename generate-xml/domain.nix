@@ -28,11 +28,9 @@ let
               (sub "path" typePath))
             (subelem "boot" [ (subattr "dev" typeString) ] [ ])
             (subelem "bootmenu" [ (subattr "enable" typeBoolYesNo) ] [ ])
-
             (subelem "kernel" [ ] (sub "path" typePath))
             (subelem "initrd" [ ] (sub "path" typePath))
             (subelem "cmdline" [ ] (sub "options" typeString))
-
           ]
         )
         (subelem "memoryBacking" [ ]

@@ -40,7 +40,7 @@
 
       mklib = import ./lib.nix;
 
-      modules = (import ./modules.nix) { inherit virtdeclareFile virtpurgeFile; };
+      modules = import ./modules.nix { inherit virtdeclareFile virtpurgeFile; };
     in
     {
       lib = mklib packages;
@@ -70,6 +70,6 @@
 
       nixosModules.default = modules.nixosModule;
 
-      checks.x86_64-linux = (import checks/checks.nix) packages mklib;
+      checks.x86_64-linux = import checks/checks.nix packages mklib;
     };
 }
