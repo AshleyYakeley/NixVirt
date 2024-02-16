@@ -28,6 +28,17 @@ let
               (sub "path" typePath))
             (subelem "boot" [ (subattr "dev" typeString) ] [ ])
             (subelem "bootmenu" [ (subattr "enable" typeBoolYesNo) ] [ ])
+
+            (subelem "kernel" [ ] (sub "path" typeString))
+            (subelem "initrd" [ ] (sub "path" typeString))
+            (subelem "cmdline" [ ] (sub "options" typeString))
+
+          ]
+        )
+        (subelem "memoryBacking" [ ]
+          [
+            (subelem "source" [ (subattr "type" typeString) ] [ ])
+            (subelem "access" [ (subattr "mode" typeString) ] [ ])
           ]
         )
         (subelem "features" [ ]
@@ -148,6 +159,23 @@ let
                   )
                   (subelem "source" [ (subattr "file" typePath) (subattr "startupPolicy" typeString) ] [ ])
                   targetelem
+                  (subelem "readonly" [ ] [ ])
+                  addresselem
+                ]
+              )
+              (subelem "filesystem" [ (subattr "type" typeString) (subattr "accessmode" typeString) ]
+                [
+                  (subelem "driver"
+                    [
+                      (subattr "name" typeString)
+                      (subattr "type" typeString)
+                      (subattr "cache" typeString)
+                      (subattr "discard" typeString)
+                    ] [ ]
+                  )
+                  (subelem "binary" [ (subattr "path" typeString) ] [ ])
+                  (subelem "source" [ (subattr "dir" typeString) (subattr "name" typeString) ] [ ])
+                  (subelem "target" [ (subattr "dir" typeString) ] [ ])
                   (subelem "readonly" [ ] [ ])
                   addresselem
                 ]
