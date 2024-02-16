@@ -127,11 +127,17 @@ A package containing `virtdeclare` and `virtpurge`.
 
 ### `lib`
 
-Functions for creating libvirt object definition XML from Nix sets; this is still under development.
+Functions for creating libvirt object definition XML from Nix sets.
 
 #### `lib.domain.getXML`
 
 Create domain XML for a given structure (returns a string).
+The Nix structure roughly follows [the XML format](https://libvirt.org/formatdomain.html), but is currently missing elements.
+Please edit [the file](generate-xml/domain.nix) and create a PR for anything you need.
+
+##### Example
+
+See [this file](checks/domain/win11/input.nix).
 
 #### `lib.domain.writeXML`
 
@@ -140,6 +146,31 @@ Write domain XML for a given structure (returns a path).
 #### `lib.network.getXML`
 
 Create network XML for a given structure (returns a string).
+The Nix structure roughly follows [the XML format](https://libvirt.org/formatnetwork.html), but is currently missing elements.
+Please edit [the file](generate-xml/network.nix) and create a PR for anything you need.
+
+##### Example
+
+```nix
+lib.network.getXML
+  {
+    name = "default";
+    uuid = "c4acfd00-4597-41c7-a48e-e2302234fa89";
+    forward =
+      {
+        mode = "nat";
+        nat = { port = { start = 1024; end = 65535; }; };
+      };
+    bridge = { name = "virbr0"; };
+    mac = { address = "52:54:00:02:77:4b"; };
+    ip =
+      {
+        address = "192.168.74.1";
+        netmask = "255.255.255.0";
+        dhcp = { range = { start = "192.168.74.2"; end = "192.168.74.254"; }; };
+      };
+  }
+```
 
 #### `lib.network.writeXML`
 
@@ -148,6 +179,20 @@ Write network XML for a given structure (returns a path).
 #### `lib.pool.getXML`
 
 Create pool XML for a given structure (returns a string).
+The Nix structure roughly follows [the XML format](https://libvirt.org/formatstorage.html), but is currently missing elements.
+Please edit [the file](generate-xml/pool.nix) and create a PR for anything you need.
+
+##### Example
+
+```nix
+lib.pool.getXML
+{
+  name = "MyPool";
+  uuid = "650c5bbb-eebd-4cea-8a2f-36e1a75a8683";
+  type = "dir";
+  target = { path = "/home/ashley/VM-Storage/MyPool"; };
+}
+```
 
 #### `lib.pool.writeXML`
 
