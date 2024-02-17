@@ -15,17 +15,13 @@ let
   attrOrNull = a: subject:
     if builtins.hasAttr a subject then builtins.getAttr a subject else null;
 
+  checkNull = f: x: xml.opt (!(isNull x)) (f x);
+
 in
 rec
 {
   sub = with builtins;
-    a: contents: x:
-      if isNull x then xml.none else
-      let
-        subject = typeCheck "set or null" isAttrs x;
-        val = attrOrNull a subject;
-      in
-      xml.opt (!(isNull val)) (contents val);
+    a: contents: checkNull (x: checkNull contents (attrOrNull a (typeCheck "set or null" isAttrs x)));
 
   elem = with builtins;
     etype: attrs: contents: subject:
