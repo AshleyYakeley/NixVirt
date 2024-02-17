@@ -128,6 +128,9 @@ class VObject:
         return self.oc.XMLDesc(self.lvobj)
 
     def undefine(self):
+        isPersistent = self.lvobj.isPersistent()
         self.deactivate()
-        self.vreport("undefine")
-        self.oc.undefine(self.lvobj)
+
+        if isPersistent:
+            self.vreport("undefine")
+            self.oc.undefine(self.lvobj)
