@@ -35,10 +35,10 @@ Default: `false`.
 Whether to make swtpm (software TPM emulator) available.
 Default: `false`.
 
-* `virtualisation.libvirt.<connection>` (set)  
+* `virtualisation.libvirt.connections.<connection>` (set)  
 `<connection>` is the hypervisor connection URI, typically `"qemu:///system"`.  
 
-* `virtualisation.libvirt.<connection>.domains` (list of sets)  
+* `virtualisation.libvirt.connections.<connection>.domains` (list of sets)  
 Each set represents a libvirt domain, and has these attributes:
 
   * `definition` (path)  
@@ -52,7 +52,7 @@ Each set represents a libvirt domain, and has these attributes:
   :warning: If this option is specified and not null, any libvirt domain not defined in the list will be deleted.
   Deleting a domain will not delete its volumes, NVRAM, or TPM state.
 
-* `virtualisation.libvirt.<connection>.networks` (list of sets)  
+* `virtualisation.libvirt.connections.<connection>.networks` (list of sets)  
 Each set represents a libvirt network, and has these attributes:
 
   * `definition` (path)  
@@ -65,7 +65,7 @@ Each set represents a libvirt network, and has these attributes:
 
   :warning: If this option is specified and not null, any libvirt network not defined in the list will be deleted.
 
-* `virtualisation.libvirt.<connection>.pools` (list of sets)  
+* `virtualisation.libvirt.connections.<connection>.pools` (list of sets)  
 Each set represents a libvirt storage pool, and has these attributes:
 
   * `definition` (path)  
