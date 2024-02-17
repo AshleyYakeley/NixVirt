@@ -166,8 +166,8 @@ These are the arguments:
 * `memory`: amount of RAM (set with `count` (integer) and `unit` (string) attributes, default `{ count = 2; unit = "GiB"; }`)
 * `storage_vol_path`: path to a QCOW2 volume for storage (string or path, required)
 * `mac_address`: MAC address (string, required)
-* `install_vol_path`: path to an ISO image for an inserted CDROM, or null (string or path, default null)
-* `virtio_net`: whether to use VirtIO for networking (faster, but may require special guest drivers) (boolean, default false)
+* `install_vol_path`: path to an ISO image for an inserted CDROM, or null (string or path, default `null`)
+* `virtio_net`: whether to use VirtIO for networking (faster, but may require special guest drivers) (boolean, default `false`)
 
 #### `lib.domain.templates.linux`
 
@@ -180,7 +180,7 @@ These are the arguments:
 * `memory`: amount of RAM (set with `count` (integer) and `unit` (string) attributes, default `{ count = 4; unit = "GiB"; }`)
 * `storage_vol_path`: path to a QCOW2 volume for storage (string or path, required)
 * `mac_address`: MAC address (string, required)
-* `install_vol_path`: path to an ISO image for an inserted CDROM, or null (string or path, default null)
+* `install_vol_path`: path to an ISO image for an inserted CDROM, or null (string or path, default `null`)
 
 ##### Example
 
@@ -214,11 +214,11 @@ These are the arguments:
 * `memory`: amount of RAM (set with `count` (integer) and `unit` (string) attributes, default `{ count = 4; unit = "GiB"; }`)
 * `storage_vol_path`: path to a QCOW2 volume for storage (string or path, required)
 * `mac_address`: MAC address (string, required)
-* `install_vol_path`: path to an ISO image for an inserted CDROM, or null (string or path, default null)
+* `install_vol_path`: path to an ISO image for an inserted CDROM, or null (string or path, default `null`)
 * `nvram_path`: path to a file for storing NVRAM, this file will be created if missing (string or path, required)
-* `virtio_net`: whether to use VirtIO for networking: this is faster, but requires installing a driver during Windows 11 installation (boolean, default false)
-* `virtio_drive`: whether to use VirtIO for the storage device: this is faster, but requires installing a driver during Windows 11 installation (boolean, default false)
-* `install_virtio`: whether to add an additional CDROM drive with a disc containing VirtIO drivers for Windows (boolean, default false)
+* `virtio_net`: whether to use VirtIO for networking: this is faster, but requires installing a driver during Windows 11 installation (boolean, default `false`)
+* `virtio_drive`: whether to use VirtIO for the storage device: this is faster, but requires installing a driver during Windows 11 installation (boolean, default `false`)
+* `install_virtio`: whether to add an additional CDROM drive with a disc containing VirtIO drivers for Windows (boolean, default `false`)
 
 ##### Example
 
