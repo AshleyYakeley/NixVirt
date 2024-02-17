@@ -31,6 +31,10 @@ Switching this on will also switch on `virtualisation.libvirtd.enable`,
 and set by default `virtualisation.libvirtd.package` to match libvirt version.  
 Default: `false`.
 
+* `virtualisation.libvirt.swtpm.enable` (boolean)  
+Whether to make swtpm (software TPM emulator) available.
+Default: `false`.
+
 * `virtualisation.libvirt.<connection>` (set)  
 `<connection>` is the hypervisor connection URI, typically `"qemu:///system"`.  
 
@@ -201,7 +205,7 @@ virtualisation.libvirt.connections."qemu:///session".domains =
 #### `lib.domain.templates.windows`
 
 A template function for a domain suitable for installing Windows 11 on.
-It supports Secure Boot via OVMF and an emulated TPM.
+It supports Secure Boot via OVMF and an emulated TPM; you will want to switch on `virtualisation.libvirt.swtpm.enable`.
 
 These are the arguments:
 
@@ -221,6 +225,7 @@ These are the arguments:
 In your Home Manager configuration:
 
 ```nix
+virtualisation.libvirt.swtpm.enable = true;
 virtualisation.libvirt.connections."qemu:///session".domains =
   [
     {

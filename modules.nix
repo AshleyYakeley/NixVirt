@@ -36,6 +36,12 @@ let
               default = false;
               description = "Enable management of libvirt objects";
             };
+          swtpm.enable = lib.mkOption
+            {
+              type = bool;
+              default = false;
+              description = "Make software TPM emulator available to libvirt";
+            };
           connections = lib.mkOption
             {
               type = attrsOf
@@ -111,14 +117,17 @@ let
                 ];
 
             script = concatStrMap scriptForConnection (builtins.attrNames cfg.connections);
+            extraPackages = if cfg.swtpm.enable then [ packages.swtpm ] else [ ];
           in
           if isHomeManager
           then
             {
+              home.packages = extraPackages;
               home.activation.NixVirt = lib.hm.dag.entryAfter [ "installPackages" ] script;
             }
           else
             {
+              environment.systemPackages = extraPackages;
               virtualisation.libvirtd =
                 {
                   enable = true;

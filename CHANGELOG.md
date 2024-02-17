@@ -7,6 +7,7 @@
 * improved XML generation
 * provided templates for network and domains
 * NixOS module: set libvirtd package to match libvirt
+* Modules: `virtualisation.libvirt.swtpm.enable` option
 
 ## [0.2.0] - 2024-02-08
 
