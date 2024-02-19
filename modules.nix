@@ -111,9 +111,9 @@ let
               in
               concatStr
                 [
-                  (scriptForType connection "domain" (getAttr "domains" opts))
                   (scriptForType connection "network" (getAttr "networks" opts))
                   (scriptForType connection "pool" (getAttr "pools" opts))
+                  (scriptForType connection "domain" (getAttr "domains" opts))
                 ];
 
             script = concatStrMap scriptForConnection (builtins.attrNames cfg.connections);
