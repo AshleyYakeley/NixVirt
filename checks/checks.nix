@@ -31,4 +31,12 @@ in
   pool-empty = test testlib.pool pool/empty;
 
   virtio-iso = lib.guest-install.virtio-win.iso;
+
+  ovmf-secboot =
+    packages.runCommand "ovmf-secboot" { }
+      ''
+        test -f ${packages.OVMFFull.fd}/FV/OVMF_CODE.ms.fd
+        test -f ${packages.OVMFFull.fd}/FV/OVMF_VARS.ms.fd
+        echo "pass" > $out
+      '';
 }
