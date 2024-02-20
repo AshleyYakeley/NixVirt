@@ -36,11 +36,11 @@
         '';
 
       virtdeclareFile = setShebang "virtdeclare" tool/virtdeclare;
-      virtpurgeFile = setShebang "virtpurge" tool/virtpurge;
+      moduleHelperFile = setShebang "nixvirt-module-helper" tool/nixvirt-module-helper;
 
       mklib = import ./lib.nix;
 
-      modules = import ./modules.nix { inherit packages virtdeclareFile virtpurgeFile; };
+      modules = import ./modules.nix { inherit packages moduleHelperFile; };
     in
     {
       lib = mklib packages;
@@ -51,10 +51,11 @@
           program = "${virtdeclareFile}";
         };
 
-      apps.x86_64-linux.virtpurge =
+      # for debugging
+      apps.x86_64-linux.nixvirt-module-helper =
         {
           type = "app";
-          program = "${virtpurgeFile}";
+          program = "${moduleHelperFile}";
         };
 
       formatter.x86_64-linux = packages.nixpkgs-fmt;
@@ -63,7 +64,6 @@
         ''
           mkdir -p $out/bin
           ln -s ${virtdeclareFile} $out/bin/virtdeclare
-          ln -s ${virtpurgeFile} $out/bin/virtpurge
         '';
 
       homeModules.default = modules.homeModule;

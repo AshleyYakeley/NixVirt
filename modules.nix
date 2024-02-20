@@ -1,4 +1,4 @@
-{ packages, virtdeclareFile, virtpurgeFile }:
+{ packages, moduleHelperFile }:
 let
   module = isHomeManager: { config, lib, ... }:
     let
@@ -77,44 +77,12 @@ let
             concatStr = builtins.concatStringsSep "";
             concatStrMap = f: x: concatStr (builtins.map f x);
 
-            scriptForObject = connection: objtype: { definition, active }:
-              let
-                stateOption =
-                  if builtins.isNull active
-                  then ""
-                  else if active then "--state active" else "--state inactive";
-              in
-              ''
-                ${virtdeclareFile} --connect ${connection} --type ${objtype} --define ${definition} ${stateOption}
-              '';
-
-            fileForObject = { definition, ... }:
-              ''
-                echo ${definition} >> $f
-              '';
-
-            scriptForType = connection: objtype: optList:
-              if builtins.isNull optList then "" else
-              concatStrMap (scriptForObject connection objtype) optList +
-              ''
-                f=$(mktemp)
-              '' +
-              concatStrMap fileForObject optList +
-              ''
-                ${virtpurgeFile} --connect ${connection} --type ${objtype} --keep $f
-                rm $f
-              '';
-
             scriptForConnection = with builtins; connection:
               let
                 opts = getAttr connection cfg.connections;
+                jsonFile = packages.writeText "nixvirt module script" (builtins.toJSON opts);
               in
-              concatStr
-                [
-                  (scriptForType connection "network" (getAttr "networks" opts))
-                  (scriptForType connection "pool" (getAttr "pools" opts))
-                  (scriptForType connection "domain" (getAttr "domains" opts))
-                ];
+              "${moduleHelperFile} --connect ${connection} ${jsonFile}";
 
             script = concatStrMap scriptForConnection (builtins.attrNames cfg.connections);
             extraPackages = if cfg.swtpm.enable then [ packages.swtpm ] else [ ];

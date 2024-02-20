@@ -3,7 +3,8 @@
 ## [Unreleased]
 
 * fixed defect in Home Manager module where domains were defined before swtpm package was available
-* clean up virtdeclare & virtpurge error reporting
+* clean up virtdeclare error reporting
+* removed virtpurge
 * improved XML generation
 * provided templates for network and domains
 * NixOS module: set libvirtd package to match libvirt

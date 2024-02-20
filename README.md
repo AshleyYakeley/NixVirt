@@ -121,14 +121,9 @@ Currently `virtdeclare` only controls libvirt domains and networks.
 * If an existing object is redefined, and the definition differs, and the object is active,
 and `--state inactive` is not specified, then `virtdeclare` will deactivate and reactivate the object with the new definition.
 
-### `apps.x86_64-linux.virtpurge`
-
-`virtpurge` is a command-line tool for deleting unused libvirt objects, used by the modules.
-Its behaviour is subject to change and should not be relied upon.
-
 ### `packages.x86_64-linux.default`
 
-A package containing `virtdeclare` and `virtpurge`.
+A package containing `virtdeclare`.
 
 ### `lib`
 

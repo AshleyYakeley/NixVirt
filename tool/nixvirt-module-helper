@@ -1,0 +1,15 @@
+#!/usr/bin/python3
+import sys, argparse, uuid, lxml.etree, libvirt, nixvirt
+
+parser = argparse.ArgumentParser(prog='nixvirt-module-helper',description='Define and control a collection of libvirt objects idempotently.')
+parser.add_argument('-v', '--verbose', action='store_true', help='report actions to stderr')
+parser.add_argument('--connect', action='store', required=True, metavar='URI', help='connection URI (e.g. qemu:///session)')
+parser.add_argument('setpath', action='store', metavar='PATH', help='path to JSON file of settings')
+
+args = parser.parse_args()
+
+
+print (args.setpath, file=sys.stderr)
+
+
+sys.exit(1)
