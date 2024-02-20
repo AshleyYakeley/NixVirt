@@ -7,7 +7,8 @@ def libvirt_callback(userdata, err):
 libvirt.registerErrorHandler(f=libvirt_callback, ctx=None)
 
 class ObjectConnection:
-    def __init__(self,uri,verbose):
+    def __init__(self,type,uri,verbose):
+        self.type = type
         self.conn = libvirt.open(uri)
         self.verbose = verbose
 
@@ -41,8 +42,7 @@ class ObjectConnection:
 
 class DomainConnection(ObjectConnection):
     def __init__(self,uri,verbose):
-        ObjectConnection.__init__(self,uri,verbose)
-        self.type = "domain"
+        ObjectConnection.__init__(self,"domain",uri,verbose)
     def getAllLV(self):
         return self.conn.listAllDomains()
     def lookupByUUID(self,uuid):
@@ -58,8 +58,7 @@ class DomainConnection(ObjectConnection):
 
 class NetworkConnection(ObjectConnection):
     def __init__(self,uri,verbose):
-        ObjectConnection.__init__(self,uri,verbose)
-        self.type = "network"
+        ObjectConnection.__init__(self,"network",uri,verbose)
     def getAllLV(self):
         return self.conn.listAllNetworks()
     def lookupByUUID(self,uuid):
@@ -74,8 +73,7 @@ class NetworkConnection(ObjectConnection):
 # https://libvirt.org/html/libvirt-libvirt-storage.html
 class PoolConnection(ObjectConnection):
     def __init__(self,uri,verbose):
-        ObjectConnection.__init__(self,uri,verbose)
-        self.type = "pool"
+        ObjectConnection.__init__(self,"pool",uri,verbose)
     def getAllLV(self):
         return self.conn.listAllStoragePools()
     def lookupByUUID(self,uuid):
@@ -130,7 +128,6 @@ class VObject:
     def undefine(self):
         isPersistent = self.lvobj.isPersistent()
         self.deactivate()
-
         if isPersistent:
             self.vreport("undefine")
             self.oc.undefine(self.lvobj)
