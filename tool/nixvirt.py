@@ -58,9 +58,6 @@ class ObjectConnection:
             subject = self.fromXML(specDef)
             subjectDef = subject.XMLDesc()
             defchanged = foundDef != subjectDef
-            if defchanged:
-                print ("old:", foundDef, file=sys.stderr)
-                print ("new:", subjectDef, file=sys.stderr)
             self.vreport(specUUID,"changed" if defchanged else "unchanged")
             if defchanged:
                 found.deactivate()
