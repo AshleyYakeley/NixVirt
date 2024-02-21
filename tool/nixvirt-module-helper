@@ -14,39 +14,19 @@ try:
     conn = nixvirt.getConnection(args.connect)
 
     for (type,key) in [("network","networks"),("pool","pools"),("domain","domains")]:
-        if key in settings:
+        itemlist = settings.get(key)
+        if itemlist is not None:
             oc = nixvirt.getObjectConnection(conn,type,args.verbose)
-            itemlist = settings[key]
             keepUUIDs = []
             for item in itemlist:
                 setstate = item["active"]
-
                 with open(item["definition"],"r") as f:
                     specDef = f.read()
                 specDefXML = lxml.etree.fromstring(specDef)
-                specUUID = uuid.UUID(specDefXML.find("uuid").text).bytes
-                keepUUIDs += [specUUID]
-                found = oc.fromUUIDOrNone(specUUID)
-                if found:
-                    foundActive = found.isActive()
-                    foundDef = found.XMLDesc()
-                    foundDefXML = lxml.etree.fromstring(foundDef)
-                    foundName = foundDefXML.find("name").text
-                    specName = specDefXML.find("name").text
-                    if foundName != specName:
-                        found.undefine()
-                    oc.vreport(specUUID,"redefine")
-                    subject = oc.fromXML(specDef)
-                    subjectDef = subject.XMLDesc()
-                    defchanged = foundDef != subjectDef
-                    oc.vreport(specUUID,"changed" if defchanged else "unchanged")
-                    if defchanged and (setstate != "inactive"):
-                        found.deactivate()
-                        if foundActive:
-                            setstate = "active"
-                else:
-                    oc.vreport(specUUID,"define new")
-                    subject = oc.fromXML(specDef)
+                (subject,deactivated) = oc.define(specDefXML)
+                if deactivated and (setstate is None):
+                    setstate = "active"
+                keepUUIDs += [subject.uuid]
 
                 # set state
                 match setstate:

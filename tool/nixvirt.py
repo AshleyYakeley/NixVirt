@@ -1,4 +1,4 @@
-import sys, uuid, libvirt
+import sys, uuid, lxml, libvirt
 
 # Switch off annoying libvirt stderr messages
 # https://stackoverflow.com/a/45543887
@@ -42,6 +42,36 @@ class ObjectConnection:
 
     def undefine(self,lvobj):
         lvobj.undefine()
+
+    def define(self,specDefXML):
+        specUUID = uuid.UUID(specDefXML.find("uuid").text).bytes
+        found = self.fromUUIDOrNone(specUUID)
+        if found is not None:
+            foundActive = found.isActive()
+            foundDef = found.XMLDesc()
+            foundDefXML = lxml.etree.fromstring(foundDef)
+            foundName = foundDefXML.find("name").text
+            specName = specDefXML.find("name").text
+            if foundName != specName:
+                found.undefine()
+            self.vreport(specUUID,"redefine")
+            subject = self.fromXML(specDef)
+            subjectDef = subject.XMLDesc()
+            defchanged = foundDef != subjectDef
+            if defchanged:
+                print ("old:", foundDef, file=sys.stderr)
+                print ("new:", subjectDef, file=sys.stderr)
+            self.vreport(specUUID,"changed" if defchanged else "unchanged")
+            if defchanged:
+                found.deactivate()
+                deactivated = foundActive
+            else:
+                deactivated = False
+            return (subject,deactivated)
+        else:
+            self.vreport(specUUID,"define new")
+            subject = self.fromXML(specDef)
+            return (subject,False)
 
 class DomainConnection(ObjectConnection):
     def __init__(self,conn,verbose):

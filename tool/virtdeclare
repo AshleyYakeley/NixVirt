@@ -25,28 +25,9 @@ try:
         with open(args.define,"r") as f:
             specDef = f.read()
         specDefXML = lxml.etree.fromstring(specDef)
-        specUUID = uuid.UUID(specDefXML.find("uuid").text).bytes
-        found = oc.fromUUIDOrNone(specUUID)
-        if found:
-            foundActive = found.isActive()
-            foundDef = found.XMLDesc()
-            foundDefXML = lxml.etree.fromstring(foundDef)
-            foundName = foundDefXML.find("name").text
-            specName = specDefXML.find("name").text
-            if foundName != specName:
-                found.undefine()
-            oc.vreport(specUUID,"redefine")
-            subject = oc.fromXML(specDef)
-            subjectDef = subject.XMLDesc()
-            defchanged = foundDef != subjectDef
-            oc.vreport(specUUID,"changed" if defchanged else "unchanged")
-            if defchanged and (setstate != "inactive"):
-                found.deactivate()
-                if foundActive:
-                    setstate = "active"
-        else:
-            oc.vreport(specUUID,"define new")
-            subject = oc.fromXML(specDef)
+        (subject,deactivated) = oc.define(specDefXML)
+        if deactivated and (setstate is None):
+            setstate = "active"
     elif args.uuid:
         specUUID = uuid.UUID(args.uuid).bytes
         subject = oc.fromUUID(specUUID)
