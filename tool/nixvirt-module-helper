@@ -13,10 +13,10 @@ with open(args.settingspath,"r") as f:
 try:
     conn = nixvirt.getConnection(args.connect)
 
-    for type in ["network","pool","domain"]:
-        if type in settings:
+    for (type,key) in [("network","networks"),("pool","pools"),("domain","domains")]:
+        if key in settings:
             oc = nixvirt.getObjectConnection(conn,type,args.verbose)
-            itemlist = settings[type + 's']
+            itemlist = settings[key]
             keepUUIDs = []
             for item in itemlist:
                 setstate = item["active"]
