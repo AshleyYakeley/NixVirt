@@ -7,12 +7,13 @@ parser.add_argument('--connect', action='store', required=True, metavar='URI', h
 parser.add_argument('settingspath', action='store', metavar='PATH', help='path to JSON file of settings')
 args = parser.parse_args()
 
-settings = json.load(args.settingspath)
+with open(args.settingspath,"r") as f:
+    settings = json.load(f)
 
 try:
     conn = nixvirt.getConnection(args.connect)
 
-    for type in ["network","pool","domain"]:
+    for type in ["networks","pools","domains"]:
         if type in settings:
             oc = nixvirt.getObjectConnection(conn,type,args.verbose)
             itemlist = settings[type]
