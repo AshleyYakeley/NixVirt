@@ -6,10 +6,13 @@ def libvirt_callback(userdata, err):
     pass
 libvirt.registerErrorHandler(f=libvirt_callback, ctx=None)
 
+def getConnection(uri):
+    return libvirt.open(uri)
+
 class ObjectConnection:
-    def __init__(self,type,uri,verbose):
+    def __init__(self,type,conn,verbose):
         self.type = type
-        self.conn = libvirt.open(uri)
+        self.conn = conn
         self.verbose = verbose
 
     def vreport(self,objid,msg):
@@ -41,8 +44,8 @@ class ObjectConnection:
         lvobj.undefine()
 
 class DomainConnection(ObjectConnection):
-    def __init__(self,uri,verbose):
-        ObjectConnection.__init__(self,"domain",uri,verbose)
+    def __init__(self,conn,verbose):
+        ObjectConnection.__init__(self,"domain",conn,verbose)
     def getAllLV(self):
         return self.conn.listAllDomains()
     def lookupByUUID(self,uuid):
@@ -57,8 +60,8 @@ class DomainConnection(ObjectConnection):
         lvobj.undefineFlags(flags=72) # VIR_DOMAIN_UNDEFINE_KEEP_NVRAM, VIR_DOMAIN_UNDEFINE_KEEP_TPM, https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainUndefineFlagsValues
 
 class NetworkConnection(ObjectConnection):
-    def __init__(self,uri,verbose):
-        ObjectConnection.__init__(self,"network",uri,verbose)
+    def __init__(self,conn,verbose):
+        ObjectConnection.__init__(self,"network",conn,verbose)
     def getAllLV(self):
         return self.conn.listAllNetworks()
     def lookupByUUID(self,uuid):
@@ -72,8 +75,8 @@ class NetworkConnection(ObjectConnection):
 
 # https://libvirt.org/html/libvirt-libvirt-storage.html
 class PoolConnection(ObjectConnection):
-    def __init__(self,uri,verbose):
-        ObjectConnection.__init__(self,"pool",uri,verbose)
+    def __init__(self,conn,verbose):
+        ObjectConnection.__init__(self,"pool",conn,verbose)
     def getAllLV(self):
         return self.conn.listAllStoragePools()
     def lookupByUUID(self,uuid):
@@ -87,14 +90,17 @@ class PoolConnection(ObjectConnection):
 
 objectTypes = ['domain','network','pool']
 
-def getObjectConnection(uri,type,verbose):
+def getObjectConnection(conn,type,verbose):
     match type:
         case "domain":
-            return DomainConnection(uri,verbose)
+            return DomainConnection(conn,verbose)
         case "network":
-            return NetworkConnection(uri,verbose)
+            return NetworkConnection(conn,verbose)
         case "pool":
-            return PoolConnection(uri,verbose)
+            return PoolConnection(conn,verbose)
+
+def getObjectConnectionFromURI(uri,type,verbose):
+    return getObjectConnection(getConnection(uri),type,verbose)
 
 class VObject:
     def __init__(self,oc,lvobj):

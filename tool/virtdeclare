@@ -18,7 +18,7 @@ args = parser.parse_args()
 setstate = args.state
 
 try:
-    oc = nixvirt.getObjectConnection(args.connect,args.type,args.verbose)
+    oc = nixvirt.getObjectConnectionFromURI(args.connect,args.type,args.verbose)
 
     # fetch / define object
     if args.define:

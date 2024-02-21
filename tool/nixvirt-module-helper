@@ -1,15 +1,67 @@
 #!/usr/bin/python3
-import sys, argparse, uuid, lxml.etree, libvirt, nixvirt
+import sys, argparse, uuid, lxml.etree, json, libvirt, nixvirt
 
 parser = argparse.ArgumentParser(prog='nixvirt-module-helper',description='Define and control a collection of libvirt objects idempotently.')
 parser.add_argument('-v', '--verbose', action='store_true', help='report actions to stderr')
 parser.add_argument('--connect', action='store', required=True, metavar='URI', help='connection URI (e.g. qemu:///session)')
-parser.add_argument('setpath', action='store', metavar='PATH', help='path to JSON file of settings')
-
+parser.add_argument('settingspath', action='store', metavar='PATH', help='path to JSON file of settings')
 args = parser.parse_args()
 
+settings = json.load(args.settingspath)
 
-print (args.setpath, file=sys.stderr)
+try:
+    conn = nixvirt.getConnection(args.connect)
 
+    for type in ["network","pool","domain"]:
+        if type in settings:
+            oc = nixvirt.getObjectConnection(conn,type,args.verbose)
+            itemlist = settings[type]
+            keepUUIDs = []
+            for item in itemlist:
+                setstate = item["active"]
 
-sys.exit(1)
+                with open(item["definition"],"r") as f:
+                    specDef = f.read()
+                specDefXML = lxml.etree.fromstring(specDef)
+                specUUID = uuid.UUID(specDefXML.find("uuid").text).bytes
+                keepUUIDs += [specUUID]
+                found = oc.fromUUIDOrNone(specUUID)
+                if found:
+                    foundActive = found.isActive()
+                    foundDef = found.XMLDesc()
+                    foundDefXML = lxml.etree.fromstring(foundDef)
+                    foundName = foundDefXML.find("name").text
+                    specName = specDefXML.find("name").text
+                    if foundName != specName:
+                        found.undefine()
+                    oc.vreport(specUUID,"redefine")
+                    subject = oc.fromXML(specDef)
+                    subjectDef = subject.XMLDesc()
+                    defchanged = foundDef != subjectDef
+                    oc.vreport(specUUID,"changed" if defchanged else "unchanged")
+                    if defchanged and (setstate != "inactive"):
+                        found.deactivate()
+                        if foundActive:
+                            setstate = "active"
+                else:
+                    oc.vreport(specUUID,"define new")
+                    subject = oc.fromXML(specDef)
+
+                # set state
+                match setstate:
+                    case "active":
+                        subject.activate()
+                    case "inactive":
+                        subject.deactivate()
+
+            allObjects = oc.getAll()
+
+            for object in allObjects:
+                if object.uuid in keepUUIDs:
+                    pass
+                else:
+                    object.undefine()
+
+except libvirt.libvirtError as err:
+    print ("virtdeclare: error:", err, file=sys.stderr)
+    sys.exit(1)

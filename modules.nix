@@ -82,7 +82,7 @@ let
                 opts = getAttr connection cfg.connections;
                 jsonFile = packages.writeText "nixvirt module script" (builtins.toJSON opts);
               in
-              "${moduleHelperFile} --connect ${connection} ${jsonFile}";
+              "${moduleHelperFile} -v --connect ${connection} ${jsonFile}\n";
 
             script = concatStrMap scriptForConnection (builtins.attrNames cfg.connections);
             extraPackages = if cfg.swtpm.enable then [ packages.swtpm ] else [ ];
