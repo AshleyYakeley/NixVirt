@@ -137,7 +137,8 @@ class NetworkConnection(ObjectConnection):
             domainDef = domain.descriptionXML()
             domainDefXML = lxml.etree.fromstring(domainDef)
             intfs = domainDefXML.xpath("/devices/interface")
-            self.vreport(uuid,"interfaces: " + intfs.tostring())
+            for intf in intfs:
+                self.vreport(uuid,"interface: " + intf.tostring())
         return []
 
 # https://libvirt.org/html/libvirt-libvirt-storage.html
