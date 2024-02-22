@@ -21,9 +21,7 @@ class Session:
         self.tempDeactivated.add((oc.type,uuid))
 
     def _wasTempDeactivated(self,oc,uuid):
-        r = (oc.type,uuid) in self.tempDeactivated
-        oc.vreport(uuid,"check WTD: " + str(r))
-        return r
+        return (oc.type,uuid) in self.tempDeactivated
 
 class ObjectConnection:
     def __init__(self,type,session):
