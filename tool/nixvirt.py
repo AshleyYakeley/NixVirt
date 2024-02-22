@@ -134,10 +134,10 @@ class NetworkConnection(ObjectConnection):
     def _getDependents(self,uuid):
         domains = DomainConnection(self.session).getAll()
         for domain in domains:
-            # https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainInterfaceAddressesSource
-            # VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_AGENT
-            ia = domain._lvobj.interfaceAddresses(1)
-            vreport(uuid,"interface: " + str(ia))
+            domainDef = domain.descriptionXML()
+            domainDefXML = lxml.etree.fromstring(domainDef)
+            intfs = domainDefXML.xpath("/devices/interface")
+            vreport(uuid,"interfaces: " + intfs.tostring())
         return []
 
 # https://libvirt.org/html/libvirt-libvirt-storage.html
