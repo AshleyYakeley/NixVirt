@@ -19,10 +19,7 @@ try:
             oc = nixvirt.getObjectConnection(session,type)
             keepUUIDs = []
             for item in itemlist:
-                with open(item["definition"],"r") as f:
-                    specDef = f.read()
-                specDefXML = lxml.etree.fromstring(specDef)
-                subject = oc.fromDefinitionXML(specDefXML)
+                subject = oc.fromDefinitionFile(item["definition"])
                 keepUUIDs += [subject.uuid]
                 subject.setActive(item.get("active"))
 

@@ -65,7 +65,8 @@ class ObjectConnection:
     def _wasTempDeactivated(self,uuid):
         return self.session._wasTempDeactivated(self,uuid)
 
-    def fromDefinitionXML(self,specDefXML):
+    def fromDefinition(self,specDef):
+        specDefXML = lxml.etree.fromstring(specDef)
         specUUID = uuid.UUID(specDefXML.find("uuid").text).bytes
         found = self.fromUUIDOrNone(specUUID)
         if found is not None:
@@ -86,6 +87,11 @@ class ObjectConnection:
         else:
             self.vreport(specUUID,"define new")
             return self._fromXML(specDef)
+
+    def fromDefinitionFile(self,path):
+        with open(path,"r") as f:
+            specDef = f.read()
+        return self.fromDefinition(specDef)
 
 class DomainConnection(ObjectConnection):
     def __init__(self,session):

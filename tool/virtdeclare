@@ -20,10 +20,7 @@ try:
 
     # fetch / define object
     if args.define:
-        with open(args.define,"r") as f:
-            specDef = f.read()
-        specDefXML = lxml.etree.fromstring(specDef)
-        subject = oc.fromDefinitionXML(specDefXML)
+        subject = oc.fromDefinitionFile(args.define)
     elif args.uuid:
         specUUID = uuid.UUID(args.uuid).bytes
         subject = oc.fromUUID(specUUID)
