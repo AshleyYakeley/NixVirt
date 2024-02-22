@@ -112,7 +112,11 @@ class DomainConnection(ObjectConnection):
     def _descriptionXML(self,lvobj):
         return lvobj.XMLDesc(flags=2) # VIR_DOMAIN_XML_INACTIVE, https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainXMLFlags
     def _undefine(self,lvobj):
-        lvobj.undefineFlags(flags=72) # VIR_DOMAIN_UNDEFINE_KEEP_NVRAM, VIR_DOMAIN_UNDEFINE_KEEP_TPM, https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainUndefineFlagsValues
+        # https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainUndefineFlagsValues
+        # VIR_DOMAIN_UNDEFINE_MANAGED_SAVE
+        # VIR_DOMAIN_UNDEFINE_KEEP_NVRAM
+        # VIR_DOMAIN_UNDEFINE_KEEP_TPM
+        lvobj.undefineFlags(flags=73)
 
 class NetworkConnection(ObjectConnection):
     def __init__(self,session):
