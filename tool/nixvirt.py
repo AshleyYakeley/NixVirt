@@ -38,12 +38,12 @@ class ObjectConnection:
     def _fromLVObject(self,lvobj):
         return VObject(self,lvobj) if lvobj else None
 
-    def fromUUID(self,uuid):
-        return self._fromLVObject(self._lookupByUUID(uuid))
+    def fromUUID(self,objid):
+        return self._fromLVObject(self._lookupByUUID(objid))
 
-    def fromUUIDOrNone(self,uuid):
+    def fromUUIDOrNone(self,objid):
         try:
-            return self.fromUUID(uuid)
+            return self.fromUUID(objid)
         except libvirt.libvirtError:
             return None
 
@@ -64,11 +64,11 @@ class ObjectConnection:
         for dependent in dependents:
             dependent._deactivate(temp = True)
 
-    def _recordTempDeactivated(self,uuid):
-        self.session._recordTempDeactivated(self,uuid)
+    def _recordTempDeactivated(self,objid):
+        self.session._recordTempDeactivated(self,objid)
 
-    def _wasTempDeactivated(self,uuid):
-        return self.session._wasTempDeactivated(self,uuid)
+    def _wasTempDeactivated(self,objid):
+        return self.session._wasTempDeactivated(self,objid)
 
     def fromDefinition(self,specDef):
         specDefXML = lxml.etree.fromstring(specDef)
@@ -103,8 +103,8 @@ class DomainConnection(ObjectConnection):
         ObjectConnection.__init__(self,"domain",session)
     def _getAllLV(self):
         return self.conn.listAllDomains()
-    def _lookupByUUID(self,uuid):
-        return self.conn.lookupByUUID(uuid)
+    def _lookupByUUID(self,objid):
+        return self.conn.lookupByUUID(objid)
     def _lookupByName(self,name):
         return self.conn.lookupByName(name)
     def _defineXML(self,defn):
@@ -125,8 +125,8 @@ class NetworkConnection(ObjectConnection):
         ObjectConnection.__init__(self,"network",session)
     def _getAllLV(self):
         return self.conn.listAllNetworks()
-    def _lookupByUUID(self,uuid):
-        return self.conn.networkLookupByUUID(uuid)
+    def _lookupByUUID(self,objid):
+        return self.conn.networkLookupByUUID(objid)
     def _lookupByName(self,name):
         return self.conn.networkLookupByName(name)
     def _defineXML(self,defn):
@@ -142,9 +142,9 @@ class NetworkConnection(ObjectConnection):
         for domain in domains:
             intfs = domain.descriptionXMLETree().xpath("/domain/devices/interface/source/@bridge")
             for intf in intfs:
-                self.vreport(uuid,"interface: " + str(intf))
+                self.vreport(obj.objid,"interface: " + str(intf))
                 for name in names:
-                    self.vreport(uuid,"bridge: " + str(name))
+                    self.vreport(obj.objid,"bridge: " + str(name))
         return []
 
 # https://libvirt.org/html/libvirt-libvirt-storage.html
@@ -153,8 +153,8 @@ class PoolConnection(ObjectConnection):
         ObjectConnection.__init__(self,"pool",session)
     def _getAllLV(self):
         return self.conn.listAllStoragePools()
-    def _lookupByUUID(self,uuid):
-        return self.conn.storagePoolLookupByUUID(uuid)
+    def _lookupByUUID(self,objid):
+        return self.conn.storagePoolLookupByUUID(objid)
     def _lookupByName(self,name):
         return self.conn.storagePoolLookupByName(name)
     def _defineXML(self,defn):
@@ -180,10 +180,10 @@ class VObject:
     def __init__(self,oc,lvobj):
         self.oc = oc
         self._lvobj = lvobj
-        self.uuid = lvobj.UUID()
+        self.objid = lvobj.UUID()
 
     def vreport(self,msg):
-        self.oc.vreport(self.uuid,msg)
+        self.oc.vreport(self.objid,msg)
 
     def isActive(self):
         return self._lvobj.isActive()
@@ -197,7 +197,7 @@ class VObject:
         if self.isActive():
             self.oc._tempDeactivateDependents(self)
             if temp:
-                self.oc._recordTempDeactivated(self.uuid)
+                self.oc._recordTempDeactivated(self.objid)
             self.vreport("deactivate (temporary)" if temp else "deactivate")
             self._lvobj.destroy()
 
@@ -209,7 +209,7 @@ class VObject:
                 self._deactivate()
             case null:
                 # reactivate objects that were temporatily deactivated
-                if self.oc._wasTempDeactivated(self.uuid):
+                if self.oc._wasTempDeactivated(self.objid):
                     self._activate()
 
     def setAutostart(self,a):
