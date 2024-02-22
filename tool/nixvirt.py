@@ -56,8 +56,13 @@ class ObjectConnection:
     def _undefine(self,lvobj):
         lvobj.undefine()
 
+    def _getDependents(self,uuid):
+        return []
+
     def _tempDeactivateDependents(self,uuid):
-        pass
+        dependents = self._getDependents(uuid)
+        for dependent in dependents:
+            dependent._deactivate(temp = True)
 
     def _recordTempDeactivated(self,uuid):
         self.session._recordTempDeactivated(self,uuid)
@@ -122,6 +127,12 @@ class NetworkConnection(ObjectConnection):
         return self.conn.networkDefineXML(defn)
     def _descriptionXML(self,lvobj):
         return lvobj.XMLDesc(flags=1) # VIR_NETWORK_XML_INACTIVE, https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkXMLFlags
+    def _getDependents(self,uuid):
+        domains = DomainConnection(self.session).getAll()
+        for domain in domains:
+            ia = domain._lvobj.interfaceAddresses()
+            vreport(uuid,"interface: " + str(ia))
+        return []
 
 # https://libvirt.org/html/libvirt-libvirt-storage.html
 class PoolConnection(ObjectConnection):
