@@ -17,12 +17,9 @@ try:
     itempairs = [(nixvirt.getObjectConnection(session,type),itemlist) for (type,key) in types if (itemlist := settings.get(key)) is not None]
 
     # do defining and undefining, deactivating as necessary
-    def getSubjectPair ((oc,itemlist)):
+    def getSubjectPair(oc,itemlist):
 
-        def getSubject(item):
-            subject = oc.fromDefinitionFile(item["definition"])
-            return (subject,item)
-        subjectitemlist = map(getSubject,itemlist)
+        subjectitemlist = [(oc.fromDefinitionFile(item["definition"]),item) for item in itemlist]
 
         allObjects = oc.getAll()
         keepUUIDs = [subject.uuid for (subject,item) in subjectitemlist]
@@ -34,7 +31,7 @@ try:
 
         return (oc,subjectitemlist)
 
-    subjectpairs = map(getSubjectPair,itempairs)
+    subjectpairs = [getSubjectPair(oc,itemlist) for (oc,itemlist) in itempairs]
 
     # do activation
     for (oc,subjectitemlist) in subjectpairs
