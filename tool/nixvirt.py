@@ -136,7 +136,7 @@ class NetworkConnection(ObjectConnection):
         for domain in domains:
             domainDef = domain.descriptionXML()
             domainDefXML = lxml.etree.fromstring(domainDef)
-            intfs = domainDefXML.xpath("/domain/devices/interface")
+            intfs = domainDefXML.xpath("/domain/devices/interface/source@bridge")
             for intf in intfs:
                 self.vreport(uuid,"interface: " + lxml.etree.tostring(intf).decode("utf-8"))
         return []
