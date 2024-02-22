@@ -21,7 +21,9 @@ class Session:
         self.tempDeactivated += (oc.type,uuid)
 
     def _wasTempDeactivated(self,oc,uuid):
-        return (oc.type,uuid) in self.tempDeactivated
+        r = (oc.type,uuid) in self.tempDeactivated
+        oc.vreport(uuid,"check WTD: " + str(r))
+        return r
 
 class ObjectConnection:
     def __init__(self,type,session):
@@ -171,7 +173,7 @@ class VObject:
             self.oc._tempDeactivateDependents(self.uuid)
             if temp:
                 self.oc._recordTempDeactivated(self.uuid)
-            self.vreport("deactivate")
+            self.vreport("deactivate (temporary)" if temp else "deactivate")
             self._lvobj.destroy()
 
     def setActive(self,s):
