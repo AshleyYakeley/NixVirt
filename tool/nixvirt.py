@@ -10,7 +10,7 @@ class Session:
     def __init__(self,uri,verbose):
         self.conn = libvirt.open(uri)
         self.verbose = verbose
-        self.tempDeactivated = []
+        self.tempDeactivated = set()
 
     def vreport(self,msg):
         if self.verbose:
@@ -18,7 +18,7 @@ class Session:
 
     # These are all objects that were temporarily deactivated, that is, for reasons other than user request
     def _recordTempDeactivated(self,oc,uuid):
-        self.tempDeactivated += (oc.type,uuid)
+        self.tempDeactivated.add((oc.type,uuid))
 
     def _wasTempDeactivated(self,oc,uuid):
         r = (oc.type,uuid) in self.tempDeactivated
