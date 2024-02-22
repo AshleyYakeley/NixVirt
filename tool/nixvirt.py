@@ -137,15 +137,16 @@ class NetworkConnection(ObjectConnection):
         # VIR_NETWORK_XML_INACTIVE
         return lvobj.XMLDesc(flags=1)
     def _getDependents(self,obj):
-        names = obj.descriptionXMLETree().xpath("/network/bridge/@name")
+        names = [str(name) for name in obj.descriptionXMLETree().xpath("/network/bridge/@name")]
         domains = DomainConnection(self.session).getAll()
+        deps = []
         for domain in domains:
             intfs = domain.descriptionXMLETree().xpath("/domain/devices/interface/source/@bridge")
             for intf in intfs:
-                self.vreport(obj.uuid,"interface: " + str(intf))
-                for name in names:
-                    self.vreport(obj.uuid,"bridge: " + str(name))
-        return []
+                if str(intf) in names:
+                    deps.append(domain)
+                    break
+        return deps
 
 # https://libvirt.org/html/libvirt-libvirt-storage.html
 class PoolConnection(ObjectConnection):
