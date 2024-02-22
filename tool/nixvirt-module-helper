@@ -34,7 +34,7 @@ try:
     subjectpairs = [getSubjectPair(oc,itemlist) for (oc,itemlist) in itempairs]
 
     # do activation
-    for (oc,subjectitemlist) in subjectpairs
+    for (oc,subjectitemlist) in subjectpairs:
         for (subject,item) in subjectitemlist:
             subject.setActive(item.get("active"))
 
