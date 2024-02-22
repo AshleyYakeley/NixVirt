@@ -13,23 +13,33 @@ with open(args.settingspath,"r") as f:
 try:
     session = nixvirt.Session(args.connect,args.verbose)
 
-    for (type,key) in [("network","networks"),("pool","pools"),("domain","domains")]:
-        itemlist = settings.get(key)
-        if itemlist is not None:
-            oc = nixvirt.getObjectConnection(session,type)
-            keepUUIDs = []
-            for item in itemlist:
-                subject = oc.fromDefinitionFile(item["definition"])
-                keepUUIDs += [subject.uuid]
-                subject.setActive(item.get("active"))
+    types = [("network","networks"),("pool","pools"),("domain","domains")]
+    itempairs = [(nixvirt.getObjectConnection(session,type),itemlist) for (type,key) in types if (itemlist := settings.get(key)) is not None]
 
-            allObjects = oc.getAll()
+    # do defining and undefining, deactivating as necessary
+    def getSubjectPair ((oc,itemlist)):
 
-            for object in allObjects:
-                if object.uuid in keepUUIDs:
-                    pass
-                else:
-                    object.undefine()
+        def getSubject(item):
+            subject = oc.fromDefinitionFile(item["definition"])
+            return (subject,item)
+        subjectitemlist = map(getSubject,itemlist)
+
+        allObjects = oc.getAll()
+        keepUUIDs = [subject.uuid for (subject,item) in subjectitemlist]
+        for object in allObjects:
+            if object.uuid in keepUUIDs:
+                pass
+            else:
+                object.undefine()
+
+        return (oc,subjectitemlist)
+
+    subjectpairs = map(getSubjectPair,itempairs)
+
+    # do activation
+    for (oc,subjectitemlist) in subjectpairs
+        for (subject,item) in subjectitemlist:
+            subject.setActive(item.get("active"))
 
 except libvirt.libvirtError as err:
     print ("NixVirt: error:", err, file=sys.stderr)
