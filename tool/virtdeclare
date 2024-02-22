@@ -12,22 +12,18 @@ specgroup.add_argument('--uuid', action='store', metavar='ID', help='object UUID
 specgroup.add_argument('--name', action='store', metavar='ID', help='object name')
 parser.add_argument('--state', action='store', choices = ['active','inactive'], help='state to put object in')
 parser.add_argument('--auto', action='store_true', help='set autostart to match state')
-
 args = parser.parse_args()
 
-setstate = args.state
-
 try:
-    oc = nixvirt.getObjectConnectionFromURI(args.connect,args.type,args.verbose)
+    session = nixvirt.Session(args.connect,args.verbose)
+    oc = nixvirt.getObjectConnection(session,args.type)
 
     # fetch / define object
     if args.define:
         with open(args.define,"r") as f:
             specDef = f.read()
         specDefXML = lxml.etree.fromstring(specDef)
-        (subject,deactivated) = oc.define(specDefXML)
-        if deactivated and (setstate is None):
-            setstate = "active"
+        subject = oc.fromDefinitionXML(specDefXML)
     elif args.uuid:
         specUUID = uuid.UUID(args.uuid).bytes
         subject = oc.fromUUID(specUUID)
@@ -35,11 +31,13 @@ try:
         subject = oc.fromName(args.name)
 
     # set state
-    match setstate:
+    match args.state:
         case "active":
-            subject.activate()
+            subject.setActive(True)
         case "inactive":
-            subject.deactivate()
+            subject.setActive(False)
+        case None:
+            subject.setActive(None)
 
     # set autostart
     if args.auto:

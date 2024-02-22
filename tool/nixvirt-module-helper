@@ -11,29 +11,20 @@ with open(args.settingspath,"r") as f:
     settings = json.load(f)
 
 try:
-    conn = nixvirt.getConnection(args.connect)
+    session = nixvirt.Session(args.connect,args.verbose)
 
     for (type,key) in [("network","networks"),("pool","pools"),("domain","domains")]:
         itemlist = settings.get(key)
         if itemlist is not None:
-            oc = nixvirt.getObjectConnection(conn,type,args.verbose)
+            oc = nixvirt.getObjectConnection(session,type)
             keepUUIDs = []
             for item in itemlist:
-                setstate = item["active"]
                 with open(item["definition"],"r") as f:
                     specDef = f.read()
                 specDefXML = lxml.etree.fromstring(specDef)
-                (subject,deactivated) = oc.define(specDefXML)
-                if deactivated and (setstate is None):
-                    setstate = "active"
+                subject = oc.fromDefinitionXML(specDefXML)
                 keepUUIDs += [subject.uuid]
-
-                # set state
-                match setstate:
-                    case "active":
-                        subject.activate()
-                    case "inactive":
-                        subject.deactivate()
+                subject.setActive(item.get("active"))
 
             allObjects = oc.getAll()
 
@@ -44,5 +35,5 @@ try:
                     object.undefine()
 
 except libvirt.libvirtError as err:
-    print ("virtdeclare: error:", err, file=sys.stderr)
+    print ("NixVirt: error:", err, file=sys.stderr)
     sys.exit(1)

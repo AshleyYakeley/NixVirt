@@ -6,27 +6,40 @@ def libvirt_callback(userdata, err):
     pass
 libvirt.registerErrorHandler(f=libvirt_callback, ctx=None)
 
-def getConnection(uri):
-    return libvirt.open(uri)
+class Session:
+    def __init__(self,uri,verbose):
+        self.conn = libvirt.open(uri)
+        self.verbose = verbose
+        self.tempDeactivated = []
+
+    def vreport(self,msg):
+        if self.verbose:
+            print (msg, file=sys.stderr)
+
+    # These are all objects that were temporarily deactivated, that is, for reasons other than user request
+    def _recordTempDeactivated(self,oc,uuid):
+        self.tempDeactivated += (oc.type,uuid)
+
+    def _wasTempDeactivated(self,oc,uuid):
+        return (oc.type,uuid) in self.tempDeactivated
 
 class ObjectConnection:
-    def __init__(self,type,conn,verbose):
+    def __init__(self,type,session):
         self.type = type
-        self.conn = conn
-        self.verbose = verbose
+        self.session = session
+        self.conn = session.conn
 
     def vreport(self,objid,msg):
-        if self.verbose:
-            print (self.type + " " + str(uuid.UUID(bytes=objid)) + ": " + msg, file=sys.stderr)
+        self.session.vreport(self.type + " " + str(uuid.UUID(bytes=objid)) + ": " + msg)
 
     def getAll(self):
-        return map(lambda lvobj: VObject(self,lvobj), self.getAllLV())
+        return map(lambda lvobj: VObject(self,lvobj), self._getAllLV())
 
-    def fromLVObject(self,lvobj):
+    def _fromLVObject(self,lvobj):
         return VObject(self,lvobj) if lvobj else None
 
     def fromUUID(self,uuid):
-        return self.fromLVObject(self.lookupByUUID(uuid))
+        return self._fromLVObject(self._lookupByUUID(uuid))
 
     def fromUUIDOrNone(self,uuid):
         try:
@@ -35,132 +48,147 @@ class ObjectConnection:
             return None
 
     def fromName(self,name):
-        return self.fromLVObject(self.lookupByName(name))
+        return self._fromLVObject(self._lookupByName(name))
 
-    def fromXML(self,defn):
-        return self.fromLVObject(self.defineXML(defn))
+    def _fromXML(self,defn):
+        return self._fromLVObject(self._defineXML(defn))
 
-    def undefine(self,lvobj):
+    def _undefine(self,lvobj):
         lvobj.undefine()
 
-    def define(self,specDefXML):
+    def _tempDeactivateDependents(self,uuid):
+        pass
+
+    def _recordTempDeactivated(self,uuid):
+        self.session._recordTempDeactivated(self,uuid)
+
+    def _wasTempDeactivated(self,uuid):
+        return self.session._wasTempDeactivated(self,uuid)
+
+    def fromDefinitionXML(self,specDefXML):
         specUUID = uuid.UUID(specDefXML.find("uuid").text).bytes
         found = self.fromUUIDOrNone(specUUID)
         if found is not None:
-            foundActive = found.isActive()
-            foundDef = found.XMLDesc()
+            foundDef = found.descriptionXML()
             foundDefXML = lxml.etree.fromstring(foundDef)
             foundName = foundDefXML.find("name").text
             specName = specDefXML.find("name").text
             if foundName != specName:
                 found.undefine()
             self.vreport(specUUID,"redefine")
-            subject = self.fromXML(specDef)
-            subjectDef = subject.XMLDesc()
+            subject = self._fromXML(specDef)
+            subjectDef = subject.descriptionXML()
             defchanged = foundDef != subjectDef
             self.vreport(specUUID,"changed" if defchanged else "unchanged")
             if defchanged:
-                found.deactivate()
-                deactivated = foundActive
-            else:
-                deactivated = False
-            return (subject,deactivated)
+                found._deactivate(temp = True)
+            return subject
         else:
             self.vreport(specUUID,"define new")
-            subject = self.fromXML(specDef)
-            return (subject,False)
+            return self._fromXML(specDef)
 
 class DomainConnection(ObjectConnection):
-    def __init__(self,conn,verbose):
-        ObjectConnection.__init__(self,"domain",conn,verbose)
-    def getAllLV(self):
+    def __init__(self,session):
+        ObjectConnection.__init__(self,"domain",session)
+    def _getAllLV(self):
         return self.conn.listAllDomains()
-    def lookupByUUID(self,uuid):
+    def _lookupByUUID(self,uuid):
         return self.conn.lookupByUUID(uuid)
-    def lookupByName(self,name):
+    def _lookupByName(self,name):
         return self.conn.lookupByName(name)
-    def defineXML(self,defn):
+    def _defineXML(self,defn):
         return self.conn.defineXML(defn)
-    def XMLDesc(self,lvobj):
+    def _descriptionXML(self,lvobj):
         return lvobj.XMLDesc(flags=2) # VIR_DOMAIN_XML_INACTIVE, https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainXMLFlags
-    def undefine(self,lvobj):
+    def _undefine(self,lvobj):
         lvobj.undefineFlags(flags=72) # VIR_DOMAIN_UNDEFINE_KEEP_NVRAM, VIR_DOMAIN_UNDEFINE_KEEP_TPM, https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainUndefineFlagsValues
 
 class NetworkConnection(ObjectConnection):
-    def __init__(self,conn,verbose):
-        ObjectConnection.__init__(self,"network",conn,verbose)
-    def getAllLV(self):
+    def __init__(self,session):
+        ObjectConnection.__init__(self,"network",session)
+    def _getAllLV(self):
         return self.conn.listAllNetworks()
-    def lookupByUUID(self,uuid):
+    def _lookupByUUID(self,uuid):
         return self.conn.networkLookupByUUID(uuid)
-    def lookupByName(self,name):
+    def _lookupByName(self,name):
         return self.conn.networkLookupByName(name)
-    def defineXML(self,defn):
+    def _defineXML(self,defn):
         return self.conn.networkDefineXML(defn)
-    def XMLDesc(self,lvobj):
+    def _descriptionXML(self,lvobj):
         return lvobj.XMLDesc(flags=1) # VIR_NETWORK_XML_INACTIVE, https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkXMLFlags
 
 # https://libvirt.org/html/libvirt-libvirt-storage.html
 class PoolConnection(ObjectConnection):
-    def __init__(self,conn,verbose):
-        ObjectConnection.__init__(self,"pool",conn,verbose)
-    def getAllLV(self):
+    def __init__(self,session):
+        ObjectConnection.__init__(self,"pool",session)
+    def _getAllLV(self):
         return self.conn.listAllStoragePools()
-    def lookupByUUID(self,uuid):
+    def _lookupByUUID(self,uuid):
         return self.conn.storagePoolLookupByUUID(uuid)
-    def lookupByName(self,name):
+    def _lookupByName(self,name):
         return self.conn.storagePoolLookupByName(name)
-    def defineXML(self,defn):
+    def _defineXML(self,defn):
         return self.conn.storagePoolDefineXML(defn) # https://libvirt.org/formatstorage.html
-    def XMLDesc(self,lvobj):
+    def _descriptionXML(self,lvobj):
         return lvobj.XMLDesc(flags=1) # VIR_STORAGE_XML_INACTIVE, https://libvirt.org/html/libvirt-libvirt-storage.html#virStorageXMLFlags
 
 objectTypes = ['domain','network','pool']
 
-def getObjectConnection(conn,type,verbose):
+def getObjectConnection(session,type):
     match type:
         case "domain":
-            return DomainConnection(conn,verbose)
+            return DomainConnection(session)
         case "network":
-            return NetworkConnection(conn,verbose)
+            return NetworkConnection(session)
         case "pool":
-            return PoolConnection(conn,verbose)
-
-def getObjectConnectionFromURI(uri,type,verbose):
-    return getObjectConnection(getConnection(uri),type,verbose)
+            return PoolConnection(session)
 
 class VObject:
     def __init__(self,oc,lvobj):
         self.oc = oc
-        self.lvobj = lvobj
+        self._lvobj = lvobj
         self.uuid = lvobj.UUID()
 
     def vreport(self,msg):
         self.oc.vreport(self.uuid,msg)
 
     def isActive(self):
-        return self.lvobj.isActive()
+        return self._lvobj.isActive()
 
-    def activate(self):
+    def _activate(self):
         if not self.isActive():
             self.vreport("activate")
-            self.lvobj.create()
+            self._lvobj.create()
 
-    def deactivate(self):
+    def _deactivate(self,temp = False):
         if self.isActive():
+            self.oc._tempDeactivateDependents(self.uuid)
+            if temp:
+                self.oc._recordTempDeactivated(self.uuid)
             self.vreport("deactivate")
-            self.lvobj.destroy()
+            self._lvobj.destroy()
+
+    def setActive(self,s):
+        match s:
+            case True:
+                self._activate()
+            case False:
+                self._deactivate()
+            case null:
+                # reactivate objects that were temporatily deactivated
+                if self.oc._wasTempDeactivated(self.uuid):
+                    self._activate()
 
     def setAutostart(self,a):
         self.vreport("set autostart true" if a else "set autostart false")
-        self.lvobj.setAutostart(a)
+        self._lvobj.setAutostart(a)
 
-    def XMLDesc(self):
-        return self.oc.XMLDesc(self.lvobj)
+    def descriptionXML(self):
+        return self.oc._descriptionXML(self._lvobj)
 
     def undefine(self):
-        isPersistent = self.lvobj.isPersistent()
-        self.deactivate()
+        isPersistent = self._lvobj.isPersistent()
+        self._deactivate()
         if isPersistent:
             self.vreport("undefine")
-            self.oc.undefine(self.lvobj)
+            self.oc._undefine(self._lvobj)
