@@ -7,6 +7,7 @@
     * Set `libvirtd` package to match `libvirt` (NixOS)
     * Added `virtualisation.libvirt.swtpm.enable` option
     * Deactivate domains on network change
+    * Added `virtualisation.libvirt.verbose` option
 * Lib:
     * Improved XML generation
     * Provided templates for network and domains

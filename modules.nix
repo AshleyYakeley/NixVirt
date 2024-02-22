@@ -36,6 +36,12 @@ let
               default = false;
               description = "Enable management of libvirt objects";
             };
+          verbose = lib.mkOption
+            {
+              type = bool;
+              default = false;
+              description = "Verbose output during module activation (for debugging)";
+            };
           swtpm.enable = lib.mkOption
             {
               type = bool;
@@ -81,8 +87,9 @@ let
               let
                 opts = getAttr connection cfg.connections;
                 jsonFile = packages.writeText "nixvirt module script" (builtins.toJSON opts);
+                verboseFlag = if cfg.verbose then "-v" else "";
               in
-              "${moduleHelperFile} -v --connect ${connection} ${jsonFile}\n";
+              "${moduleHelperFile} ${verboseFlag} --connect ${connection} ${jsonFile}\n";
 
             script = concatStrMap scriptForConnection (builtins.attrNames cfg.connections);
             extraPackages = if cfg.swtpm.enable then [ packages.swtpm ] else [ ];
