@@ -134,7 +134,9 @@ class NetworkConnection(ObjectConnection):
     def _getDependents(self,uuid):
         domains = DomainConnection(self.session).getAll()
         for domain in domains:
-            ia = domain._lvobj.interfaceAddresses()
+            # https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainInterfaceAddressesSource
+            # VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_AGENT
+            ia = domain._lvobj.interfaceAddresses(1)
             vreport(uuid,"interface: " + str(ia))
         return []
 
