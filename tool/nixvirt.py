@@ -142,9 +142,9 @@ class NetworkConnection(ObjectConnection):
         for domain in domains:
             intfs = domain.descriptionXMLETree().xpath("/domain/devices/interface/source/@bridge")
             for intf in intfs:
-                self.vreport(obj.objid,"interface: " + str(intf))
+                self.vreport(obj.uuid,"interface: " + str(intf))
                 for name in names:
-                    self.vreport(obj.objid,"bridge: " + str(name))
+                    self.vreport(obj.uuid,"bridge: " + str(name))
         return []
 
 # https://libvirt.org/html/libvirt-libvirt-storage.html
@@ -180,10 +180,10 @@ class VObject:
     def __init__(self,oc,lvobj):
         self.oc = oc
         self._lvobj = lvobj
-        self.objid = lvobj.UUID()
+        self.uuid = lvobj.UUID()
 
     def vreport(self,msg):
-        self.oc.vreport(self.objid,msg)
+        self.oc.vreport(self.uuid,msg)
 
     def isActive(self):
         return self._lvobj.isActive()
@@ -197,7 +197,7 @@ class VObject:
         if self.isActive():
             self.oc._tempDeactivateDependents(self)
             if temp:
-                self.oc._recordTempDeactivated(self.objid)
+                self.oc._recordTempDeactivated(self.uuid)
             self.vreport("deactivate (temporary)" if temp else "deactivate")
             self._lvobj.destroy()
 
@@ -209,7 +209,7 @@ class VObject:
                 self._deactivate()
             case null:
                 # reactivate objects that were temporatily deactivated
-                if self.oc._wasTempDeactivated(self.objid):
+                if self.oc._wasTempDeactivated(self.uuid):
                     self._activate()
 
     def setAutostart(self,a):
