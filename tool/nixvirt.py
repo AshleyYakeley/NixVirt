@@ -56,11 +56,11 @@ class ObjectConnection:
     def _undefine(self,lvobj):
         lvobj.undefine()
 
-    def _getDependents(self,uuid):
+    def _getDependents(self,obj):
         return []
 
-    def _tempDeactivateDependents(self,uuid):
-        dependents = self._getDependents(uuid)
+    def _tempDeactivateDependents(self,obj):
+        dependents = self._getDependents(obj)
         for dependent in dependents:
             dependent._deactivate(temp = True)
 
@@ -75,7 +75,7 @@ class ObjectConnection:
         specUUID = uuid.UUID(specDefXML.find("uuid").text).bytes
         found = self.fromUUIDOrNone(specUUID)
         if found is not None:
-            foundDef = found.descriptionXML()
+            foundDef = found.descriptionXMLText()
             foundDefXML = lxml.etree.fromstring(foundDef)
             foundName = foundDefXML.find("name").text
             specName = specDefXML.find("name").text
@@ -83,7 +83,7 @@ class ObjectConnection:
                 found.undefine()
             self.vreport(specUUID,"redefine")
             subject = self._fromXML(specDef)
-            subjectDef = subject.descriptionXML()
+            subjectDef = subject.descriptionXMLText()
             defchanged = foundDef != subjectDef
             self.vreport(specUUID,"changed" if defchanged else "unchanged")
             if defchanged:
@@ -109,8 +109,10 @@ class DomainConnection(ObjectConnection):
         return self.conn.lookupByName(name)
     def _defineXML(self,defn):
         return self.conn.defineXML(defn)
-    def _descriptionXML(self,lvobj):
-        return lvobj.XMLDesc(flags=2) # VIR_DOMAIN_XML_INACTIVE, https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainXMLFlags
+    def _descriptionXMLText(self,lvobj):
+        # https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainXMLFlags
+        # VIR_DOMAIN_XML_INACTIVE
+        return lvobj.XMLDesc(flags=2)
     def _undefine(self,lvobj):
         # https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainUndefineFlagsValues
         # VIR_DOMAIN_UNDEFINE_MANAGED_SAVE
@@ -128,17 +130,21 @@ class NetworkConnection(ObjectConnection):
     def _lookupByName(self,name):
         return self.conn.networkLookupByName(name)
     def _defineXML(self,defn):
+        # https://libvirt.org/formatnetwork.html
         return self.conn.networkDefineXML(defn)
-    def _descriptionXML(self,lvobj):
-        return lvobj.XMLDesc(flags=1) # VIR_NETWORK_XML_INACTIVE, https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkXMLFlags
-    def _getDependents(self,uuid):
+    def _descriptionXMLText(self,lvobj):
+        # https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkXMLFlags
+        # VIR_NETWORK_XML_INACTIVE
+        return lvobj.XMLDesc(flags=1)
+    def _getDependents(self,obj):
+        names = obj.descriptionXMLETree().xpath("/network/bridge/@name")
         domains = DomainConnection(self.session).getAll()
         for domain in domains:
-            domainDef = domain.descriptionXML()
-            domainDefXML = lxml.etree.fromstring(domainDef)
-            intfs = domainDefXML.xpath("/domain/devices/interface/source/@bridge")
+            intfs = domain.descriptionXMLETree().xpath("/domain/devices/interface/source/@bridge")
             for intf in intfs:
                 self.vreport(uuid,"interface: " + str(intf))
+                for name in names:
+                    self.vreport(uuid,"bridge: " + str(name))
         return []
 
 # https://libvirt.org/html/libvirt-libvirt-storage.html
@@ -152,9 +158,12 @@ class PoolConnection(ObjectConnection):
     def _lookupByName(self,name):
         return self.conn.storagePoolLookupByName(name)
     def _defineXML(self,defn):
-        return self.conn.storagePoolDefineXML(defn) # https://libvirt.org/formatstorage.html
-    def _descriptionXML(self,lvobj):
-        return lvobj.XMLDesc(flags=1) # VIR_STORAGE_XML_INACTIVE, https://libvirt.org/html/libvirt-libvirt-storage.html#virStorageXMLFlags
+        # https://libvirt.org/formatstorage.html
+        return self.conn.storagePoolDefineXML(defn)
+    def _descriptionXMLText(self,lvobj):
+        # https://libvirt.org/html/libvirt-libvirt-storage.html#virStorageXMLFlags
+        # VIR_STORAGE_XML_INACTIVE
+        return lvobj.XMLDesc(flags=1)
 
 objectTypes = ['domain','network','pool']
 
@@ -186,7 +195,7 @@ class VObject:
 
     def _deactivate(self,temp = False):
         if self.isActive():
-            self.oc._tempDeactivateDependents(self.uuid)
+            self.oc._tempDeactivateDependents(self)
             if temp:
                 self.oc._recordTempDeactivated(self.uuid)
             self.vreport("deactivate (temporary)" if temp else "deactivate")
@@ -207,8 +216,11 @@ class VObject:
         self.vreport("set autostart true" if a else "set autostart false")
         self._lvobj.setAutostart(a)
 
-    def descriptionXML(self):
-        return self.oc._descriptionXML(self._lvobj)
+    def descriptionXMLText(self):
+        return self.oc._descriptionXMLText(self._lvobj)
+
+    def descriptionXMLETree(self):
+        return lxml.etree.fromstring(self.descriptionXMLText())
 
     def undefine(self):
         isPersistent = self._lvobj.isPersistent()
