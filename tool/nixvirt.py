@@ -10,18 +10,10 @@ class Session:
     def __init__(self,uri,verbose):
         self.conn = libvirt.open(uri)
         self.verbose = verbose
-        self.tempDeactivated = set()
 
     def vreport(self,msg):
         if self.verbose:
             print (msg, file=sys.stderr)
-
-    # These are all objects that were temporarily deactivated, that is, for reasons other than user request
-    def _recordTempDeactivated(self,oc,uuid):
-        self.tempDeactivated.add((oc.type,uuid))
-
-    def _wasTempDeactivated(self,oc,uuid):
-        return (oc.type,uuid) in self.tempDeactivated
 
 class ObjectConnection:
     def __init__(self,type,session):
@@ -62,13 +54,7 @@ class ObjectConnection:
     def _tempDeactivateDependents(self,obj):
         dependents = self._getDependents(obj)
         for dependent in dependents:
-            dependent._deactivate(temp = True)
-
-    def _recordTempDeactivated(self,objid):
-        self.session._recordTempDeactivated(self,objid)
-
-    def _wasTempDeactivated(self,objid):
-        return self.session._wasTempDeactivated(self,objid)
+            dependent._deactivate()
 
     def fromDefinition(self,specDef):
         specDefXML = lxml.etree.fromstring(specDef)
@@ -87,7 +73,7 @@ class ObjectConnection:
             defchanged = foundDef != subjectDef
             self.vreport(specUUID,"changed" if defchanged else "unchanged")
             if defchanged:
-                found._deactivate(temp = True)
+                found._deactivate()
             return subject
         else:
             self.vreport(specUUID,"define new")
@@ -182,6 +168,7 @@ class VObject:
         self.oc = oc
         self._lvobj = lvobj
         self.uuid = lvobj.UUID()
+        self.originalIsActive = self.isActive()
 
     def vreport(self,msg):
         self.oc.vreport(self.uuid,msg)
@@ -194,24 +181,20 @@ class VObject:
             self.vreport("activate")
             self._lvobj.create()
 
-    def _deactivate(self,temp = False):
+    def _deactivate(self):
         if self.isActive():
             self.oc._tempDeactivateDependents(self)
-            if temp:
-                self.oc._recordTempDeactivated(self.uuid)
             self.vreport("deactivate (temporary)" if temp else "deactivate")
             self._lvobj.destroy()
 
     def setActive(self,s):
-        match s:
-            case True:
-                self._activate()
-            case False:
-                self._deactivate()
-            case null:
-                # reactivate objects that were temporatily deactivated
-                if self.oc._wasTempDeactivated(self.uuid):
-                    self._activate()
+        if s is None:
+            # reactivate objects that were temporatily deactivated
+            s = self.originalIsActive
+        if s:
+            self._activate()
+        else:
+            self._deactivate()
 
     def setAutostart(self,a):
         self.vreport("set autostart true" if a else "set autostart false")
