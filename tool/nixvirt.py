@@ -184,7 +184,7 @@ class VObject:
     def _deactivate(self):
         if self.isActive():
             self.oc._tempDeactivateDependents(self)
-            self.vreport("deactivate (temporary)" if temp else "deactivate")
+            self.vreport("deactivate")
             self._lvobj.destroy()
 
     def setActive(self,s):
