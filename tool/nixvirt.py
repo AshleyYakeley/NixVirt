@@ -121,19 +121,19 @@ class NetworkConnection(ObjectConnection):
         # VIR_NETWORK_XML_INACTIVE
         return lvobj.XMLDesc(flags=1)
     def _getDependents(self,obj):
-        networknames = [str(name) for name in obj.descriptionXMLETree().xpath("/network/name")]
-        bridgenames = [str(name) for name in obj.descriptionXMLETree().xpath("/network/bridge/@name")]
+        networknames = [name.text for name in obj.descriptionXMLETree().xpath("/network/name")]
+        bridgenames = [name.text for name in obj.descriptionXMLETree().xpath("/network/bridge/@name")]
         domains = DomainConnection(self.session).getAll()
         deps = []
         for domain in domains:
             domainbridgenames = domain.descriptionXMLETree().xpath("/domain/devices/interface[@type='bridge']/source/@bridge")
             for name in domainbridgenames:
-                if str(name) in bridgenames:
+                if name.text in bridgenames:
                     deps.append(domain)
                     break
             domainnetworknames = domain.descriptionXMLETree().xpath("/domain/devices/interface[@type='network']/source/@network")
             for name in domainnetworknames:
-                if str(name) in networknames:
+                if name.text in networknames:
                     deps.append(domain)
                     break
         return deps
