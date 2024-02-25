@@ -10,34 +10,55 @@ args = parser.parse_args()
 with open(args.settingspath,"r") as f:
     settings = json.load(f)
 
-try:
-    session = nixvirt.Session(args.connect,args.verbose)
+class TypeSpec:
+    def __init__(self,session,type,itemlist):
+        self.oc = nixvirt.getObjectConnection(session,type)
+        self.specList = [nixvirt.ObjectSpec.fromDefinitionFile(self.oc,item["definition"],item.get("active")) for item in itemlist]
 
-    types = [("network","networks"),("pool","pools"),("domain","domains")]
-    itempairs = [(nixvirt.getObjectConnection(session,type),itemlist) for (type,key) in types if (itemlist := settings.get(key)) is not None]
-
-    # do defining and undefining, deactivating as necessary
-    def getSubjectPair(oc,itemlist):
-
-        subjectitemlist = [(oc.fromDefinitionFile(item["definition"]),item) for item in itemlist]
-
-        allObjects = oc.getAll()
-        keepUUIDs = [subject.uuid for (subject,item) in subjectitemlist]
+    def deleteOld(self):
+        allObjects = self.oc.getAll()
+        keepUUIDs = [objspec.specUUID for objspec in self.specList]
         for object in allObjects:
             if object.uuid in keepUUIDs:
                 pass
             else:
                 object.undefine()
 
-        return (oc,subjectitemlist)
+    def define(self):
+        for objspec in self.specList:
+            objspec.define()
 
-    subjectpairs = [getSubjectPair(oc,itemlist) for (oc,itemlist) in itempairs]
+    def setActive(self):
+        for objspec in self.specList:
+            objspec.setActive()
+
+try:
+    session = nixvirt.Session(args.connect,args.verbose)
+
+    types = [("network","networks"),("pool","pools"),("domain","domains")]
+
+    typeSpecs = []
+    for (type,key) in types:
+        itemlist = settings.get(key)
+        if itemlist is not None:
+            typeSpecs.append(TypeSpec(session,type,itemlist))
+
+    # delete old stuff
+    for typeSpec in typeSpecs:
+        typeSpec.deleteOld()
+
+    # define new stuff
+    for typeSpec in typeSpecs:
+        typeSpec.define()
 
     # do activation
-    for (oc,subjectitemlist) in subjectpairs:
-        for (subject,item) in subjectitemlist:
-            subject.setActive(item.get("active"))
+    for typeSpec in typeSpecs:
+        typeSpec.setActive()
 
 except libvirt.libvirtError as err:
-    print ("NixVirt: error:", err, file=sys.stderr)
+    print ("NixVirt: libvirt error:", err, file=sys.stderr)
+    sys.exit(1)
+
+except lxml.etree.XMLSyntaxError as err:
+    print ("NixVirt: XML error:", err, file=sys.stderr)
     sys.exit(1)

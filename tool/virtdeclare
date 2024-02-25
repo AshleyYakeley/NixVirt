@@ -14,36 +14,42 @@ parser.add_argument('--state', action='store', choices = ['active','inactive'], 
 parser.add_argument('--auto', action='store_true', help='set autostart to match state')
 args = parser.parse_args()
 
+    # set state
+match args.state:
+    case "active":
+        active = True
+    case "inactive":
+        active = False
+    case None:
+        active = None
+
 try:
     session = nixvirt.Session(args.connect,args.verbose)
     oc = nixvirt.getObjectConnection(session,args.type)
 
-    # fetch / define object
+    # fetch object
     if args.define:
-        subject = oc.fromDefinitionFile(args.define)
+        spec = nixvirt.ObjectSpec.fromDefinitionFile(oc,args.define,active)
     elif args.uuid:
         specUUID = uuid.UUID(args.uuid).bytes
-        subject = oc.fromUUID(specUUID)
+        spec = nixvirt.ObjectSpec.fromUUID(oc,specUUID,active)
     else:
-        subject = oc.fromName(args.name)
+        spec = nixvirt.ObjectSpec.fromName(oc,args.name,active)
+
+    # define object
+    spec.define()
 
     # set state
-    match args.state:
-        case "active":
-            subject.setActive(True)
-        case "inactive":
-            subject.setActive(False)
-        case None:
-            subject.setActive(None)
+    spec.setActive()
 
     # set autostart
-    if args.auto:
-        match args.state:
-            case "active":
-                subject.setAutostart(True)
-            case "inactive":
-                subject.setAutostart(False)
+    if args.auto and (active is not None):
+        spec.subject.setAutostart(active)
 
 except libvirt.libvirtError as err:
-    print ("virtdeclare: error:", err, file=sys.stderr)
+    print ("virtdeclare: libvirt error:", err, file=sys.stderr)
+    sys.exit(1)
+
+except lxml.etree.XMLSyntaxError as err:
+    print ("virtdeclare: XML error:", err, file=sys.stderr)
     sys.exit(1)

@@ -30,7 +30,6 @@
       <readonly/>
     </disk>
     <interface type='bridge'>
-      <mac address='52:54:00:02:04:06'/>
       <source bridge='virbr0'/>
       <model type='virtio'/>
     </interface>

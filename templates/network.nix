@@ -1,6 +1,6 @@
 stuff:
 {
-  bridge = { name ? "default", uuid, bridge_name ? "virbr0", mac_address, subnet_byte }:
+  bridge = { name ? "default", uuid, bridge_name ? "virbr0", subnet_byte }:
     let
       prefix = "192.168.${builtins.toString subnet_byte}.";
     in
@@ -19,7 +19,6 @@ stuff:
             };
         };
       bridge = { name = bridge_name; };
-      mac = { address = mac_address; };
       ip =
         {
           address = "${prefix}1";

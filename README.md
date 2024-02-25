@@ -160,7 +160,6 @@ These are the arguments:
 * `uuid`: the libvirt identifier (UUID string, required)
 * `memory`: amount of RAM (set with `count` (integer) and `unit` (string) attributes, default `{ count = 2; unit = "GiB"; }`)
 * `storage_vol_path`: path to a QCOW2 volume for storage (string or path, required)
-* `mac_address`: MAC address (string, required)
 * `install_vol_path`: path to an ISO image for an inserted CDROM, or null (string or path, default `null`)
 * `virtio_net`: whether to use VirtIO for networking (faster, but may require special guest drivers) (boolean, default `false`)
 
@@ -174,7 +173,6 @@ These are the arguments:
 * `uuid`: the libvirt identifier (UUID string, required)
 * `memory`: amount of RAM (set with `count` (integer) and `unit` (string) attributes, default `{ count = 4; unit = "GiB"; }`)
 * `storage_vol_path`: path to a QCOW2 volume for storage (string or path, required)
-* `mac_address`: MAC address (string, required)
 * `install_vol_path`: path to an ISO image for an inserted CDROM, or null (string or path, default `null`)
 
 ##### Example
@@ -191,7 +189,6 @@ virtualisation.libvirt.connections."qemu:///session".domains =
           uuid = "cc7439ed-36af-4696-a6f2-1f0c4474d87e";
           memory = { count = 6; unit = "GiB"; };
           storage_vol_path = /home/ashley/VM-Storage/MyPool/Penguin.qcow2;
-          mac_address = "52:54:00:d4:ae:7f";
         });
     }
   ];
@@ -208,7 +205,6 @@ These are the arguments:
 * `uuid`: the libvirt identifier (UUID string, required)
 * `memory`: amount of RAM (set with `count` (integer) and `unit` (string) attributes, default `{ count = 4; unit = "GiB"; }`)
 * `storage_vol_path`: path to a QCOW2 volume for storage (string or path, required)
-* `mac_address`: MAC address (string, required)
 * `install_vol_path`: path to an ISO image for an inserted CDROM, or null (string or path, default `null`)
 * `nvram_path`: path to a file for storing NVRAM, this file will be created if missing (string or path, required)
 * `virtio_net`: whether to use VirtIO for networking: this is faster, but requires installing a driver during Windows 11 installation (boolean, default `false`)
@@ -230,7 +226,6 @@ virtualisation.libvirt.connections."qemu:///session".domains =
           uuid = "def734bb-e2ca-44ee-80f5-0ea0f2593aaa";
           memory = { count = 8; unit = "GiB"; };
           storage_vol_path = /home/ashley/VM-Storage/MyPool/Bellevue.qcow2;
-          mac_address = "52:54:00:71:74:8e";
           install_vol_path = /home/ashley/VM-Storage/Win11_23H2_EnglishInternational_x64v2.iso;
           nvram_path = /home/ashley/VM-Storage/Bellevue.nvram;
           virtio_net = true;
@@ -284,7 +279,6 @@ These are the arguments:
 * `name`: the libvirt name (string, default `"default"`)
 * `uuid`: the libvirt identifier (UUID string, required)
 * `bridge_name`: the network name this bridge will create (string, default `"virbr0"`)
-* `mac_address`: MAC address (string, required)
 * `subnet_byte`: byte of the subnet (integer in range 1-254, required). Given x, the subnet of the bridge will be 192.168.x.0/24.
 
 ##### Example
@@ -298,7 +292,6 @@ virtualisation.libvirt.connections."qemu:///system".networks =
       definition = nixvirt.lib.network.writeXML (nixvirt.lib.network.templates.bridge
         {
           uuid = "70b08691-28dc-4b47-90a1-45bbeac9ab5a";
-          mac_address = "52:54:00:4f:c7:ca";
           subnet_byte = 71;
         });
       active = true;

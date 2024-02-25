@@ -1,4 +1,4 @@
-import sys, uuid, lxml, libvirt
+import sys, uuid, hashlib, lxml, libvirt
 
 # Switch off annoying libvirt stderr messages
 # https://stackoverflow.com/a/45543887
@@ -10,18 +10,10 @@ class Session:
     def __init__(self,uri,verbose):
         self.conn = libvirt.open(uri)
         self.verbose = verbose
-        self.tempDeactivated = set()
 
     def vreport(self,msg):
         if self.verbose:
             print (msg, file=sys.stderr)
-
-    # These are all objects that were temporarily deactivated, that is, for reasons other than user request
-    def _recordTempDeactivated(self,oc,uuid):
-        self.tempDeactivated.add((oc.type,uuid))
-
-    def _wasTempDeactivated(self,oc,uuid):
-        return (oc.type,uuid) in self.tempDeactivated
 
 class ObjectConnection:
     def __init__(self,type,session):
@@ -59,44 +51,22 @@ class ObjectConnection:
     def _getDependents(self,obj):
         return []
 
-    def _tempDeactivateDependents(self,obj):
+    def _deactivateDependents(self,obj):
         dependents = self._getDependents(obj)
         for dependent in dependents:
-            dependent._deactivate(temp = True)
+            dependent._deactivate()
 
-    def _recordTempDeactivated(self,objid):
-        self.session._recordTempDeactivated(self,objid)
+    def _fixDefinitionXML(self,objid,specDefXML):
+        return None
 
-    def _wasTempDeactivated(self,objid):
-        return self.session._wasTempDeactivated(self,objid)
-
-    def fromDefinition(self,specDef):
-        specDefXML = lxml.etree.fromstring(specDef)
-        specUUID = uuid.UUID(specDefXML.find("uuid").text).bytes
-        found = self.fromUUIDOrNone(specUUID)
-        if found is not None:
-            foundDef = found.descriptionXMLText()
-            foundDefXML = lxml.etree.fromstring(foundDef)
-            foundName = foundDefXML.find("name").text
-            specName = specDefXML.find("name").text
-            if foundName != specName:
-                found.undefine()
-            self.vreport(specUUID,"redefine")
-            subject = self._fromXML(specDef)
-            subjectDef = subject.descriptionXMLText()
-            defchanged = foundDef != subjectDef
-            self.vreport(specUUID,"changed" if defchanged else "unchanged")
-            if defchanged:
-                found._deactivate(temp = True)
-            return subject
-        else:
-            self.vreport(specUUID,"define new")
-            return self._fromXML(specDef)
-
-    def fromDefinitionFile(self,path):
-        with open(path,"r") as f:
-            specDef = f.read()
-        return self.fromDefinition(specDef)
+    def _assignMacAddress(self,objid,index):
+        hash = hashlib.sha256()
+        hash.update(objid)
+        hash.update(index.to_bytes(4, "big"))
+        bb = hash.digest()[0:3].hex(":")
+        addr = "52:54:00:" + bb
+        self.vreport(objid,"assigning MAC address " + addr)
+        return addr
 
 class DomainConnection(ObjectConnection):
     def __init__(self,session):
@@ -119,6 +89,20 @@ class DomainConnection(ObjectConnection):
         # VIR_DOMAIN_UNDEFINE_KEEP_NVRAM
         # VIR_DOMAIN_UNDEFINE_KEEP_TPM
         lvobj.undefineFlags(flags=73)
+    def _fixDefinitionXML(self,objid,specDefXML):
+        interfaces = specDefXML.xpath("/domain/devices/interface")
+        index = 0
+        for interface in interfaces:
+            addresses = interface.xpath("/interface/mac/@address")
+            if len(addresses) == 0:
+                addr = self._assignMacAddress(objid,index)
+                mac = lxml.etree.Element("mac")
+                mac.attrib["address"] = addr
+                interface.append(mac)
+            index += 1
+            return specDefXML
+        else:
+            return None
 
 class NetworkConnection(ObjectConnection):
     def __init__(self,session):
@@ -153,6 +137,16 @@ class NetworkConnection(ObjectConnection):
                     deps.append(domain)
                     break
         return deps
+    def _fixDefinitionXML(self,objid,specDefXML):
+        addresses = specDefXML.xpath("/network/mac/@address")
+        if len(addresses) == 0:
+            addr = self._assignMacAddress(objid,0)
+            mac = lxml.etree.Element("mac")
+            mac.attrib["address"] = addr
+            specDefXML.append(mac)
+            return specDefXML
+        else:
+            return None
 
 # https://libvirt.org/html/libvirt-libvirt-storage.html
 class PoolConnection(ObjectConnection):
@@ -200,24 +194,17 @@ class VObject:
             self.vreport("activate")
             self._lvobj.create()
 
-    def _deactivate(self,temp = False):
+    def _deactivate(self):
         if self.isActive():
-            self.oc._tempDeactivateDependents(self)
-            if temp:
-                self.oc._recordTempDeactivated(self.uuid)
-            self.vreport("deactivate (temporary)" if temp else "deactivate")
+            self.oc._deactivateDependents(self)
+            self.vreport("deactivate")
             self._lvobj.destroy()
 
     def setActive(self,s):
-        match s:
-            case True:
-                self._activate()
-            case False:
-                self._deactivate()
-            case null:
-                # reactivate objects that were temporatily deactivated
-                if self.oc._wasTempDeactivated(self.uuid):
-                    self._activate()
+        if s:
+            self._activate()
+        else:
+            self._deactivate()
 
     def setAutostart(self,a):
         self.vreport("set autostart true" if a else "set autostart false")
@@ -235,3 +222,71 @@ class VObject:
         if isPersistent:
             self.vreport("undefine")
             self.oc._undefine(self._lvobj)
+
+# what we want for an object
+class ObjectSpec:
+
+    def __init__(self,oc,specUUID = None,specName = None,specDef = None,active = None):
+        if specUUID is not None:
+            self.subject = oc.fromUUIDOrNone(specUUID)
+        elif specName is not None:
+            self.subject = oc.fromName(specName)
+            specUUID = self.subject.uuid
+        else:
+            self.subject = None
+        if active is None:
+            if self.subject is None:
+                active = False
+            else:
+                active = self.subject.isActive()
+        self.oc = oc
+        self.specDef = specDef
+        self.specName = specName
+        self.specUUID = specUUID
+        self.active = active
+
+    def vreport(self,msg):
+        self.oc.vreport(self.specUUID,msg)
+
+    def fromUUID(oc,specUUID,active):
+        return ObjectSpec(oc,specUUID = specUUID,active = active)
+
+    def fromName(oc,specName,active):
+        return ObjectSpec(oc,specName = specName,active = active)
+
+    def fromDefinition(oc,specDef,active):
+        specDefXML = lxml.etree.fromstring(specDef)
+        specUUID = uuid.UUID(specDefXML.find("uuid").text).bytes
+        specName = specDefXML.find("name").text
+        fixedDefXML = oc._fixDefinitionXML(specUUID,specDefXML)
+        if fixedDefXML is not None:
+            specDef = lxml.etree.tostring(fixedDefXML).decode("utf-8")
+        return ObjectSpec(oc,specUUID = specUUID,specName = specName,specDef = specDef,active = active)
+
+    def fromDefinitionFile(oc,path,active):
+        with open(path,"r") as f:
+            specDef = f.read()
+        return ObjectSpec.fromDefinition(oc,specDef,active)
+
+    def define(self):
+        if self.specDef is not None:
+            if self.subject is not None:
+                foundDef = self.subject.descriptionXMLText()
+                foundDefXML = lxml.etree.fromstring(foundDef)
+                foundName = foundDefXML.find("name").text
+                if foundName != self.specName:
+                    self.subject.undefine()
+                self.vreport("redefine")
+                newvobject = self.oc._fromXML(self.specDef)
+                subjectDef = newvobject.descriptionXMLText()
+                defchanged = foundDef != subjectDef
+                self.vreport("changed" if defchanged else "unchanged")
+                if defchanged:
+                    self.subject._deactivate()
+                self.subject = newvobject
+            else:
+                self.vreport("define new")
+                self.subject = self.oc._fromXML(self.specDef)
+
+    def setActive(self):
+        self.subject.setActive(self.active)

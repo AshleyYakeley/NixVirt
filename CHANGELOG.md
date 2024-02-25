@@ -8,6 +8,7 @@
     * Added `virtualisation.libvirt.swtpm.enable` option
     * Deactivate domains on network change
     * Added `virtualisation.libvirt.verbose` option
+    * Assign missing MAC addresses reproducibly
 * Lib:
     * Improved XML generation
     * Provided templates for network and domains

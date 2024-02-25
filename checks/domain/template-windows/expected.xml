@@ -62,7 +62,6 @@
       <readonly/>
     </disk>
     <interface type='bridge'>
-      <mac address='52:54:00:02:08:5c'/>
       <source bridge='virbr0'/>
     </interface>
     <channel type='spicevmc'>

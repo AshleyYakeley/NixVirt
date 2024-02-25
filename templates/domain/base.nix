@@ -3,7 +3,6 @@
 , uuid
 , memory ? { count = 2; unit = "GiB"; }
 , storage_vol_path
-, mac_address
 , install_vol_path ? null
 , virtio_net ? false
 , ...
@@ -68,7 +67,6 @@
       interface =
         {
           type = "bridge";
-          mac = { address = mac_address; };
           model = if virtio_net then { type = "virtio"; } else null;
           source = { bridge = "virbr0"; };
         };
