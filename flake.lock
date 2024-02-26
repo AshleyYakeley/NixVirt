@@ -2,11 +2,27 @@
   "nodes": {
     "nixpkgs": {
       "locked": {
-        "lastModified": 1708918445,
-        "narHash": "sha256-ITr/zd3C7Z8LrLuRlop51JVUlb6AfrnWLWs9Ins4CiI=",
+        "lastModified": 1708831307,
+        "narHash": "sha256-0iL/DuGjiUeck1zEaL+aIe2WvA3/cVhp/SlmTcOZXH4=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "af810fc67e4084c23897d3a3be008510867eaf89",
+        "rev": "5bf1cadb72ab4e77cb0b700dab76bcdaf88f706b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-23.11",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs-ovmf": {
+      "locked": {
+        "lastModified": 1708940383,
+        "narHash": "sha256-S3j+oIWQD7926qnEKhdtjOmTIVdaZxy6IhkWBxiMgeQ=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "8ed6d5f5e34d9d278d9421f6ebee03b050e034cd",
         "type": "github"
       },
       "original": {
@@ -18,7 +34,8 @@
     },
     "root": {
       "inputs": {
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs",
+        "nixpkgs-ovmf": "nixpkgs-ovmf"
       }
     }
   },

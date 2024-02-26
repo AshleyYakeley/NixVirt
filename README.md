@@ -10,7 +10,11 @@ Add NixVirt to your own `flake.nix`:
 
 ```nix
 {
-  inputs.NixVirt.url = "https://flakehub.com/f/AshleyYakeley/NixVirt/*.tar.gz";
+  inputs.NixVirt =
+  {
+    url = "https://flakehub.com/f/AshleyYakeley/NixVirt/*.tar.gz";
+    inputs.nixpkgs.follows = "nixpkgs";
+  };
 
   outputs = { self, NixVirt }:
   {
@@ -18,6 +22,9 @@ Add NixVirt to your own `flake.nix`:
   };
 }
 ```
+
+You should probably use `inputs.nixpkgs.follows` to keep NixVirt stuff at the same version as your system software,
+to prevent various version incompatibilities.
 
 These are the available outputs:
 

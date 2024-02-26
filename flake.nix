@@ -8,14 +8,23 @@
           type = "github";
           owner = "NixOS";
           repo = "nixpkgs";
+          ref = "nixos-23.11";
+        };
+
+      nixpkgs-ovmf =
+        {
+          type = "github";
+          owner = "NixOS";
+          repo = "nixpkgs";
           # ref = "nixos-unstable";
           ref = "master"; # https://github.com/AshleyYakeley/NixVirt/issues/6
         };
     };
 
-  outputs = { self, nixpkgs }:
+  outputs = { self, nixpkgs, nixpkgs-ovmf }:
     let
       packages = import nixpkgs { system = "x86_64-linux"; };
+      packages-ovmf = import nixpkgs-ovmf { system = "x86_64-linux"; };
 
       nixvirtPythonModulePackage = packages.runCommand "nixvirtPythonModulePackage" { }
         ''
@@ -43,9 +52,11 @@
       mklib = import ./lib.nix;
 
       modules = import ./modules.nix { inherit packages moduleHelperFile; };
+
+      stuff = { inherit packages packages-ovmf; };
     in
     {
-      lib = mklib packages;
+      lib = mklib stuff;
 
       apps.x86_64-linux.virtdeclare =
         {
@@ -72,6 +83,6 @@
 
       nixosModules.default = modules.nixosModule;
 
-      checks.x86_64-linux = import checks/checks.nix packages mklib;
+      checks.x86_64-linux = import checks/checks.nix stuff mklib;
     };
 }

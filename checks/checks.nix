@@ -1,19 +1,26 @@
-packages: mklib:
+stuff: mklib:
 let
-  lib = mklib packages;
-  testlib = mklib
+  lib = mklib stuff;
+  teststuff =
     {
-      writeTextFile = packages.writeTextFile;
-      runCommand = name: args: script: "BUILD " + name;
-      qemu = "QEMU_PATH";
-      OVMFFull.fd = "OVMFFull_FD_PATH";
+      packages =
+        {
+          writeTextFile = stuff.packages.writeTextFile;
+          runCommand = name: args: script: "BUILD " + name;
+          qemu = "QEMU_PATH";
+        };
+      packages-ovmf =
+        {
+          OVMFFull.fd = "OVMFFull_FD_PATH";
+        };
     };
+  testlib = mklib teststuff;
   test = xlib: dirpath:
     let
       found = xlib.writeXML (import "${dirpath}/input.nix" testlib);
       expected = "${dirpath}/expected.xml";
     in
-    packages.runCommand "check" { }
+    stuff.packages.runCommand "check" { }
       ''
         diff -u ${expected} ${found}
         echo "pass" > $out
@@ -33,10 +40,10 @@ in
   virtio-iso = lib.guest-install.virtio-win.iso;
 
   ovmf-secboot =
-    packages.runCommand "ovmf-secboot" { }
+    stuff.packages.runCommand "ovmf-secboot" { }
       ''
-        test -f ${packages.OVMFFull.fd}/FV/OVMF_CODE.ms.fd
-        test -f ${packages.OVMFFull.fd}/FV/OVMF_VARS.ms.fd
+        test -f ${stuff.packages-ovmf.OVMFFull.fd}/FV/OVMF_CODE.ms.fd
+        test -f ${stuff.packages-ovmf.OVMFFull.fd}/FV/OVMF_VARS.ms.fd
         echo "pass" > $out
       '';
 }

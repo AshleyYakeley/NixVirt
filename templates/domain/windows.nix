@@ -1,6 +1,6 @@
 # https://www.microsoft.com/en-us/windows/windows-11-specifications
 # https://sysguides.com/install-a-windows-11-virtual-machine-on-kvm
-stuff@{ packages, guest-install, ... }:
+stuff@{ packages, packages-ovmf, guest-install, ... }:
 { name
 , uuid
 , memory ? { count = 4; unit = "GiB"; }
@@ -27,11 +27,11 @@ base //
       {
         readonly = true;
         type = "pflash";
-        path = "${packages.OVMFFull.fd}/FV/OVMF_CODE.ms.fd";
+        path = "${packages-ovmf.OVMFFull.fd}/FV/OVMF_CODE.ms.fd";
       };
     nvram =
       {
-        template = "${packages.OVMFFull.fd}/FV/OVMF_VARS.ms.fd";
+        template = "${packages-ovmf.OVMFFull.fd}/FV/OVMF_VARS.ms.fd";
         path = nvram_path;
       };
   };
