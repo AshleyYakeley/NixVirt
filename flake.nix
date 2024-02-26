@@ -26,6 +26,7 @@
         [
           ps.libvirt
           ps.lxml
+          ps.xmldiff
           nixvirtPythonModulePackage
         ]);
 

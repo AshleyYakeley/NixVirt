@@ -1,4 +1,4 @@
-import sys, uuid, hashlib, lxml, libvirt
+import sys, uuid, hashlib, lxml, xmldiff.main, xmldiff.formatting, libvirt
 
 # Switch off annoying libvirt stderr messages
 # https://stackoverflow.com/a/45543887
@@ -279,10 +279,12 @@ class ObjectSpec:
                 self.vreport("redefine")
                 newvobject = self.oc._fromXML(self.specDef)
                 subjectDef = newvobject.descriptionXMLText()
-                defchanged = foundDef != subjectDef
-                self.vreport("changed" if defchanged else "unchanged")
-                if defchanged:
+                if foundDef != subjectDef:
+                    diff = xmldiff.main.diff_texts(foundDef,subjectDef,formatter = xmldiff.formatting.DiffFormatter())
+                    self.vreport("changed:\n" + diff)
                     self.subject._deactivate()
+                else:
+                    self.vreport("unchanged")
                 self.subject = newvobject
             else:
                 self.vreport("define new")
