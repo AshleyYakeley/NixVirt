@@ -6,9 +6,10 @@
       nixpkgs =
         {
           type = "github";
-          owner = "shlevy";
+          owner = "NixOS";
           repo = "nixpkgs";
-          ref = "ovmf-ms";
+          # ref = "nixos-unstable";
+          ref = "master"; # https://github.com/AshleyYakeley/NixVirt/issues/6
         };
     };
 
