@@ -16,8 +16,7 @@
           type = "github";
           owner = "NixOS";
           repo = "nixpkgs";
-          # ref = "nixos-unstable";
-          ref = "master"; # https://github.com/AshleyYakeley/NixVirt/issues/6
+          ref = "nixos-unstable";
         };
     };
 
