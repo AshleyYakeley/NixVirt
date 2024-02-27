@@ -4,12 +4,13 @@ stuff@{ packages, ... }:
 , memory ? { count = 4; unit = "GiB"; }
 , storage_vol_path
 , install_vol_path ? null
+, virtio_video ? true
 , ...
 }:
 let
   base = import ./base.nix stuff
     {
-      inherit name uuid memory storage_vol_path install_vol_path;
+      inherit name uuid memory storage_vol_path install_vol_path virtio_video;
       virtio_net = true;
     };
 in

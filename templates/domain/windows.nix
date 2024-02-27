@@ -9,13 +9,14 @@ stuff@{ packages, packages-ovmf, guest-install, ... }:
 , nvram_path
 , virtio_net ? false
 , virtio_drive ? false
+, virtio_video ? true
 , install_virtio ? false
 , ...
 }:
 let
   base = import ./base.nix stuff
     {
-      inherit name uuid memory storage_vol_path install_vol_path virtio_net;
+      inherit name uuid memory storage_vol_path install_vol_path virtio_net virtio_video;
     };
 in
 base //
@@ -134,14 +135,5 @@ base //
             version = "2.0";
           };
       };
-    graphics = base.devices.graphics //
-    {
-      listen = { type = "none"; };
-      gl = { enable = false; };
-    };
-    video.model = base.devices.video.model //
-    {
-      acceleration = { accel3d = false; };
-    };
   };
 }

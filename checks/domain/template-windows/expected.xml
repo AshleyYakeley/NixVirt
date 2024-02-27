@@ -80,13 +80,13 @@
     <graphics type='spice' autoport='yes'>
       <listen type='none'/>
       <image compression='off'/>
-      <gl enable='no'/>
+      <gl enable='yes'/>
     </graphics>
     <sound model='ich9'/>
     <audio id='1' type='spice'/>
     <video>
-      <model type='qxl' ram='65536' vram='65536' vgamem='16384' heads='1' primary='yes'>
-        <acceleration accel3d='no'/>
+      <model type='virtio' heads='1' primary='yes'>
+        <acceleration accel3d='yes'/>
       </model>
     </video>
     <redirdev bus='usb' type='spicevmc'/>

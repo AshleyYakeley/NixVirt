@@ -5,6 +5,7 @@
 , storage_vol_path
 , install_vol_path ? null
 , virtio_net ? false
+, virtio_video ? true
 , ...
 }:
 {
@@ -87,22 +88,32 @@
         {
           type = "spice";
           autoport = true;
-          listen = { type = "address"; };
+          listen = { type = "none"; };
           image = { compression = false; };
+          gl = { enable = virtio_video; };
         };
       sound = { model = "ich9"; };
       audio = { id = 1; type = "spice"; };
       video =
         {
           model =
-            {
-              type = "qxl";
-              ram = 65536;
-              vram = 65536;
-              vgamem = 16384;
-              heads = 1;
-              primary = true;
-            };
+            if virtio_video
+            then
+              {
+                type = "virtio";
+                heads = 1;
+                primary = true;
+                acceleration = { accel3d = true; };
+              }
+            else
+              {
+                type = "qxl";
+                ram = 65536;
+                vram = 65536;
+                vgamem = 16384;
+                heads = 1;
+                primary = true;
+              };
         };
       redirdev =
         [
