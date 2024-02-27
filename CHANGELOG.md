@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.3.0]
 
 * Modules:
     * Fixed defect where domains were defined before `swtpm` package was available
