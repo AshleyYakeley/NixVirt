@@ -166,8 +166,8 @@ These are the arguments:
 * `name`: the libvirt name (string, required)
 * `uuid`: the libvirt identifier (UUID string, required)
 * `memory`: amount of RAM (set with `count` (integer) and `unit` (string) attributes, default `{ count = 2; unit = "GiB"; }`)
-* `storage_vol_path`: path to a QCOW2 volume for storage (string or path, required)
-* `install_vol_path`: path to an ISO image for an inserted CDROM, or null (string or path, default `null`)
+* `storage_vol`: source element or path to a QCOW2 volume for storage (set, string or path, required)
+* `install_vol`: source element or path to an ISO image for an inserted CDROM, or null (set, string or path, default `null`)
 * `virtio_net`: whether to use VirtIO for networking (faster, but may require special guest drivers) (boolean, default `false`)
 * `virtio_video`: whether to use VirtIO for graphics (boolean, default `true`)
 
@@ -180,8 +180,8 @@ These are the arguments:
 * `name`: the libvirt name (string, required)
 * `uuid`: the libvirt identifier (UUID string, required)
 * `memory`: amount of RAM (set with `count` (integer) and `unit` (string) attributes, default `{ count = 4; unit = "GiB"; }`)
-* `storage_vol_path`: path to a QCOW2 volume for storage (string or path, required)
-* `install_vol_path`: path to an ISO image for an inserted CDROM, or null (string or path, default `null`)
+* `storage_vol`: source element or path to a QCOW2 volume for storage (set, string or path, required)
+* `install_vol`: source element or path to an ISO image for an inserted CDROM, or null (set, string or path, default `null`)
 * `virtio_video`: whether to use VirtIO for graphics (boolean, default `true`)
 
 ##### Example
@@ -197,7 +197,7 @@ virtualisation.libvirt.connections."qemu:///session".domains =
           name = "Penguin";
           uuid = "cc7439ed-36af-4696-a6f2-1f0c4474d87e";
           memory = { count = 6; unit = "GiB"; };
-          storage_vol_path = /home/ashley/VM-Storage/MyPool/Penguin.qcow2;
+          storage_vol = { pool = "MyPool"; volume = "Penguin.qcow2"; }
         });
     }
   ];
@@ -213,8 +213,8 @@ These are the arguments:
 * `name`: the libvirt name (string, required)
 * `uuid`: the libvirt identifier (UUID string, required)
 * `memory`: amount of RAM (set with `count` (integer) and `unit` (string) attributes, default `{ count = 4; unit = "GiB"; }`)
-* `storage_vol_path`: path to a QCOW2 volume for storage (string or path, required)
-* `install_vol_path`: path to an ISO image for an inserted CDROM, or null (string or path, default `null`)
+* `storage_vol`: source element or path to a QCOW2 volume for storage (set, string or path, required)
+* `install_vol`: source element or path to an ISO image for an inserted CDROM, or null (set, string or path, default `null`)
 * `nvram_path`: path to a file for storing NVRAM, this file will be created if missing (string or path, required)
 * `virtio_net`: whether to use VirtIO for networking: this is faster, but requires installing a driver during Windows 11 installation (boolean, default `false`)
 * `virtio_video`: whether to use VirtIO for graphics (boolean, default `true`)
@@ -235,8 +235,8 @@ virtualisation.libvirt.connections."qemu:///session".domains =
           name = "Bellevue";
           uuid = "def734bb-e2ca-44ee-80f5-0ea0f2593aaa";
           memory = { count = 8; unit = "GiB"; };
-          storage_vol_path = /home/ashley/VM-Storage/MyPool/Bellevue.qcow2;
-          install_vol_path = /home/ashley/VM-Storage/Win11_23H2_EnglishInternational_x64v2.iso;
+          storage_vol = { pool = "MyPool"; volume = "Bellevue.qcow2"; };
+          install_vol = /home/ashley/VM-Storage/Win11_23H2_EnglishInternational_x64v2.iso;
           nvram_path = /home/ashley/VM-Storage/Bellevue.nvram;
           virtio_net = true;
           virtio_drive = true;

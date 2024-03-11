@@ -1,9 +1,15 @@
+let
+  mksource = with builtins;
+    src:
+    if isString src || isPath src then { file = src; }
+    else src;
+in
 { packages, ... }:
 { name
 , uuid
 , memory ? { count = 2; unit = "GiB"; }
-, storage_vol_path
-, install_vol_path ? null
+, storage_vol
+, install_vol ? null
 , virtio_net ? false
 , virtio_video ? true
 , ...
@@ -49,7 +55,7 @@
                 type = "qcow2";
                 discard = "unmap";
               };
-            source = { file = storage_vol_path; };
+            source = mksource storage_vol;
             target = { dev = "vda"; };
           }
           {
@@ -60,7 +66,7 @@
                 name = "qemu";
                 type = "raw";
               };
-            source = if builtins.isNull install_vol_path then null else { file = install_vol_path; };
+            source = mksource install_vol;
             target = { dev = "sdc"; };
             readonly = true;
           }

@@ -2,15 +2,15 @@ stuff@{ packages, ... }:
 { name
 , uuid
 , memory ? { count = 4; unit = "GiB"; }
-, storage_vol_path
-, install_vol_path ? null
+, storage_vol
+, install_vol ? null
 , virtio_video ? true
 , ...
 }:
 let
   base = import ./base.nix stuff
     {
-      inherit name uuid memory storage_vol_path install_vol_path virtio_video;
+      inherit name uuid memory storage_vol install_vol virtio_video;
       virtio_net = true;
     };
 in

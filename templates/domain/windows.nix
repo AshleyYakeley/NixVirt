@@ -4,8 +4,8 @@ stuff@{ packages, packages-ovmf, guest-install, ... }:
 { name
 , uuid
 , memory ? { count = 4; unit = "GiB"; }
-, storage_vol_path
-, install_vol_path ? null
+, storage_vol
+, install_vol ? null
 , nvram_path
 , virtio_net ? false
 , virtio_drive ? false
@@ -16,7 +16,7 @@ stuff@{ packages, packages-ovmf, guest-install, ... }:
 let
   base = import ./base.nix stuff
     {
-      inherit name uuid memory storage_vol_path install_vol_path virtio_net virtio_video;
+      inherit name uuid memory storage_vol install_vol virtio_net virtio_video;
     };
 in
 base //
@@ -82,7 +82,7 @@ base //
             };
           source =
             {
-              file = storage_vol_path;
+              file = storage_vol;
             };
           target = if virtio_drive then { dev = "vda"; bus = "virtio"; } else
           { dev = "sda"; bus = "sata"; };
@@ -92,9 +92,9 @@ base //
           device = "cdrom";
           driver = { name = "qemu"; type = "raw"; };
           source =
-            if builtins.isNull install_vol_path then null else
+            if builtins.isNull install_vol then null else
             {
-              file = install_vol_path;
+              file = install_vol;
               startupPolicy = "mandatory";
             };
           target = { bus = "sata"; dev = "hdc"; };

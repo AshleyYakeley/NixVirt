@@ -155,7 +155,28 @@ let
                       (subattr "discard" typeString)
                     ] [ ]
                   )
-                  (subelem "source" [ (subattr "file" typePath) (subattr "startupPolicy" typeString) ] [ ])
+                  (subelem "source"
+                    [
+                      (subattr "file" typePath)
+                      (subattr "startupPolicy" typeString)
+                      (subattr "protocol" typeString)
+                      (subattr "name" typeString)
+                      (subattr "query" typeString)
+                      (subattr "dev" typePath)
+                      (subattr "pool" typeString)
+                      (subattr "volume" typeString)
+                      (subattr "dir" typePath)
+                      (subattr "type" typeString)
+                      (subattr "path" typePath)
+                    ]
+                    [
+                      (subelem "host"
+                        [
+                          (subattr "name" typeString)
+                          (subattr "port" typeInt)
+                        ]
+                        [ ])
+                    ])
                   targetelem
                   (subelem "readonly" [ ] [ ])
                   addresselem

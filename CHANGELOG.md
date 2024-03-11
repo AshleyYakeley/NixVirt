@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+* Lib:
+    * Better support for volume sources in domains in generation and templates
+
 ## [0.3.0]
 
 * Modules:
