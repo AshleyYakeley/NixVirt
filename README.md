@@ -32,56 +32,51 @@ These are the available outputs:
 
 A NixOS module with these options:
 
-* `virtualisation.libvirt.enable` (boolean)  
+* `virtualisation.libvirt.enable` (boolean, default `false`)  
 Whether to use NixVirt.
 Switching this on will also switch on `virtualisation.libvirtd.enable`,
-and set by default `virtualisation.libvirtd.package` to match libvirt version.  
-Default: `false`.
+and set by default `virtualisation.libvirtd.package` to match libvirt version.
 
-* `virtualisation.libvirt.swtpm.enable` (boolean)  
+* `virtualisation.libvirt.swtpm.enable` (boolean, default `false`)  
 Whether to make swtpm (software TPM emulator) available.
-Default: `false`.
 
 * `virtualisation.libvirt.connections.<connection>` (set)  
 `<connection>` is the hypervisor connection URI, typically `"qemu:///system"`.  
 
-* `virtualisation.libvirt.connections.<connection>.domains` (list of sets)  
+* `virtualisation.libvirt.connections.<connection>.domains` (list of sets or `null`, default `null`)  
 Each set represents a libvirt domain, and has these attributes:
 
   * `definition` (path)  
   Path to a [domain definition XML](https://libvirt.org/formatdomain.html) file.
   You can obtain this for your existing domains with `virsh dumpxml`.
 
-  * `active` (`true`, `false`, `null`)  
+  * `active` (`true`, `false`, `null`, default `null`)  
   State to put the domain in (running/stopped), or null to ignore.  
-  Default: `null`.
 
   :warning: If this option is specified and not null, any libvirt domain not defined in the list will be deleted.
   Deleting a domain will not delete its volumes, NVRAM, or TPM state.
 
-* `virtualisation.libvirt.connections.<connection>.networks` (list of sets)  
+* `virtualisation.libvirt.connections.<connection>.networks` (list of sets or `null`, default `null`)  
 Each set represents a libvirt network, and has these attributes:
 
   * `definition` (path)  
   Path to a [network definition XML](https://libvirt.org/formatnetwork.html) file.
   You can obtain this for your existing networks with `virsh net-dumpxml`.
 
-  * `active` (`true`, `false`, `null`)  
+  * `active` (`true`, `false`, `null`, default `null`)  
   State to put the network in, or null to ignore.  
-  Default: `null`.
 
   :warning: If this option is specified and not null, any libvirt network not defined in the list will be deleted.
 
-* `virtualisation.libvirt.connections.<connection>.pools` (list of sets)  
+* `virtualisation.libvirt.connections.<connection>.pools` (list of sets or `null`, default `null`)  
 Each set represents a libvirt storage pool, and has these attributes:
 
   * `definition` (path)  
   Path to a [pool definition XML](https://libvirt.org/formatstorage.html) file.
   You can obtain this for your existing pools with `virsh pool-dumpxml`.
 
-  * `active` (`true`, `false`, `null`)  
+  * `active` (`true`, `false`, `null`, default `null`)  
   State to put the pool in, or null to ignore.  
-  Default: `null`.
 
   :warning: If this option is specified and not null, any libvirt pool not defined in the list will be deleted.
   However, deleting a pool does not delete the files or other storage holding the volumes it contained.
