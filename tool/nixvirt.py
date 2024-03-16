@@ -21,14 +21,11 @@ class ObjectConnection:
         self.session = session
         self.conn = session.conn
 
-    def vreport(self,msg):
-        self.session.vreport(self.type + ": " + msg)
-
     def vreport(self,objid,msg):
         self.session.vreport(self.type + " " + str(uuid.UUID(bytes=objid)) + ": " + msg)
 
     def getFile(self,path):
-        self.vreport("reading " + path)
+        self.session.vreport(self.type + ": reading " + path)
         with open(path,"r") as f:
             return f.read()
 
