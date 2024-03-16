@@ -4,11 +4,11 @@ let
     let
       cfg = config.virtualisation.libvirt;
       defaultConnectionURI = if isHomeManager then "qemu:///session" else "qemu:///system";
-      mkObjectOption = with lib.types; { singular, plural }: lib.mkOption
+      mkObjectOption = with lib.types; { singular, plural, extraOptions ? { } }: lib.mkOption
         {
           type = nullOr (listOf (submodule
             {
-              options =
+              options = extraOptions //
                 {
                   definition = lib.mkOption
                     {
@@ -69,6 +69,26 @@ let
                           {
                             singular = "pool";
                             plural = "pools";
+                            extraOptions =
+                              {
+                                volumes = lib.mkOption
+                                  {
+                                    type = listOf
+                                      (submodule
+                                        {
+                                          options =
+                                            {
+                                              definition = lib.mkOption
+                                                {
+                                                  type = path;
+                                                  description = "path to volume definition XML";
+                                                };
+                                            };
+                                        });
+                                    default = [ ];
+                                    description = "volumes to create if missing";
+                                  };
+                              };
                           };
                       };
                   });
