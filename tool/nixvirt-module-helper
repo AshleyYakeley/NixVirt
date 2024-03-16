@@ -41,7 +41,7 @@ try:
 
     types = [("network","networks"),("pool","pools"),("domain","domains")]
 
-    session.vreport("examining settings")
+    session.vreport("Examining settings")
     typeSpecs = []
     for (type,key) in types:
         itemlist = settings.get(key)
@@ -49,26 +49,26 @@ try:
             typeSpecs.append(TypeSpec(session,type,itemlist))
 
     # delete old stuff
-    session.vreport("deleting old objects")
+    session.vreport("Deleting old objects")
     for typeSpec in typeSpecs:
         typeSpec.deleteOld()
 
     # define new stuff
-    session.vreport("defining new objects")
+    session.vreport("Defining new objects")
     for typeSpec in typeSpecs:
         typeSpec.define()
 
     # define extra stuff
-    session.vreport("defining pool volumes")
+    session.vreport("Defining pool volumes")
     for typeSpec in typeSpecs:
         typeSpec.defineExtra()
 
     # do activation
-    session.vreport("setting activation state")
+    session.vreport("Setting activation state")
     for typeSpec in typeSpecs:
         typeSpec.setActive()
 
-    session.vreport("done")
+    session.vreport("Done")
 
 except libvirt.libvirtError as err:
     print ("NixVirt: libvirt error:", err, file=sys.stderr)

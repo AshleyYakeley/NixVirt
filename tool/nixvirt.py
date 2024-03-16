@@ -1,9 +1,5 @@
 import sys, uuid, hashlib, lxml, xmldiff.main, xmldiff.formatting, libvirt
 
-def getFile(path):
-    with open(path,"r") as f:
-        return f.read()
-
 # Switch off annoying libvirt stderr messages
 # https://stackoverflow.com/a/45543887
 def libvirt_callback(userdata, err):
@@ -25,8 +21,16 @@ class ObjectConnection:
         self.session = session
         self.conn = session.conn
 
+    def vreport(self,msg):
+        self.session.vreport(self.type + ": " + msg)
+
     def vreport(self,objid,msg):
         self.session.vreport(self.type + " " + str(uuid.UUID(bytes=objid)) + ": " + msg)
+
+    def getFile(self,path):
+        self.vreport("reading " + path)
+        with open(path,"r") as f:
+            return f.read()
 
     def getAll(self):
         return map(lambda lvobj: VObject(self,lvobj), self._getAllLV())
@@ -178,7 +182,7 @@ class PoolConnection(ObjectConnection):
             for volume in volumes:
                 path = volume.get("definition")
                 if path is not None:
-                    volDef = getFile(path)
+                    volDef = self.getFile(path)
                     volDefETree = lxml.etree.fromstring(volDef)
                     volName = volDefETree.find("name").text
                     volLVObj = pool._lvobj.storageVolLookupByName(volName)
@@ -291,7 +295,7 @@ class ObjectSpec:
         return ObjectSpec(oc,specUUID = specUUID,specName = specName,specDef = specDef,active = active, extra = extra)
 
     def fromDefinitionFile(oc,path,active,extra = None):
-        specDef = getFile(path)
+        specDef = oc.getFile(path)
         return ObjectSpec.fromDefinition(oc,specDef,active, extra = extra)
 
     def define(self):
