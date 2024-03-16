@@ -81,6 +81,13 @@ Each set represents a libvirt storage pool, and has these attributes:
   :warning: If this option is specified and not null, any libvirt pool not defined in the list will be deleted.
   However, deleting a pool does not delete the files or other storage holding the volumes it contained.
 
+  * `volumes` (list of sets, default `[]`)  
+  Volumes to create if not already existing. Existing volumes not listed will be ignored (not deleted).
+  Each set has this attribute:
+
+    * `definition` (path)  
+    Path to a [volume definition XML](https://libvirt.org/formatstorage.html) file.
+
 Note that NixOS already has options under `virtualisation.libvirtd` for controlling the libvirt daemon.
 
 ### `homeModules.default`

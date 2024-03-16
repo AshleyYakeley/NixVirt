@@ -1,5 +1,9 @@
 import sys, uuid, hashlib, lxml, xmldiff.main, xmldiff.formatting, libvirt
 
+def getFile(path):
+    with open(path,"r") as f:
+        return f.read()
+
 # Switch off annoying libvirt stderr messages
 # https://stackoverflow.com/a/45543887
 def libvirt_callback(userdata, err):
@@ -56,7 +60,7 @@ class ObjectConnection:
         for dependent in dependents:
             dependent._deactivate()
 
-    def _fixDefinitionXML(self,objid,specDefXML):
+    def _fixDefinitionXML(self,objid,specDefETree):
         return None
 
     def _assignMacAddress(self,objid,index):
@@ -67,6 +71,9 @@ class ObjectConnection:
         addr = "52:54:00:" + bb
         self.vreport(objid,"assigning MAC address " + addr)
         return addr
+
+    def _defineExtra(self,lvobj,extra):
+        pass
 
 class DomainConnection(ObjectConnection):
     def __init__(self,session):
@@ -89,8 +96,8 @@ class DomainConnection(ObjectConnection):
         # VIR_DOMAIN_UNDEFINE_KEEP_NVRAM
         # VIR_DOMAIN_UNDEFINE_KEEP_TPM
         lvobj.undefineFlags(flags=73)
-    def _fixDefinitionXML(self,objid,specDefXML):
-        interfaces = specDefXML.xpath("/domain/devices/interface")
+    def _fixDefinitionXML(self,objid,specDefETree):
+        interfaces = specDefETree.xpath("/domain/devices/interface")
         index = 0
         for interface in interfaces:
             addresses = interface.xpath("/interface/mac/@address")
@@ -100,7 +107,7 @@ class DomainConnection(ObjectConnection):
                 mac.attrib["address"] = addr
                 interface.append(mac)
             index += 1
-            return specDefXML
+            return specDefETree
         else:
             return None
 
@@ -137,14 +144,14 @@ class NetworkConnection(ObjectConnection):
                     deps.append(domain)
                     break
         return deps
-    def _fixDefinitionXML(self,objid,specDefXML):
-        addresses = specDefXML.xpath("/network/mac/@address")
+    def _fixDefinitionXML(self,objid,specDefETree):
+        addresses = specDefETree.xpath("/network/mac/@address")
         if len(addresses) == 0:
             addr = self._assignMacAddress(objid,0)
             mac = lxml.etree.Element("mac")
             mac.attrib["address"] = addr
-            specDefXML.append(mac)
-            return specDefXML
+            specDefETree.append(mac)
+            return specDefETree
         else:
             return None
 
@@ -165,6 +172,22 @@ class PoolConnection(ObjectConnection):
         # https://libvirt.org/html/libvirt-libvirt-storage.html#virStorageXMLFlags
         # VIR_STORAGE_XML_INACTIVE
         return lvobj.XMLDesc(flags=1)
+    def _defineExtra(self,pool,extra):
+        volumes = extra.get("volumes")
+        if volumes is not None:
+            for volume in volumes:
+                path = volume.get("definition")
+                if path is not None:
+                    volDef = getFile(path)
+                    volDefETree = lxml.etree.fromstring(volDef)
+                    volName = volDefETree.find("name").text
+                    volLVObj = pool._lvobj.storageVolLookupByName(volName)
+                    if volLVObj is not None:
+                        pool.vreport("found volume " + volName)
+                    else:
+                        pool.vreport("creating volume " + volName)
+                        volLVObj = pool._lvobj.storageVolCreateXML(volDef)
+                    volLVObj.info()
 
 objectTypes = ['domain','network','pool']
 
@@ -223,10 +246,13 @@ class VObject:
             self.vreport("undefine")
             self.oc._undefine(self._lvobj)
 
+    def defineExtra(self,extra):
+        self.oc._defineExtra(self,extra)
+
 # what we want for an object
 class ObjectSpec:
 
-    def __init__(self,oc,specUUID = None,specName = None,specDef = None,active = None):
+    def __init__(self,oc,specUUID = None,specName = None,specDef = None,active = None,extra = None):
         if specUUID is not None:
             self.subject = oc.fromUUIDOrNone(specUUID)
         elif specName is not None:
@@ -244,6 +270,7 @@ class ObjectSpec:
         self.specName = specName
         self.specUUID = specUUID
         self.active = active
+        self.extra = extra
 
     def vreport(self,msg):
         self.oc.vreport(self.specUUID,msg)
@@ -254,26 +281,25 @@ class ObjectSpec:
     def fromName(oc,specName,active):
         return ObjectSpec(oc,specName = specName,active = active)
 
-    def fromDefinition(oc,specDef,active):
-        specDefXML = lxml.etree.fromstring(specDef)
-        specUUID = uuid.UUID(specDefXML.find("uuid").text).bytes
-        specName = specDefXML.find("name").text
-        fixedDefXML = oc._fixDefinitionXML(specUUID,specDefXML)
+    def fromDefinition(oc,specDef,active,extra = None):
+        specDefETree = lxml.etree.fromstring(specDef)
+        specUUID = uuid.UUID(specDefETree.find("uuid").text).bytes
+        specName = specDefETree.find("name").text
+        fixedDefXML = oc._fixDefinitionXML(specUUID,specDefETree)
         if fixedDefXML is not None:
             specDef = lxml.etree.tostring(fixedDefXML).decode("utf-8")
-        return ObjectSpec(oc,specUUID = specUUID,specName = specName,specDef = specDef,active = active)
+        return ObjectSpec(oc,specUUID = specUUID,specName = specName,specDef = specDef,active = active, extra = extra)
 
-    def fromDefinitionFile(oc,path,active):
-        with open(path,"r") as f:
-            specDef = f.read()
-        return ObjectSpec.fromDefinition(oc,specDef,active)
+    def fromDefinitionFile(oc,path,active,extra = None):
+        specDef = getFile(path)
+        return ObjectSpec.fromDefinition(oc,specDef,active, extra = extra)
 
     def define(self):
         if self.specDef is not None:
             if self.subject is not None:
                 foundDef = self.subject.descriptionXMLText()
-                foundDefXML = lxml.etree.fromstring(foundDef)
-                foundName = foundDefXML.find("name").text
+                foundDefETree = lxml.etree.fromstring(foundDef)
+                foundName = foundDefETree.find("name").text
                 if foundName != self.specName:
                     self.subject.undefine()
                 self.vreport("redefine")
@@ -289,6 +315,10 @@ class ObjectSpec:
             else:
                 self.vreport("define new")
                 self.subject = self.oc._fromXML(self.specDef)
+
+    def defineExtra(self):
+        if self.subject is not None:
+            self.subject.defineExtra(self.extra)
 
     def setActive(self):
         self.subject.setActive(self.active)

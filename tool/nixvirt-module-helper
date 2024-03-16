@@ -13,7 +13,7 @@ with open(args.settingspath,"r") as f:
 class TypeSpec:
     def __init__(self,session,type,itemlist):
         self.oc = nixvirt.getObjectConnection(session,type)
-        self.specList = [nixvirt.ObjectSpec.fromDefinitionFile(self.oc,item["definition"],item.get("active")) for item in itemlist]
+        self.specList = [nixvirt.ObjectSpec.fromDefinitionFile(self.oc,item["definition"],item.get("active"),item) for item in itemlist]
 
     def deleteOld(self):
         allObjects = self.oc.getAll()
@@ -27,6 +27,10 @@ class TypeSpec:
     def define(self):
         for objspec in self.specList:
             objspec.define()
+
+    def defineExtra(self):
+        for objspec in self.specList:
+            objspec.defineExtra()
 
     def setActive(self):
         for objspec in self.specList:
@@ -50,6 +54,10 @@ try:
     # define new stuff
     for typeSpec in typeSpecs:
         typeSpec.define()
+
+    # define extra stuff
+    for typeSpec in typeSpecs:
+        typeSpec.defineExtra()
 
     # do activation
     for typeSpec in typeSpecs:
