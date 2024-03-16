@@ -182,6 +182,7 @@ class PoolConnection(ObjectConnection):
                     volDef = self.getFile(path)
                     volDefETree = lxml.etree.fromstring(volDef)
                     volName = volDefETree.find("name").text
+                    pool._activate()
                     volLVObj = pool._lvobj.storageVolLookupByName(volName)
                     if volLVObj is not None:
                         pool.vreport("found volume " + volName)
