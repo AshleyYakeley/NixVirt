@@ -331,7 +331,27 @@ lib.pool.getXML
 
 #### `lib.pool.writeXML`
 
-Write pool XML for a given structure (returns a path).
+Write volume XML for a given structure (returns a path).
+
+#### `lib.volume.getXML`
+
+Create volume XML for a given structure (returns a string).
+The Nix structure roughly follows [the XML format](https://libvirt.org/formatstorage.html), but is currently missing elements.
+Please edit [the file](generate-xml/volume.nix) and create a PR for anything you need.
+
+##### Example
+
+```nix
+lib.volume.getXML
+{
+  name = "MainDisk";
+  capacity = { count = 20; unit = "GB"; };
+}
+```
+
+#### `lib.volume.writeXML`
+
+Write volume XML for a given structure (returns a path).
 
 #### `lib.xml`
 

@@ -17,5 +17,6 @@ in
   domain = objtype "domain" (import generate-xml/domain.nix) // { templates = import ./templates/domain.nix stuff1; };
   network = objtype "network" (import generate-xml/network.nix) // { templates = import ./templates/network.nix stuff1; };
   pool = objtype "pool" (import generate-xml/pool.nix);
+  volume = objtype "volume" (import generate-xml/volume.nix);
   inherit guest-install;
 }

@@ -37,6 +37,8 @@ in
 
   pool-empty = test testlib.pool pool/empty;
 
+  volume-typical = test testlib.volume volume/typical;
+
   virtio-iso = lib.guest-install.virtio-win.iso;
 
   ovmf-secboot =
