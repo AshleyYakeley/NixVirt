@@ -202,7 +202,7 @@ class PoolConnection(ObjectConnection):
                         pool.vreport("found volume " + volName)
                     except libvirt.libvirtError:
                         pool.vreport("creating volume " + volName)
-                        volLVObj = pool._lvobj.storageVolCreateXML(volDefXML)
+                        volLVObj = pool._lvobj.createXML(volDefXML)
                     volLVObj.info()
     def _relevantDefETree(self,specDefXML,defETree):
         specDefETree = xmlToETree(specDefXML)
