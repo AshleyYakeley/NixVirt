@@ -82,8 +82,8 @@ class ObjectConnection:
     def _defineExtra(self,lvobj,extra):
         pass
 
-    def _relevantDefinition(self,specDefXML,defXML,defETree):
-        return defXML
+    def _relevantDefETree(self,specDefXML,defETree):
+        return defETree
 
 class DomainConnection(ObjectConnection):
     def __init__(self,session):
@@ -199,10 +199,8 @@ class PoolConnection(ObjectConnection):
                         pool.vreport("creating volume " + volName)
                         volLVObj = pool._lvobj.storageVolCreateXML(volDefXML)
                     volLVObj.info()
-    def _relevantDefinition(self,specDefXML,defXML,defETree):
+    def _relevantDefETree(self,specDefXML,defETree):
         specDefETree = xmlToETree(specDefXML)
-        if defETree is None:
-            defETree = xmlToETree(defXML)
 
         def relevance(p):
             if len(specDefETree.xpath(p)) == 0:
@@ -213,7 +211,7 @@ class PoolConnection(ObjectConnection):
         relevance("/pool/allocation")
         relevance("/pool/available")
         relevance("/pool/target/permissions")
-        return eTreeToXML(defETree)
+        return defETree
 
 objectTypes = ['domain','network','pool']
 
@@ -323,18 +321,18 @@ class ObjectSpec:
     def define(self):
         if self.specDefXML is not None:
             if self.subject is not None:
-                oldDefXML = self.subject.descriptionXML()
-                oldDefETree = xmlToETree(oldDefXML)
+                oldDefETree = self.subject.descriptionETree()
                 foundName = oldDefETree.find("name").text
                 if foundName != self.specName:
                     self.subject.undefine()
-                oldRelDefXML = self.oc._relevantDefinition(self.specDefXML,oldDefXML,oldDefETree)
+                oldRelDefETree = self.oc._relevantDefETree(self.specDefXML,oldDefETree)
                 self.vreport("redefine")
                 newvobject = self.oc._fromXML(self.specDefXML)
-                newRelDefXML = self.oc._relevantDefinition(self.specDefXML,newvobject.descriptionXML(),None)
-                if oldRelDefXML != newRelDefXML:
-                    diff = xmldiff.main.diff_texts(oldRelDefXML,newRelDefXML,formatter = xmldiff.formatting.DiffFormatter())
-                    self.vreport("changed:\n" + diff)
+                newRelDefETree = self.oc._relevantDefETree(self.specDefXML,newvobject.descriptionETree())
+                diff = xmldiff.main.diff_trees(oldRelDefETree,newRelDefETree)
+                if len(diff) > 0:
+                    difftext = xmldiff.formatting.DiffFormatter().render(diff)
+                    self.vreport("changed:\n" + difftext)
                     self.subject._deactivate()
                 else:
                     self.vreport("unchanged")
