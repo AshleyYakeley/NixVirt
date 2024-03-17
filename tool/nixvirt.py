@@ -203,6 +203,16 @@ class PoolConnection(ObjectConnection):
         specDefETree = xmlToETree(specDefXML)
         if defETree is None:
             defETree = xmlToETree(defXML)
+
+        def relevance(p):
+            if len(specDefETree.xpath(p)) == 0:
+                for node in defETree.xpath(p):
+                    defETree.remove(node)
+
+        relevance("/pool/capacity")
+        relevance("/pool/allocation")
+        relevance("/pool/available")
+        relevance("/pool/target/permissions")
         return eTreeToXML(defETree)
 
 objectTypes = ['domain','network','pool']
