@@ -82,8 +82,13 @@ class ObjectConnection:
     def _defineExtra(self,lvobj,extra):
         pass
 
+    def _cleanDefETree(self,specDefXML,defETree):
+        for elem in defETree.iter():
+            elem.tail = ""
+        self._relevantDefETree(specDefXML,defETree)
+
     def _relevantDefETree(self,specDefXML,defETree):
-        return defETree
+        pass
 
 class DomainConnection(ObjectConnection):
     def __init__(self,session):
@@ -211,7 +216,6 @@ class PoolConnection(ObjectConnection):
         relevance("/pool/allocation")
         relevance("/pool/available")
         relevance("/pool/target/permissions")
-        return defETree
 
 objectTypes = ['domain','network','pool']
 
@@ -325,14 +329,15 @@ class ObjectSpec:
                 foundName = oldDefETree.find("name").text
                 if foundName != self.specName:
                     self.subject.undefine()
-                oldRelDefETree = self.oc._relevantDefETree(self.specDefXML,oldDefETree)
+                self.oc._cleanDefETree(self.specDefXML,oldDefETree)
                 self.vreport("redefine")
                 newvobject = self.oc._fromXML(self.specDefXML)
-                newRelDefETree = self.oc._relevantDefETree(self.specDefXML,newvobject.descriptionETree())
-                diff = xmldiff.main.diff_trees(oldRelDefETree,newRelDefETree)
+                newDefETree = newvobject.descriptionETree()
+                self.oc._cleanDefETree(self.specDefXML,newDefETree)
+                diff = xmldiff.main.diff_trees(oldDefETree,newDefETree)
                 if len(diff) > 0:
                     if self.oc.session.verbose:
-                        difftext = xmldiff.main.diff_trees(oldRelDefETree,newRelDefETree,formatter=xmldiff.formatting.DiffFormatter())
+                        difftext = xmldiff.main.diff_trees(oldDefETree,newDefETree,formatter=xmldiff.formatting.DiffFormatter())
                         self.vreport("changed:\n" + difftext)
                     self.subject._deactivate()
                 else:
