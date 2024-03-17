@@ -6,6 +6,12 @@ def libvirt_callback(userdata, err):
     pass
 libvirt.registerErrorHandler(f=libvirt_callback, ctx=None)
 
+def eTreeToXML(etree):
+    return lxml.etree.tostring(etree).decode("utf-8")
+
+def xmlToETree(xml):
+    return lxml.etree.fromstring(xml)
+
 class Session:
     def __init__(self,uri,verbose):
         self.conn = libvirt.open(uri)
@@ -61,7 +67,7 @@ class ObjectConnection:
         for dependent in dependents:
             dependent._deactivate()
 
-    def _fixDefinitionXML(self,objid,specDefETree):
+    def _fixDefinitionETree(self,objid,specDefETree):
         return None
 
     def _assignMacAddress(self,objid,index):
@@ -76,6 +82,9 @@ class ObjectConnection:
     def _defineExtra(self,lvobj,extra):
         pass
 
+    def _relevantDefinition(self,specDefXML,defXML,defETree):
+        return defXML
+
 class DomainConnection(ObjectConnection):
     def __init__(self,session):
         ObjectConnection.__init__(self,"domain",session)
@@ -87,7 +96,7 @@ class DomainConnection(ObjectConnection):
         return self.conn.lookupByName(name)
     def _defineXML(self,defn):
         return self.conn.defineXML(defn)
-    def _descriptionXMLText(self,lvobj):
+    def _descriptionXML(self,lvobj):
         # https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainXMLFlags
         # VIR_DOMAIN_XML_INACTIVE
         return lvobj.XMLDesc(flags=2)
@@ -97,7 +106,7 @@ class DomainConnection(ObjectConnection):
         # VIR_DOMAIN_UNDEFINE_KEEP_NVRAM
         # VIR_DOMAIN_UNDEFINE_KEEP_TPM
         lvobj.undefineFlags(flags=73)
-    def _fixDefinitionXML(self,objid,specDefETree):
+    def _fixDefinitionETree(self,objid,specDefETree):
         interfaces = specDefETree.xpath("/domain/devices/interface")
         index = 0
         for interface in interfaces:
@@ -124,28 +133,28 @@ class NetworkConnection(ObjectConnection):
     def _defineXML(self,defn):
         # https://libvirt.org/formatnetwork.html
         return self.conn.networkDefineXML(defn)
-    def _descriptionXMLText(self,lvobj):
+    def _descriptionXML(self,lvobj):
         # https://libvirt.org/html/libvirt-libvirt-network.html#virNetworkXMLFlags
         # VIR_NETWORK_XML_INACTIVE
         return lvobj.XMLDesc(flags=1)
     def _getDependents(self,obj):
-        networknames = [name.text for name in obj.descriptionXMLETree().xpath("/network/name")]
-        bridgenames = [str(name) for name in obj.descriptionXMLETree().xpath("/network/bridge/@name")]
+        networknames = [name.text for name in obj.descriptionETree().xpath("/network/name")]
+        bridgenames = [str(name) for name in obj.descriptionETree().xpath("/network/bridge/@name")]
         domains = DomainConnection(self.session).getAll()
         deps = []
         for domain in domains:
-            domainbridgenames = domain.descriptionXMLETree().xpath("/domain/devices/interface[@type='bridge']/source/@bridge")
+            domainbridgenames = domain.descriptionETree().xpath("/domain/devices/interface[@type='bridge']/source/@bridge")
             for name in domainbridgenames:
                 if str(name) in bridgenames:
                     deps.append(domain)
                     break
-            domainnetworknames = domain.descriptionXMLETree().xpath("/domain/devices/interface[@type='network']/source/@network")
+            domainnetworknames = domain.descriptionETree().xpath("/domain/devices/interface[@type='network']/source/@network")
             for name in domainnetworknames:
                 if str(name) in networknames:
                     deps.append(domain)
                     break
         return deps
-    def _fixDefinitionXML(self,objid,specDefETree):
+    def _fixDefinitionETree(self,objid,specDefETree):
         addresses = specDefETree.xpath("/network/mac/@address")
         if len(addresses) == 0:
             addr = self._assignMacAddress(objid,0)
@@ -169,7 +178,7 @@ class PoolConnection(ObjectConnection):
     def _defineXML(self,defn):
         # https://libvirt.org/formatstorage.html
         return self.conn.storagePoolDefineXML(defn)
-    def _descriptionXMLText(self,lvobj):
+    def _descriptionXML(self,lvobj):
         # https://libvirt.org/html/libvirt-libvirt-storage.html#virStorageXMLFlags
         # VIR_STORAGE_XML_INACTIVE
         return lvobj.XMLDesc(flags=1)
@@ -179,8 +188,8 @@ class PoolConnection(ObjectConnection):
             for volume in volumes:
                 path = volume.get("definition")
                 if path is not None:
-                    volDef = self.getFile(path)
-                    volDefETree = lxml.etree.fromstring(volDef)
+                    volDefXML = self.getFile(path)
+                    volDefETree = xmlToETree(volDefXML)
                     volName = volDefETree.find("name").text
                     pool._activate()
                     volLVObj = pool._lvobj.storageVolLookupByName(volName)
@@ -188,8 +197,13 @@ class PoolConnection(ObjectConnection):
                         pool.vreport("found volume " + volName)
                     else:
                         pool.vreport("creating volume " + volName)
-                        volLVObj = pool._lvobj.storageVolCreateXML(volDef)
+                        volLVObj = pool._lvobj.storageVolCreateXML(volDefXML)
                     volLVObj.info()
+    def _relevantDefinition(self,specDefXML,defXML,defETree):
+        specDefETree = xmlToETree(specDefXML)
+        if defETree is None:
+            defETree = xmlToETree(defXML)
+        return eTreeToXML(defETree)
 
 objectTypes = ['domain','network','pool']
 
@@ -235,11 +249,11 @@ class VObject:
         self.vreport("set autostart true" if a else "set autostart false")
         self._lvobj.setAutostart(a)
 
-    def descriptionXMLText(self):
-        return self.oc._descriptionXMLText(self._lvobj)
+    def descriptionXML(self):
+        return self.oc._descriptionXML(self._lvobj)
 
-    def descriptionXMLETree(self):
-        return lxml.etree.fromstring(self.descriptionXMLText())
+    def descriptionETree(self):
+        return xmlToETree(self.descriptionXML())
 
     def undefine(self):
         isPersistent = self._lvobj.isPersistent()
@@ -254,7 +268,7 @@ class VObject:
 # what we want for an object
 class ObjectSpec:
 
-    def __init__(self,oc,specUUID = None,specName = None,specDef = None,active = None,extra = None):
+    def __init__(self,oc,specUUID = None,specName = None,specDefXML = None,active = None,extra = None):
         if specUUID is not None:
             self.subject = oc.fromUUIDOrNone(specUUID)
         elif specName is not None:
@@ -268,7 +282,7 @@ class ObjectSpec:
             else:
                 active = self.subject.isActive()
         self.oc = oc
-        self.specDef = specDef
+        self.specDefXML = specDefXML
         self.specName = specName
         self.specUUID = specUUID
         self.active = active
@@ -283,32 +297,33 @@ class ObjectSpec:
     def fromName(oc,specName,active):
         return ObjectSpec(oc,specName = specName,active = active)
 
-    def fromDefinition(oc,specDef,active,extra = None):
-        specDefETree = lxml.etree.fromstring(specDef)
+    def fromDefinition(oc,specDefXML,active,extra = None):
+        specDefETree = xmlToETree(specDefXML)
         specUUID = uuid.UUID(specDefETree.find("uuid").text).bytes
         specName = specDefETree.find("name").text
-        fixedDefXML = oc._fixDefinitionXML(specUUID,specDefETree)
-        if fixedDefXML is not None:
-            specDef = lxml.etree.tostring(fixedDefXML).decode("utf-8")
-        return ObjectSpec(oc,specUUID = specUUID,specName = specName,specDef = specDef,active = active, extra = extra)
+        fixedDefETree = oc._fixDefinitionETree(specUUID,specDefETree)
+        if fixedDefETree is not None:
+            specDefXML = eTreeToXML(fixedDefETree)
+        return ObjectSpec(oc,specUUID = specUUID,specName = specName,specDefXML = specDefXML,active = active, extra = extra)
 
     def fromDefinitionFile(oc,path,active,extra = None):
-        specDef = oc.getFile(path)
-        return ObjectSpec.fromDefinition(oc,specDef,active, extra = extra)
+        specDefXML = oc.getFile(path)
+        return ObjectSpec.fromDefinition(oc,specDefXML,active, extra = extra)
 
     def define(self):
-        if self.specDef is not None:
+        if self.specDefXML is not None:
             if self.subject is not None:
-                foundDef = self.subject.descriptionXMLText()
-                foundDefETree = lxml.etree.fromstring(foundDef)
-                foundName = foundDefETree.find("name").text
+                oldDefXML = self.subject.descriptionXML()
+                oldDefETree = xmlToETree(oldDefXML)
+                foundName = oldDefETree.find("name").text
                 if foundName != self.specName:
                     self.subject.undefine()
+                oldRelDefXML = self.oc._relevantDefinition(self.specDefXML,oldDefXML,oldDefETree)
                 self.vreport("redefine")
-                newvobject = self.oc._fromXML(self.specDef)
-                subjectDef = newvobject.descriptionXMLText()
-                if foundDef != subjectDef:
-                    diff = xmldiff.main.diff_texts(foundDef,subjectDef,formatter = xmldiff.formatting.DiffFormatter())
+                newvobject = self.oc._fromXML(self.specDefXML)
+                newRelDefXML = self.oc._relevantDefinition(self.specDefXML,newvobject.descriptionXML(),None)
+                if oldRelDefXML != newRelDefXML:
+                    diff = xmldiff.main.diff_texts(oldRelDefXML,newRelDefXML,formatter = xmldiff.formatting.DiffFormatter())
                     self.vreport("changed:\n" + diff)
                     self.subject._deactivate()
                 else:
@@ -316,7 +331,7 @@ class ObjectSpec:
                 self.subject = newvobject
             else:
                 self.vreport("define new")
-                self.subject = self.oc._fromXML(self.specDef)
+                self.subject = self.oc._fromXML(self.specDefXML)
 
     def defineExtra(self):
         if self.subject is not None:
