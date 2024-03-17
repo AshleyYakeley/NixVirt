@@ -332,7 +332,7 @@ class ObjectSpec:
                 diff = xmldiff.main.diff_trees(oldRelDefETree,newRelDefETree)
                 if len(diff) > 0:
                     if self.oc.session.verbose:
-                        difftext = xmldiff.main.diff_trees(oldRelDefETree,newRelDefETree,xmldiff.formatting.DiffFormatter())
+                        difftext = xmldiff.main.diff_trees(oldRelDefETree,newRelDefETree,formatter=xmldiff.formatting.DiffFormatter())
                         self.vreport("changed:\n" + difftext)
                     self.subject._deactivate()
                 else:
