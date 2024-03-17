@@ -197,10 +197,10 @@ class PoolConnection(ObjectConnection):
                     volDefETree = xmlToETree(volDefXML)
                     volName = volDefETree.find("name").text
                     pool._activate()
-                    volLVObj = pool._lvobj.storageVolLookupByName(volName)
-                    if volLVObj is not None:
+                    try:
+                        volLVObj = pool._lvobj.storageVolLookupByName(volName)
                         pool.vreport("found volume " + volName)
-                    else:
+                    except libvirt.libvirtError:
                         pool.vreport("creating volume " + volName)
                         volLVObj = pool._lvobj.storageVolCreateXML(volDefXML)
                     volLVObj.info()
