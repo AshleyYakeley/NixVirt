@@ -207,7 +207,7 @@ class PoolConnection(ObjectConnection):
         def relevance(p):
             if len(specDefETree.xpath(p)) == 0:
                 for node in defETree.xpath(p):
-                    defETree.remove(node)
+                    node.getparent().remove(node)
 
         relevance("/pool/capacity")
         relevance("/pool/allocation")
