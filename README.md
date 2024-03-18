@@ -32,12 +32,12 @@ These are the available outputs:
 
 A NixOS module with these options:
 
-* `virtualisation.libvirt.enable` (boolean, default `false`)  
+* `virtualisation.libvirt.enable` (bool, default `false`)  
 Whether to use NixVirt.
 Switching this on will also switch on `virtualisation.libvirtd.enable`,
 and set by default `virtualisation.libvirtd.package` to match libvirt version.
 
-* `virtualisation.libvirt.swtpm.enable` (boolean, default `false`)  
+* `virtualisation.libvirt.swtpm.enable` (bool, default `false`)  
 Whether to make swtpm (software TPM emulator) available.
 
 * `virtualisation.libvirt.connections.<connection>` (set)  
@@ -50,7 +50,7 @@ Each set represents a libvirt domain, and has these attributes:
   Path to a [domain definition XML](https://libvirt.org/formatdomain.html) file.
   You can obtain this for your existing domains with `virsh dumpxml`.
 
-  * `active` (`true`, `false`, `null`, default `null`)  
+  * `active` (bool or `null`, default `null`)  
   State to put the domain in (running/stopped), or null to ignore.  
 
   :warning: If this option is specified and not null, any libvirt domain not defined in the list will be deleted.
@@ -63,7 +63,7 @@ Each set represents a libvirt network, and has these attributes:
   Path to a [network definition XML](https://libvirt.org/formatnetwork.html) file.
   You can obtain this for your existing networks with `virsh net-dumpxml`.
 
-  * `active` (`true`, `false`, `null`, default `null`)  
+  * `active` (bool or `null`, default `null`)  
   State to put the network in, or null to ignore.  
 
   :warning: If this option is specified and not null, any libvirt network not defined in the list will be deleted.
@@ -75,15 +75,20 @@ Each set represents a libvirt storage pool, and has these attributes:
   Path to a [pool definition XML](https://libvirt.org/formatstorage.html) file.
   You can obtain this for your existing pools with `virsh pool-dumpxml`.
 
-  * `active` (`true`, `false`, `null`, default `null`)  
+  * `active` (bool or `null`, default `null`)  
   State to put the pool in, or null to ignore.  
 
   :warning: If this option is specified and not null, any libvirt pool not defined in the list will be deleted.
   However, deleting a pool does not delete the files or other storage holding the volumes it contained.
 
   * `volumes` (list of sets, default `[]`)  
-  Volumes to create if not already existing. Existing volumes not listed will be ignored (not deleted).
+  Volumes to create if not already existing.
+  Existing volumes not listed will be ignored (not deleted);
+  to delete a volume, set `present = false`.
   Each set has this attribute:
+
+    * `present` (bool, default `true`)  
+    Whether the volume with the specified name should exist.
 
     * `definition` (path)  
     Path to a [volume definition XML](https://libvirt.org/formatstorage.html) file.
@@ -170,8 +175,8 @@ These are the arguments:
 * `memory`: amount of RAM (set with `count` (integer) and `unit` (string) attributes, default `{ count = 2; unit = "GiB"; }`)
 * `storage_vol`: source element or path to a QCOW2 volume for storage (set, string or path, required)
 * `install_vol`: source element or path to an ISO image for an inserted CDROM, or null (set, string or path, default `null`)
-* `virtio_net`: whether to use VirtIO for networking (faster, but may require special guest drivers) (boolean, default `false`)
-* `virtio_video`: whether to use VirtIO for graphics (boolean, default `true`)
+* `virtio_net`: whether to use VirtIO for networking (faster, but may require special guest drivers) (bool, default `false`)
+* `virtio_video`: whether to use VirtIO for graphics (bool, default `true`)
 
 #### `lib.domain.templates.linux`
 
@@ -184,7 +189,7 @@ These are the arguments:
 * `memory`: amount of RAM (set with `count` (integer) and `unit` (string) attributes, default `{ count = 4; unit = "GiB"; }`)
 * `storage_vol`: source element or path to a QCOW2 volume for storage (set, string or path, required)
 * `install_vol`: source element or path to an ISO image for an inserted CDROM, or null (set, string or path, default `null`)
-* `virtio_video`: whether to use VirtIO for graphics (boolean, default `true`)
+* `virtio_video`: whether to use VirtIO for graphics (bool, default `true`)
 
 ##### Example
 
@@ -218,10 +223,10 @@ These are the arguments:
 * `storage_vol`: source element or path to a QCOW2 volume for storage (set, string or path, required)
 * `install_vol`: source element or path to an ISO image for an inserted CDROM, or null (set, string or path, default `null`)
 * `nvram_path`: path to a file for storing NVRAM, this file will be created if missing (string or path, required)
-* `virtio_net`: whether to use VirtIO for networking: this is faster, but requires installing a driver during Windows 11 installation (boolean, default `false`)
-* `virtio_video`: whether to use VirtIO for graphics (boolean, default `true`)
-* `virtio_drive`: whether to use VirtIO for the storage device: this is faster, but requires installing a driver during Windows 11 installation (boolean, default `false`)
-* `install_virtio`: whether to add an additional CDROM drive with a disc containing VirtIO drivers for Windows (boolean, default `false`)
+* `virtio_net`: whether to use VirtIO for networking: this is faster, but requires installing a driver during Windows 11 installation (bool, default `false`)
+* `virtio_video`: whether to use VirtIO for graphics (bool, default `true`)
+* `virtio_drive`: whether to use VirtIO for the storage device: this is faster, but requires installing a driver during Windows 11 installation (bool, default `false`)
+* `install_virtio`: whether to add an additional CDROM drive with a disc containing VirtIO drivers for Windows (bool, default `false`)
 
 ##### Example
 

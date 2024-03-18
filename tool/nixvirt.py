@@ -191,6 +191,9 @@ class PoolConnection(ObjectConnection):
         volumes = extra.get("volumes")
         if volumes is not None:
             for volume in volumes:
+                present = volume.get("present")
+                if present is None:
+                    present = True
                 path = volume.get("definition")
                 if path is not None:
                     volDefXML = self.getFile(path)
@@ -201,9 +204,15 @@ class PoolConnection(ObjectConnection):
                         volLVObj = pool._lvobj.storageVolLookupByName(volName)
                         pool.vreport("found volume " + volName)
                     except libvirt.libvirtError:
-                        pool.vreport("creating volume " + volName)
-                        volLVObj = pool._lvobj.createXML(volDefXML)
-                    volLVObj.info()
+                        volLVObj = None
+                    if volLVObj is None:
+                        if present:
+                            pool.vreport("creating volume " + volName)
+                            volLVObj = pool._lvobj.createXML(volDefXML)
+                    else:
+                        if not present:
+                            pool.vreport("deleting volume " + volName)
+                            volLVObj.delete()
     def _relevantDefETree(self,specDefXML,defETree):
         specDefETree = xmlToETree(specDefXML)
 

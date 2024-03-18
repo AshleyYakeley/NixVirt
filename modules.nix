@@ -78,6 +78,12 @@ let
                                         {
                                           options =
                                             {
+                                              present = lib.mkOption
+                                                {
+                                                  type = bool;
+                                                  default = true;
+                                                  description = "whether the volume should exist";
+                                                };
                                               definition = lib.mkOption
                                                 {
                                                   type = path;
