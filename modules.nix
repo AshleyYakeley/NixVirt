@@ -118,7 +118,7 @@ let
               "${moduleHelperFile} ${verboseFlag} --connect ${connection} ${jsonFile}\n";
 
             script = concatStrMap scriptForConnection (builtins.attrNames cfg.connections);
-            extraPackages = if cfg.swtpm.enable then [ packages.swtpm ] else [ ];
+            extraPackages = [ packages.qemu-utils ] ++ (if cfg.swtpm.enable then [ packages.swtpm ] else [ ]);
           in
           if isHomeManager
           then

@@ -14,7 +14,7 @@ parser.add_argument('--state', action='store', choices = ['active','inactive'], 
 parser.add_argument('--auto', action='store_true', help='set autostart to match state')
 args = parser.parse_args()
 
-    # set state
+# set state
 match args.state:
     case "active":
         active = True
