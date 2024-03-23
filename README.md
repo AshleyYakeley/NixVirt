@@ -164,7 +164,7 @@ These definitions are currently not stable, and are mostly for getting started w
 
 If you have suggestions for improvements, please create a PR.
 
-#### `lib.domain.templates.pc-i440fx`
+#### `lib.domain.templates.pc`
 
 A template function for a kinda basic Intel 440FX machine.
 
@@ -178,7 +178,7 @@ These are the arguments:
 * `virtio_net`: whether to use VirtIO for networking (faster, but may require special guest drivers) (bool, default `false`)
 * `virtio_video`: whether to use VirtIO for graphics (bool, default `true`)
 
-#### `lib.domain.templates.pc-q35`
+#### `lib.domain.templates.q35`
 
 A template function for a kinda basic Intel Q35 machine.
 

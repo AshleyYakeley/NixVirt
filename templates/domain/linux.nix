@@ -8,7 +8,7 @@ stuff@{ packages, ... }:
 , ...
 }:
 let
-  base = import ./pc-q35.nix stuff
+  base = import ./q35.nix stuff
     {
       inherit name uuid memory storage_vol install_vol virtio_video;
       virtio_net = true;

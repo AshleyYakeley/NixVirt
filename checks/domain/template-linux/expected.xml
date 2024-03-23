@@ -3,7 +3,7 @@
   <uuid>2904419d-b283-4cfd-9f2c-7c3713ff809f</uuid>
   <memory unit='GiB'>6</memory>
   <os>
-    <type arch='x86_64' machine='pc-q35'>hvm</type>
+    <type arch='x86_64' machine='q35'>hvm</type>
     <boot dev='cdrom'/>
     <boot dev='hd'/>
   </os>

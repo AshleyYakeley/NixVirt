@@ -22,7 +22,7 @@ in
     {
       type = "hvm";
       arch = "x86_64";
-      machine = "pc-i440fx";
+      machine = "q35";
       boot = [{ dev = "cdrom"; } { dev = "hd"; }];
     };
   features =
@@ -67,7 +67,7 @@ in
                 type = "raw";
               };
             source = mksource install_vol;
-            target = { dev = "hdc"; bus = "ide"; };
+            target = { dev = "sdc"; bus = "sata"; };
             readonly = true;
           }
         ];

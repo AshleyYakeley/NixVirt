@@ -22,7 +22,7 @@ in
     {
       type = "hvm";
       arch = "x86_64";
-      machine = "pc-q35";
+      machine = "pc";
       boot = [{ dev = "cdrom"; } { dev = "hd"; }];
     };
   features =
@@ -67,7 +67,7 @@ in
                 type = "raw";
               };
             source = mksource install_vol;
-            target = { dev = "sdc"; bus = "sata"; };
+            target = { dev = "hdc"; bus = "ide"; };
             readonly = true;
           }
         ];
