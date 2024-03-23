@@ -12,6 +12,15 @@ let
         (subelem "target" [ ]
           [
             (subelem "format" [ (subattr "type" typeString) ] [ ])
+            (subelem "compat" [ ] typeString)
+            (subelem "nocow" [ ] [ ])
+            (subelem "clusterSize" [ (subattr "unit" typeString) ] (sub "count" typeInt))
+            (subelem "features" [ ]
+              [
+                (subelem "lazy_refcounts" [ ] [ ])
+                (subelem "extended_l2" [ ] [ ])
+              ]
+            )
           ]
         )
       ];
