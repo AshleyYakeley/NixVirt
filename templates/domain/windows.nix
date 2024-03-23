@@ -14,7 +14,7 @@ stuff@{ packages, packages-ovmf, guest-install, ... }:
 , ...
 }:
 let
-  base = import ./base.nix stuff
+  base = import ./pc-q35.nix stuff
     {
       inherit name uuid memory storage_vol install_vol virtio_net virtio_video;
     };

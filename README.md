@@ -164,9 +164,23 @@ These definitions are currently not stable, and are mostly for getting started w
 
 If you have suggestions for improvements, please create a PR.
 
-#### `lib.domain.templates.base`
+#### `lib.domain.templates.pc-i440fx`
 
-A template function for a kinda basic Q35 machine.
+A template function for a kinda basic Intel 440FX machine.
+
+These are the arguments:
+
+* `name`: the libvirt name (string, required)
+* `uuid`: the libvirt identifier (UUID string, required)
+* `memory`: amount of RAM (set with `count` (integer) and `unit` (string) attributes, default `{ count = 2; unit = "GiB"; }`)
+* `storage_vol`: source element or path to a QCOW2 volume for storage (set, string or path, required)
+* `install_vol`: source element or path to an ISO image for an inserted CDROM, or null (set, string or path, default `null`)
+* `virtio_net`: whether to use VirtIO for networking (faster, but may require special guest drivers) (bool, default `false`)
+* `virtio_video`: whether to use VirtIO for graphics (bool, default `true`)
+
+#### `lib.domain.templates.pc-q35`
+
+A template function for a kinda basic Intel Q35 machine.
 
 These are the arguments:
 

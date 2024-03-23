@@ -4,6 +4,7 @@
 
 * Lib:
     * Better support for volume sources in domains in generation and templates
+    * Templates for both Intel 440FX and Intel Q35
 
 ## [0.3.0]
 
