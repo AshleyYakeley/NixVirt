@@ -90,8 +90,13 @@ Each set represents a libvirt storage pool, and has these attributes:
     * `present` (bool, default `true`)  
     Whether the volume with the specified name should exist.
 
-    * `definition` (path)  
+    * `definition` (path, default `null`)  
     Path to a [volume definition XML](https://libvirt.org/formatstorage.html) file.
+
+    * `name` (string, default `null`)  
+    Name of volume, can be used instead of `definition` when `present = false`.
+
+    At least one of `definition` and `name` should exist (non-null); if they both do, the names must match.
 
 Note that NixOS already has options under `virtualisation.libvirtd` for controlling the libvirt daemon.
 
