@@ -84,10 +84,17 @@ let
                                                   default = true;
                                                   description = "whether the volume should exist";
                                                 };
+                                              name = lib.mkOption
+                                                {
+                                                  type = nullOr str;
+                                                  description = "name of the volume (for present=false)";
+                                                  default = null;
+                                                };
                                               definition = lib.mkOption
                                                 {
-                                                  type = path;
+                                                  type = nullOr path;
                                                   description = "path to volume definition XML";
+                                                  default = null;
                                                 };
                                             };
                                         });

@@ -70,6 +70,10 @@ try:
 
     session.vreport("Done")
 
+except nixvirt.NixVirtError as err:
+    print ("NixVirt:", err, file=sys.stderr)
+    sys.exit(1)
+
 except libvirt.libvirtError as err:
     print ("NixVirt: libvirt error:", err, file=sys.stderr)
     sys.exit(1)

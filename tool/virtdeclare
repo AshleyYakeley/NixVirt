@@ -46,6 +46,10 @@ try:
     if args.auto and (active is not None):
         spec.subject.setAutostart(active)
 
+except nixvirt.NixVirtError as err:
+    print ("virtdeclare:", err, file=sys.stderr)
+    sys.exit(1)
+
 except libvirt.libvirtError as err:
     print ("virtdeclare: libvirt error:", err, file=sys.stderr)
     sys.exit(1)

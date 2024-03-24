@@ -12,6 +12,13 @@ def eTreeToXML(etree):
 def xmlToETree(xml):
     return lxml.etree.fromstring(xml)
 
+class NixVirtError(Exception):
+    def __init__(self, msg):
+        self.msg = msg
+
+    def __str__(self):
+        return msg
+
 class Session:
     def __init__(self,uri,verbose):
         self.conn = libvirt.open(uri)
@@ -195,24 +202,37 @@ class PoolConnection(ObjectConnection):
                 if present is None:
                     present = True
                 path = volume.get("definition")
+                volName = volume.get("name")
                 if path is not None:
                     volDefXML = self.getFile(path)
                     volDefETree = xmlToETree(volDefXML)
-                    volName = volDefETree.find("name").text
-                    pool._activate()
-                    try:
-                        volLVObj = pool._lvobj.storageVolLookupByName(volName)
-                        pool.vreport("found volume " + volName)
-                    except libvirt.libvirtError:
-                        volLVObj = None
-                    if volLVObj is None:
-                        if present:
-                            pool.vreport("creating volume " + volName)
-                            volLVObj = pool._lvobj.createXML(volDefXML)
+                    defVolName = volDefETree.find("name").text
+                    if volName is None:
+                        volName = defVolName
+                    elif volName != defVolName:
+                        raise NixVirtError("volume: name inconsistent with definition")
+                else:
+                    if volName is None:
+                        raise NixVirtError("volume: neither definition nor name specified")
                     else:
-                        if not present:
-                            pool.vreport("deleting volume " + volName)
-                            volLVObj.delete()
+                        if present:
+                            raise NixVirtError("volume: cannot create without definition")
+
+                pool._activate()
+                try:
+                    volLVObj = pool._lvobj.storageVolLookupByName(volName)
+                    pool.vreport("found volume " + volName)
+                except libvirt.libvirtError:
+                    volLVObj = None
+                if volLVObj is None:
+                    if present:
+                        pool.vreport("creating volume " + volName)
+                        volLVObj = pool._lvobj.createXML(volDefXML)
+                else:
+                    if not present:
+                        pool.vreport("deleting volume " + volName)
+                        volLVObj.delete()
+
     def _relevantDefETree(self,specDefXML,defETree):
         specDefETree = xmlToETree(specDefXML)
 
