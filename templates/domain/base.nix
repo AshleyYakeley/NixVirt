@@ -1,5 +1,9 @@
 { packages, ... }:
 let
+  mksourcetype = with builtins;
+    src:
+    if isAttrs src && src ? "volume" then "volume"
+    else "file";
   mksource = with builtins;
     src:
     if isString src || isPath src then { file = src; }
@@ -47,7 +51,7 @@ let
           disk =
             [
               {
-                type = "file";
+                type = mksourcetype storage_vol;
                 device = "disk";
                 driver =
                   {
@@ -59,7 +63,7 @@ let
                 target = { dev = "vda"; bus = "virtio"; };
               }
               {
-                type = "file";
+                type = mksourcetype install_vol;
                 device = "cdrom";
                 driver =
                   {
