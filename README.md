@@ -53,8 +53,8 @@ Each set represents a libvirt domain, and has these attributes:
   * `active` (bool or `null`, default `null`)  
   State to put the domain in (running/stopped), or null to ignore.  
 
-  :warning: If this option is specified and not null, any libvirt domain not defined in the list will be deleted.
-  Deleting a domain will not delete its volumes, NVRAM, or TPM state.
+    :warning: If this option is specified and not null, any libvirt domain not defined in the list will be deleted.
+    Deleting a domain will not delete its volumes, NVRAM, or TPM state.
 
 * `virtualisation.libvirt.connections.<connection>.networks` (list of sets or `null`, default `null`)  
 Each set represents a libvirt network, and has these attributes:
@@ -66,7 +66,7 @@ Each set represents a libvirt network, and has these attributes:
   * `active` (bool or `null`, default `null`)  
   State to put the network in, or null to ignore.  
 
-  :warning: If this option is specified and not null, any libvirt network not defined in the list will be deleted.
+    :warning: If this option is specified and not null, any libvirt network not defined in the list will be deleted.
 
 * `virtualisation.libvirt.connections.<connection>.pools` (list of sets or `null`, default `null`)  
 Each set represents a libvirt storage pool, and has these attributes:
@@ -78,8 +78,8 @@ Each set represents a libvirt storage pool, and has these attributes:
   * `active` (bool or `null`, default `null`)  
   State to put the pool in, or null to ignore.  
 
-  :warning: If this option is specified and not null, any libvirt pool not defined in the list will be deleted.
-  However, deleting a pool does not delete the files or other storage holding the volumes it contained.
+    :warning: If this option is specified and not null, any libvirt pool not defined in the list will be deleted.
+    However, deleting a pool does not delete the files or other storage holding the volumes it contained.
 
   * `volumes` (list of sets, default `[]`)  
   Volumes to create if not already existing.
