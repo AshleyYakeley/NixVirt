@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.4.0]
 
 * Modules:
     * Specify volumes to be present/absent within pools
