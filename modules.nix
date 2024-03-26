@@ -124,8 +124,9 @@ let
               in
               "${moduleHelperFile} ${verboseFlag} --connect ${connection} ${jsonFile}\n";
 
-            script = "echo $PATH > /dev/stderr\n" + concatStrMap scriptForConnection (builtins.attrNames cfg.connections);
             extraPackages = [ packages.qemu-utils ] ++ (if cfg.swtpm.enable then [ packages.swtpm ] else [ ]);
+            extraPaths = concatStrMap (p: "${p}/bin:") extraPackages;
+            script = "echo extraPaths: ${extraPaths} > /dev/stderr\n" + concatStrMap scriptForConnection (builtins.attrNames cfg.connections);
           in
           if isHomeManager
           then
