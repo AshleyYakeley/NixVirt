@@ -126,7 +126,7 @@ let
 
             extraPackages = [ packages.qemu-utils ] ++ (if cfg.swtpm.enable then [ packages.swtpm ] else [ ]);
             extraPaths = concatStrMap (p: "${p}/bin:") extraPackages;
-            script = "echo extraPaths: ${extraPaths} > /dev/stderr\n" + concatStrMap scriptForConnection (builtins.attrNames cfg.connections);
+            script = "PATH=${extraPaths}$PATH\n" + concatStrMap scriptForConnection (builtins.attrNames cfg.connections);
           in
           if isHomeManager
           then
