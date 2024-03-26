@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.4.1]
+
+* Fix defect causing libvirt not to find executable files during activation
+
 ## [0.4.0]
 
 * Modules:
