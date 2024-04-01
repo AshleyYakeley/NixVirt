@@ -1,7 +1,7 @@
 <domain type='kvm'>
-  <name>test-windows</name>
-  <uuid>a8bdda9a-6c4a-49bf-bf2d-0dc9792e7b18</uuid>
-  <memory unit='GiB'>10</memory>
+  <name>test-windows-2</name>
+  <uuid>a67f3ed6-fdad-462a-8c3b-d970db34d8da</uuid>
+  <memory unit='GiB'>4</memory>
   <vcpu>2</vcpu>
   <os>
     <type arch='x86_64' machine='q35'>hvm</type>
@@ -44,21 +44,15 @@
   </pm>
   <devices>
     <emulator>QEMU_PATH/bin/qemu-system-x86_64</emulator>
-    <disk type='file' device='disk'>
+    <disk type='volume' device='disk'>
       <driver name='qemu' type='qcow2' cache='none' discard='unmap'/>
-      <source file='/Storage/MyHD.qcow2'/>
+      <source pool='default' volume='win10.qcow2'/>
       <target dev='sda' bus='sata'/>
     </disk>
     <disk type='file' device='cdrom'>
       <driver name='qemu' type='raw'/>
       <source file='/Source/Win11_23H2_EnglishInternational_x64v2.iso' startupPolicy='mandatory'/>
       <target dev='hdc' bus='sata'/>
-      <readonly/>
-    </disk>
-    <disk type='file' device='cdrom'>
-      <driver name='qemu' type='raw'/>
-      <source file='BUILD virtio-win.iso'/>
-      <target dev='hdd' bus='sata'/>
       <readonly/>
     </disk>
     <interface type='bridge'>

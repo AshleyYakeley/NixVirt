@@ -20,7 +20,7 @@
   <devices>
     <emulator>QEMU_PATH/bin/qemu-system-x86_64</emulator>
     <disk type='file' device='disk'>
-      <driver name='qemu' type='qcow2' discard='unmap'/>
+      <driver name='qemu' type='qcow2' cache='none' discard='unmap'/>
       <source file='/Storage/MyHD.qcow2'/>
       <target dev='vda' bus='virtio'/>
     </disk>

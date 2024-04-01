@@ -8,12 +8,31 @@ let
     src:
     if isString src || isPath src then { file = src; }
     else src;
+  mkstorage = virtio_drive: storage_vol:
+    {
+      type = mksourcetype storage_vol;
+      device = "disk";
+      driver =
+        {
+          name = "qemu";
+          type = "qcow2";
+          cache = "none";
+          discard = "unmap";
+        };
+      source = mksource storage_vol;
+      target =
+        if virtio_drive
+        then { dev = "vda"; bus = "virtio"; }
+        else
+          { dev = "sda"; bus = "sata"; };
+    };
   base = machinetype: cdtarget:
     { name
     , uuid
     , memory ? { count = 2; unit = "GiB"; }
     , storage_vol
     , install_vol ? null
+    , virtio_drive ? true
     , virtio_net ? false
     , virtio_video ? true
     , ...
@@ -50,18 +69,7 @@ let
           emulator = "${packages.qemu}/bin/qemu-system-x86_64";
           disk =
             [
-              {
-                type = mksourcetype storage_vol;
-                device = "disk";
-                driver =
-                  {
-                    name = "qemu";
-                    type = "qcow2";
-                    discard = "unmap";
-                  };
-                source = mksource storage_vol;
-                target = { dev = "vda"; bus = "virtio"; };
-              }
+              (mkstorage virtio_drive storage_vol)
               {
                 type = mksourcetype install_vol;
                 device = "cdrom";
@@ -136,6 +144,7 @@ let
     };
 in
 {
+  inherit mkstorage;
   pc = base "pc" { dev = "hdc"; bus = "ide"; };
   q35 = base "q35" { dev = "sdc"; bus = "sata"; };
 }

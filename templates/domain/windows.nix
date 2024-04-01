@@ -14,7 +14,8 @@ stuff@{ packages, packages-ovmf, guest-install, ... }:
 , ...
 }:
 let
-  base = (import ./base.nix stuff).q35
+  basestuff = import ./base.nix stuff;
+  base = basestuff.q35
     {
       inherit name uuid memory storage_vol install_vol virtio_net virtio_video;
     };
@@ -70,23 +71,7 @@ base //
   {
     disk =
       [
-        {
-          type = "file";
-          device = "disk";
-          driver =
-            {
-              name = "qemu";
-              type = "qcow2";
-              cache = "none";
-              discard = "unmap";
-            };
-          source =
-            {
-              file = storage_vol;
-            };
-          target = if virtio_drive then { dev = "vda"; bus = "virtio"; } else
-          { dev = "sda"; bus = "sata"; };
-        }
+        (basestuff.mkstorage virtio_drive storage_vol)
         {
           type = "file";
           device = "cdrom";

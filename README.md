@@ -182,6 +182,7 @@ These are the arguments:
 * `install_vol`: source element or path to an ISO image for an inserted CDROM, or null (set, string or path, default `null`)
 * `virtio_net`: whether to use VirtIO for networking (faster, but may require special guest drivers) (bool, default `false`)
 * `virtio_video`: whether to use VirtIO for graphics (bool, default `true`)
+* `virtio_drive`: whether to use VirtIO for the storage device (bool, default `true`)
 
 #### `lib.domain.templates.q35`
 
@@ -196,6 +197,7 @@ These are the arguments:
 * `install_vol`: source element or path to an ISO image for an inserted CDROM, or null (set, string or path, default `null`)
 * `virtio_net`: whether to use VirtIO for networking (faster, but may require special guest drivers) (bool, default `false`)
 * `virtio_video`: whether to use VirtIO for graphics (bool, default `true`)
+* `virtio_drive`: whether to use VirtIO for the storage device (bool, default `true`)
 
 #### `lib.domain.templates.linux`
 
@@ -209,6 +211,7 @@ These are the arguments:
 * `storage_vol`: source element or path to a QCOW2 volume for storage (set, string or path, required)
 * `install_vol`: source element or path to an ISO image for an inserted CDROM, or null (set, string or path, default `null`)
 * `virtio_video`: whether to use VirtIO for graphics (bool, default `true`)
+* `virtio_drive`: whether to use VirtIO for the storage device (bool, default `true`)
 
 ##### Example
 

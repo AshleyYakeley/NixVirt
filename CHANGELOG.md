@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.2]
+
+* Lib:
+    * Domain Templates:
+        * Fix defect in `storage_vol` in Windows template
+        * add `virtio_drive` option for all
+        * set `cache="none"` for disk drivers
+
 ## [0.4.1]
 
 * Fix defect causing libvirt not to find executable files during activation
