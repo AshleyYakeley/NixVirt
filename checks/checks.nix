@@ -34,6 +34,7 @@ in
   domain-linux = test testlib.domain domain/template-linux;
   domain-windows-1 = test testlib.domain domain/template-windows-1;
   domain-windows-2 = test testlib.domain domain/template-windows-2;
+  domain-windows-3 = test testlib.domain domain/template-windows-3;
   domain-win11 = test testlib.domain domain/win11;
 
   pool-empty = test testlib.pool pool/empty;
