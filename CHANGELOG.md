@@ -5,7 +5,7 @@
 * Lib:
     * XML generation:
         * Allow QEMU `commandline` in domains
-        * Allow in hypervisor feature kvm section customization in domains
+        * Allow in feature section, customization of the `kvm` options, in domains
     * Domain Templates:
         * Fix defect in `storage_vol` in Windows template
         * add `virtio_drive` option for all
