@@ -64,6 +64,13 @@ let
                 (subelem "evmcs" [ (subattr "state" typeBoolOnOff) ] [ ])
               ])
             (subelem "vmport" [ (subattr "state" typeBoolOnOff) ] [ ])
+            (subelem "kvm" [ ] [
+              (subelem "hidden" [ (subattr "state" typeBoolOnOff) ] [ ])
+              (subelem "hint-dedicated" [ (subattr "state" typeBoolOnOff) ] [ ])
+              (subelem "poll-control" [ (subattr "state" typeBoolOnOff) ] [ ])
+              (subelem "pv-ipi" [ (subattr "state" typeBoolOnOff) ] [ ])
+              (subelem "dirty-ring" [ (subattr "state" typeBoolOnOff) (subattr "size" typeInt) ] [ ])
+            ])
           ]
         )
         (subelem "cpu"

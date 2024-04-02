@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+* Lib:
+    * XML generation:
+        * Allow in feature section, customization of the `kvm` options, in domains
+
 ## [0.4.2]
 
 * Lib:
