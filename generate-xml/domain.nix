@@ -279,6 +279,12 @@ let
               (subelem "memballoon" [ (subattr "model" typeString) ] [ addresselem ])
             ]
         )
+        (sub "qemu-commandline" (elem "commandline"
+          [ (attr "xmlns" (typeConstant "http://libvirt.org/schemas/domain/qemu/1.0")) ]
+          [
+            (subelem "arg" [ (subattr "value" typeString) ] [ ])
+            (subelem "env" [ (subattr "name" typeString) (subattr "value" typeString) ] [ ])
+          ]))
       ];
 
 in

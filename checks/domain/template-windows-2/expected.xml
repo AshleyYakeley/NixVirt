@@ -88,4 +88,10 @@
     <redirdev bus='usb' type='spicevmc'/>
     <redirdev bus='usb' type='spicevmc'/>
   </devices>
+  <commandline xmlns='http://libvirt.org/schemas/domain/qemu/1.0'>
+    <arg value='-newarg'/>
+    <arg value='parameter'/>
+    <env name='ID' value='wibble'/>
+    <env name='BAR'/>
+  </commandline>
 </domain>

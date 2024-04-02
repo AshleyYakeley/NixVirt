@@ -3,6 +3,8 @@
 ## [0.4.2]
 
 * Lib:
+    * XML generation:
+        * Allow QEMU `commandline` in domains
     * Domain Templates:
         * Fix defect in `storage_vol` in Windows template
         * add `virtio_drive` option for all
