@@ -218,6 +218,25 @@ let
                   targetelem
                   addresselem
                 ])
+              (subelem "hostdev"
+                [
+                  (subattr "mode" typeString)
+                  (subattr "type" typeString)
+                  (subattr "managed" typeBoolYesNo)
+                ]
+                [
+                  (subelem "source" [] [ addresselem ])
+                ]
+              )
+              (subelem "shmem"
+                [
+                  (subattr "name" typeString)
+                ]
+                [
+                  (subelem "model" [ (subattr "type" typeString) ] [])
+                  (subelem "size" [ (subattr "unit" typeString) ] (sub "count" typeInt))
+                ]
+              )
               (subelem "interface"
                 [
                   (subattr "type" typeString)
