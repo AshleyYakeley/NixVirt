@@ -3,7 +3,7 @@ on:
   pull_request:
 jobs:
   check-flake:
-    run-on: ubuntu-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: cachix/install-nix-action@v25
