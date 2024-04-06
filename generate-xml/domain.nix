@@ -223,16 +223,8 @@ let
                   (subattr "mode" typeString)
                   (subattr "type" typeString)
                   (subattr "managed" typeBoolYesNo)
-                  (subelem "source"
-                    [ (subelem "address"
-                      [
-                        (subattr "domain" typeString)
-                        (subattr "bus" typeString)
-                        (subattr "slot" typeString)
-                        (subattr "function" typeString)
-                      ])
-                    ])
-                ]
+                  (subelem "source" [] [ addresselem ])
+                ][]
               )
               (subelem "shmem" [ (subattr "name") ] [
                 (subelem "model" [ (subattr "type" typeString) ])
