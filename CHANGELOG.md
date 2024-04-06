@@ -3,12 +3,8 @@
 ## [Unreleased]
 * Lib:
     * XML generation:
-        * Allow in device section, devices of type `shmem` and `hostdev`
-
-## [Unreleased]
-* Lib:
-    * XML generation:
         * Allow in feature section, customization of the `kvm` options, in domains
+        * Allow in device section, devices of type `shmem` and `hostdev`
 
 ## [0.4.2]
 
