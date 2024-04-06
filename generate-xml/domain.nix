@@ -223,6 +223,8 @@ let
                   (subattr "mode" typeString)
                   (subattr "type" typeString)
                   (subattr "managed" typeBoolYesNo)
+                ]
+                [
                   (subelem "source" [] [ 
                     # Could not be "addresselem" because it uses hex values like "0x0000"
                     (subelem "address" [
@@ -230,14 +232,19 @@ let
                       (subattr "bus" typeString)
                       (subattr "slot" typeString)
                       (subattr "function" typeString)
-                    ][])
+                    ])
                   ])
-                ][]
+                ]
               )
-              (subelem "shmem" [ (subattr "name") ] [
-                (subelem "model" [ (subattr "type" typeString) ] [])
-                (subelem "size" [ (subattr "unit" typeString) ] (sub "count" typeInt))
-              ])
+              (subelem "shmem"
+                [
+                  (subattr "name")
+                ]
+                [
+                  (subelem "model" [ (subattr "type" typeString) ] [])
+                  (subelem "size" [ (subattr "unit" typeString) ] (sub "count" typeInt))
+                ]
+              )
               (subelem "interface"
                 [
                   (subattr "type" typeString)
