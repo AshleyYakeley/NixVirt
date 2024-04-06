@@ -225,14 +225,7 @@ let
                   (subattr "managed" typeBoolYesNo)
                 ]
                 [
-                  (subelem "source" [] [ 
-                    # Could not be "addresselem" because it uses hex values like "0x0000"
-                    (subelem "address" [
-                      (subattr "domain" typeString)
-                      (subattr "bus" typeString)
-                      (subattr "slot" typeString)
-                      (subattr "function" typeString)
-                    ][])
+                  (subelem "source" [] [ addresselem ])
                   ])
                 ]
               )
