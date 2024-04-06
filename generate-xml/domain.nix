@@ -218,7 +218,7 @@ let
                   targetelem
                   addresselem
                 ])
-              (subelm "hostdev"
+              (subelem "hostdev"
                 [
                   (subattr "mode" typeString)
                   (subattr "type" typeString)
