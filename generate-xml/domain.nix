@@ -223,8 +223,8 @@ let
                   (subattr "mode" typeString)
                   (subattr "type" typeString)
                   (subattr "managed" typeBoolYesNo)
-                  (subelm "source"
-                    [ (subelm "address"
+                  (subelem "source"
+                    [ (subelem "address"
                       [
                         (subattr "domain" typeString)
                         (subattr "bus" typeString)
@@ -234,9 +234,9 @@ let
                     ])
                 ]
               )
-              (subelm "shmem" [ (subattr "name") ] [
-                (subelm "model" [ (subattr "type" typeString) ])
-                (subelm "size" [ (subattr "unit" typeString) ] (sub "count" typeInt))
+              (subelem "shmem" [ (subattr "name") ] [
+                (subelem "model" [ (subattr "type" typeString) ])
+                (subelem "size" [ (subattr "unit" typeString) ] (sub "count" typeInt))
               ])
               (subelem "interface"
                 [
