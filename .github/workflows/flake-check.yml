@@ -1,6 +1,8 @@
 name: "Check flake"
 on:
+  push:
   pull_request:
+  workflow_dispatch:
 jobs:
   check-flake:
     runs-on: ubuntu-latest
