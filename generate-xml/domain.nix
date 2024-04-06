@@ -238,7 +238,7 @@ let
               )
               (subelem "shmem"
                 [
-                  (subattr "name")
+                  (subattr "name" typeString)
                 ]
                 [
                   (subelem "model" [ (subattr "type" typeString) ] [])
