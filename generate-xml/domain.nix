@@ -237,7 +237,7 @@ let
               (subelem "shmem" [ (subattr "name") ] [
                 (subelem "model" [ (subattr "type" typeString) ])
                 (subelem "size" [ (subattr "unit" typeString) ] (sub "count" typeInt))
-              ])
+              ][])
               (subelem "interface"
                 [
                   (subattr "type" typeString)
