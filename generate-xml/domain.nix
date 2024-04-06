@@ -226,7 +226,6 @@ let
                 ]
                 [
                   (subelem "source" [] [ addresselem ])
-                  ])
                 ]
               )
               (subelem "shmem"
