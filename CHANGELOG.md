@@ -1,8 +1,8 @@
 # Changelog
 
-## [Unreleased]
+## [0.5.0]
 * Lib:
-    * XML generation:
+    * XML domain generation:
         * Allow in feature section, customization of the `kvm` options, in domains
         * Allow in device section, devices of type `shmem` and `hostdev`
 
