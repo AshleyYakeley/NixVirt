@@ -232,7 +232,7 @@ let
                       (subattr "bus" typeString)
                       (subattr "slot" typeString)
                       (subattr "function" typeString)
-                    ])
+                    ][])
                   ])
                 ]
               )
