@@ -226,10 +226,10 @@ let
                   (subelem "source" [] [ 
                     # Could not be "addresselem" because it uses hex values like "0x0000"
                     (subelem "address" [
-                      (subattr "domain" typeInt)
-                      (subattr "bus" typeInt)
-                      (subattr "slot" typeInt)
-                      (subattr "function" typeInt)
+                      (subattr "domain" typeString)
+                      (subattr "bus" typeString)
+                      (subattr "slot" typeString)
+                      (subattr "function" typeString)
                     ][])
                   ])
                 ][]
