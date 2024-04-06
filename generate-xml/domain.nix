@@ -230,7 +230,7 @@ let
                       (subattr "bus" typeInt)
                       (subattr "slot" typeInt)
                       (subattr "function" typeInt)
-                    ])
+                    ][])
                   ])
                 ][]
               )
