@@ -107,6 +107,10 @@ let
               ]
               [ ]
             )
+            (subelem "cache") [
+              (subattr "level" typeInt)
+              (subattr "mode" typeString)
+            ][])
             (subelem "feature" [
               (subattr "policy" typeString)
               (subattr "name" typeString)
