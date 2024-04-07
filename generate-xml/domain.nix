@@ -19,10 +19,10 @@ let
         (subelem "sysinfo" [ (subattr "type" typeString) ] [
           (subelem "bios" [] [
             (subattr "entry" [ (subattr "name" typeString) ] (sub "value" typeString))
-          ][])
+          ])
           (subelem "system" [] [
             (subattr "entry" [ (subattr "name" typeString) ] (sub "value" typeString))
-          ][])
+          ])
         ])
 
         (subelem "os" [ ]
@@ -107,6 +107,10 @@ let
               ]
               [ ]
             )
+            (subelem "feature" [
+              (subattr "policy" typeString)
+              (subattr "name" typeString)
+            ][])
           ]
         )
         (subelem "clock"

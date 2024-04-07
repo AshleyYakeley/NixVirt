@@ -4,6 +4,7 @@
 * Lib:
     * XML domain generation:
         * Allow in feature section, customization of the `smbios` option
+        * Allow in cpu section, customization of the `feature` option
         * Add section `sysinfo`
 
 ## [0.5.0]
