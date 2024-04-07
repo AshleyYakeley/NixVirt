@@ -1,5 +1,11 @@
 # Changelog
 
+## [UNRELEASED]
+* Lib:
+    * XML domain generation:
+        * Allow in feature section, customization of the `smbios` option
+        * Add section `sysinfo`
+
 ## [0.5.0]
 * Lib:
     * XML domain generation:

@@ -15,6 +15,16 @@ let
         (subelem "memory" [ (subattr "unit" typeString) ] (sub "count" typeInt))
         (subelem "currentMemory" [ (subattr "unit" typeString) ] (sub "count" typeInt))
         (subelem "vcpu" [ (subattr "placement" typeString) ] (sub "count" typeInt))
+
+        (subelem "sysinfo" [ (subattr "type" typeString) ] [
+          (subelem "bios" [] [
+            (subattr "entry" [ (subattr "name" typeString) ] (sub "value" typeString))
+          ])
+          (subelem "system" [] [
+            (subattr "entry" [ (subattr "name" typeString) ] (sub "value" typeString))
+          ])
+        ])
+
         (subelem "os" [ ]
           [
             (elem "type" [ (subattr "arch" typeString) (subattr "machine" typeString) ] (sub "type" typeString))
@@ -31,6 +41,7 @@ let
             (subelem "kernel" [ ] (sub "path" typePath))
             (subelem "initrd" [ ] (sub "path" typePath))
             (subelem "cmdline" [ ] (sub "options" typeString))
+            (subelem "smbios" [ (subattr "mode" typeString) ] [])
           ]
         )
         (subelem "memoryBacking" [ ]
