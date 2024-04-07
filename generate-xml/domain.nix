@@ -107,7 +107,7 @@ let
               ]
               [ ]
             )
-            (subelem "cache") [
+            (subelem "cache" [
               (subattr "level" typeInt)
               (subattr "mode" typeString)
             ][])
