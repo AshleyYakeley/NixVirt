@@ -245,6 +245,7 @@ let
                 ]
                 [
                   (subelem "source" [] [ addresselem ])
+                  (subelem "boot" [ (subattr "order" typeInt) ][])
                 ]
               )
               (subelem "shmem"
