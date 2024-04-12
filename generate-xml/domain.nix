@@ -15,6 +15,7 @@ let
         (subelem "memory" [ (subattr "unit" typeString) ] (sub "count" typeInt))
         (subelem "currentMemory" [ (subattr "unit" typeString) ] (sub "count" typeInt))
         (subelem "vcpu" [ (subattr "placement" typeString) ] (sub "count" typeInt))
+        (subelem "iothreads" [ ] (sub "count" typeInt))
         (subelem "cputune" [ ] [
           (subelem "vcpupin" [ (subattr "vcpu" typeString) (subattr "cpuset" typeString) ] [ ])
           (subelem "emulatorpin" [ (subattr "cpuset" typeString) ] [ ])
