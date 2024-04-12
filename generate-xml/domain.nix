@@ -17,9 +17,9 @@ let
         (subelem "vcpu" [ (subattr "placement" typeString) ] (sub "count" typeInt))
         (subelem "iothreads" [ ] (sub "count" typeInt))
         (subelem "cputune" [ ] [
-          (subelem "vcpupin" [ (subattr "vcpu" typeString) (subattr "cpuset" typeString) ] [ ])
+          (subelem "vcpupin" [ (subattr "vcpu" typeInt) (subattr "cpuset" typeString) ] [ ])
           (subelem "emulatorpin" [ (subattr "cpuset" typeString) ] [ ])
-          (subelem "iothreadpin" [ (subattr "iothread" typeString) (subattr "cpuset" typeString) ] [ ])
+          (subelem "iothreadpin" [ (subattr "iothread" typeInt) (subattr "cpuset" typeString) ] [ ])
           (subelem "shares" [ ] typeInt)
           (subelem "period" [ ] typeInt)
           (subelem "quota" [ ] typeInt)
@@ -29,14 +29,14 @@ let
           (subelem "emulator_quota" [ ] typeInt)
           (subelem "iothread_period" [ ] typeInt)
           (subelem "iothread_quota" [ ] typeInt)
-          (subelem "vcpusched" [ (subattr "vcpus" typeString) (subattr "scheduler" typeString) (subattr "priority" typeString) ] [ ])
-          (subelem "iothreadsched" [ (subattr "iothreads" typeString) (subattr "scheduler" typeString) ] [ ])
+          (subelem "vcpusched" [ (subattr "vcpus" typeString) (subattr "scheduler" typeString) (subattr "priority" typeInt) ] [ ])
+          (subelem "iothreadsched" [ (subattr "iothreads" typeInt) (subattr "scheduler" typeString) ] [ ])
           (subelem "cachetune" [ (subattr "vcpus" typeString) ] [
-            (subelem "cache" [ (subattr "id" typeString) (subattr "level" typeString) (subattr "type" typeString) (subattr "size" typeString) (subattr "unit" typeString) ] [ ])
-            (subelem "monitor" [ (subattr "level" typeString) (subattr "vcpus" typeString) ] [ ])
+            (subelem "cache" [ (subattr "id" typeInt) (subattr "level" typeInt) (subattr "type" typeString) (subattr "size" typeInt) (subattr "unit" typeString) ] [ ])
+            (subelem "monitor" [ (subattr "level" typeInt) (subattr "vcpus" typeString) ] [ ])
           ])
           (subelem "memorytune" [ (subattr "vcpus" typeString) ] [
-            (subelem "node" [ (subattr "id" typeString) (subattr "bandwidth" typeString) ] [ ])
+            (subelem "node" [ (subattr "id" typeInt) (subattr "bandwidth" typeInt) ] [ ])
           ])
         ])
 
