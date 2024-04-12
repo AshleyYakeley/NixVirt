@@ -46,8 +46,15 @@ let
         )
         (subelem "memoryBacking" [ ]
           [
+            (subelem "hugepages" [ ] [
+              (subelem "page" [ (subattr "size" typeString) (subattr "unit" typeString) (subattr "nodeset" typeString) ] [ ])
+            ])
+            (subelem "nosharepages" [ ] [ ])
+            (subelem "locked" [ ] [ ])
             (subelem "source" [ (subattr "type" typeString) ] [ ])
             (subelem "access" [ (subattr "mode" typeString) ] [ ])
+            (subelem "allocation" [ (subattr "mode" typeString) (subattr "threads" typeString) ] [ ])
+            (subelem "discard" [ ] [ ])
           ]
         )
         (subelem "features" [ ]
