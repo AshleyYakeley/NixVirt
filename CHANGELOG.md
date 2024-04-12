@@ -6,6 +6,7 @@
         * Allow in feature section, customization of the `smbios` option
         * Allow in cpu section, customization of the `feature` and `cache` option
         * Add section `sysinfo`
+        * add bootorder for device `disk` and `hostdev`
         * Updated section `memoryBacking`
 
 ## [0.5.0]
