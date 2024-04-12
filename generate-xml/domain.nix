@@ -206,6 +206,7 @@ let
                   targetelem
                   (subelem "readonly" [ ] [ ])
                   addresselem
+                  (subelem "boot" [ (subattr "order" typeInt) ][])
                 ]
               )
               (subelem "filesystem" [ (subattr "type" typeString) (subattr "accessmode" typeString) ]
@@ -245,6 +246,7 @@ let
                 ]
                 [
                   (subelem "source" [] [ addresselem ])
+                  (subelem "boot" [ (subattr "order" typeInt) ][])
                 ]
               )
               (subelem "shmem"
