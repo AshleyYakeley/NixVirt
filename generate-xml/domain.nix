@@ -206,6 +206,7 @@ let
                   targetelem
                   (subelem "readonly" [ ] [ ])
                   addresselem
+                  (subelem "boot" [ (subattr "order" typeInt) ][])
                 ]
               )
               (subelem "filesystem" [ (subattr "type" typeString) (subattr "accessmode" typeString) ]
