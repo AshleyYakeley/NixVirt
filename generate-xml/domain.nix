@@ -15,6 +15,29 @@ let
         (subelem "memory" [ (subattr "unit" typeString) ] (sub "count" typeInt))
         (subelem "currentMemory" [ (subattr "unit" typeString) ] (sub "count" typeInt))
         (subelem "vcpu" [ (subattr "placement" typeString) ] (sub "count" typeInt))
+        (subelem "cputune" [ ] [
+          (subelem "vcpupin" [ (subattr "vcpu" typeString) (subattr "cpuset" typeString) ] [ ])
+          (subelem "emulatorpin" [ (subattr "cpuset" typeString) ] [ ])
+          (subelem "iothreadpin" [ (subattr "iothread" typeString) (subattr "cpuset" typeString) ] [ ])
+          (subelem "shares" [ ] typeInt)
+          (subelem "period" [ ] typeInt)
+          (subelem "quota" [ ] typeInt)
+          (subelem "global_period" [ ] typeInt)
+          (subelem "global_quota" [ ] typeInt)
+          (subelem "emulator_period" [ ] typeInt)
+          (subelem "emulator_quota" [ ] typeInt)
+          (subelem "iothread_period" [ ] typeInt)
+          (subelem "iothread_quota" [ ] typeInt)
+          (subelem "vcpusched" [ (subattr "vcpus" typeString) (subattr "scheduler" typeString) (subattr "priority" typeString) ] [ ])
+          (subelem "iothreadsched" [ (subattr "iothreads" typeString) (subattr "scheduler" typeString) ] [ ])
+          (subelem "cachetune" [ (subattr "vcpus" typeString) ] [
+            (subelem "cache" [ (subattr "id" typeString) (subattr "level" typeString) (subattr "type" typeString) (subattr "size" typeString) (subattr "unit" typeString) ] [ ])
+            (subelem "monitor" [ (subattr "level" typeString) (subattr "vcpus" typeString) ] [ ])
+          ])
+          (subelem "memorytune" [ (subattr "vcpus" typeString) ] [
+            (subelem "node" [ (subattr "id" typeString) (subattr "bandwidth" typeString) ] [ ])
+          ])
+        ])
 
         (subelem "sysinfo" [ (subattr "type" typeString) ] [
           (subelem "bios" [] [
