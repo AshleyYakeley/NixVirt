@@ -8,6 +8,7 @@
         * Add section `sysinfo`
         * add bootorder for device `disk` and `hostdev`
         * add section `iothreads`
+        * add section `cputune`
 
 ## [0.5.0]
 * Lib:
