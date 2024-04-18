@@ -9,6 +9,7 @@
         * add bootorder for device `disk` and `hostdev`
         * add section `iothreads`
         * Updated section `memoryBacking`
+        * add section `cputune`
 
 ## [0.5.0]
 * Lib:
