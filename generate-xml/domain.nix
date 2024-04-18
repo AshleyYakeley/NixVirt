@@ -145,7 +145,7 @@ let
                     (subattr "threshold" typeInt)
                     (subattr "slew" typeInt)
                     (subattr "limit" typeInt)
-                  ]
+                  ] [ ]
                 )
               ]
             )
