@@ -10,6 +10,7 @@
         * add section `iothreads`
         * Updated section `memoryBacking`
         * Allow in feature section, customization of the `ioapic` option
+        * add section `cputune`
 
 ## [0.5.0]
 * Lib:
