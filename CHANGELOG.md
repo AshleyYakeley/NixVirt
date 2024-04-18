@@ -9,6 +9,7 @@
         * add bootorder for device `disk` and `hostdev`
         * add section `iothreads`
         * Updated section `memoryBacking`
+        * Allow in feature section, customization of the `ioapic` option
 
 ## [0.5.0]
 * Lib:

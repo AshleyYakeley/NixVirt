@@ -90,6 +90,7 @@ let
               (subelem "pv-ipi" [ (subattr "state" typeBoolOnOff) ] [ ])
               (subelem "dirty-ring" [ (subattr "state" typeBoolOnOff) (subattr "size" typeInt) ] [ ])
             ])
+            (subelem "ioapic" [ (subattr "driver" typeString) ] [ ])
           ]
         )
         (subelem "cpu"
