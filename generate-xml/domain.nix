@@ -133,9 +133,22 @@ let
             (subelem "timer"
               [
                 (subattr "name" typeString)
+                (subattr "track" typeString)
                 (subattr "tickpolicy" typeString)
+                (subattr "frequency" typeInt)
+                (subattr "mode" typeString)
                 (subattr "present" typeBoolYesNo)
-              ] [ ])
+              ]
+              [
+                (subelem "catchup"
+                  [
+                    (subattr "threshold" typeInt)
+                    (subattr "slew" typeInt)
+                    (subattr "limit" typeInt)
+                  ]
+                )
+              ]
+            )
           ]
         )
         (subelem "on_poweroff" [ ] typeString)
