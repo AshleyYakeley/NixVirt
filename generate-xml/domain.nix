@@ -217,42 +217,60 @@ let
             [
               (subelem "emulator" [ ] typePath)
               (subelem "disk" [ (subattr "type" typeString) (subattr "device" typeString) ]
-                [
-                  (subelem "driver"
-                    [
-                      (subattr "name" typeString)
-                      (subattr "type" typeString)
-                      (subattr "cache" typeString)
-                      (subattr "discard" typeString)
-                    ] [ ]
-                  )
-                  (subelem "source"
-                    [
-                      (subattr "file" typePath)
-                      (subattr "startupPolicy" typeString)
-                      (subattr "protocol" typeString)
-                      (subattr "name" typeString)
-                      (subattr "query" typeString)
-                      (subattr "dev" typePath)
-                      (subattr "pool" typeString)
-                      (subattr "volume" typeString)
-                      (subattr "dir" typePath)
-                      (subattr "type" typeString)
-                      (subattr "path" typePath)
-                    ]
-                    [
-                      (subelem "host"
-                        [
-                          (subattr "name" typeString)
-                          (subattr "port" typeInt)
-                        ]
-                        [ ])
-                    ])
-                  targetelem
-                  (subelem "readonly" [ ] [ ])
-                  addresselem
-                  (subelem "boot" [ (subattr "order" typeInt) ] [ ])
-                ]
+                (
+                  let
+                    backingStuff =
+                      [
+                        (subelem "source"
+                          [
+                            (subattr "file" typePath)
+                            (subattr "startupPolicy" typeString)
+                            (subattr "protocol" typeString)
+                            (subattr "name" typeString)
+                            (subattr "query" typeString)
+                            (subattr "dev" typePath)
+                            (subattr "pool" typeString)
+                            (subattr "volume" typeString)
+                            (subattr "dir" typePath)
+                            (subattr "type" typeString)
+                            (subattr "path" typePath)
+                          ]
+                          [
+                            (subelem "host"
+                              [
+                                (subattr "name" typeString)
+                                (subattr "port" typeInt)
+                              ]
+                              [ ])
+                          ])
+                        (subelem "backingStore" [ (subattr "type" typeString) ]
+                          (
+                            [
+                              (subelem "format" [ (subattr "type" typeString) ] [ ])
+                            ] ++
+                            backingStuff
+                          )
+                        )
+                      ];
+                  in
+                  [
+                    (subelem "driver"
+                      [
+                        (subattr "name" typeString)
+                        (subattr "type" typeString)
+                        (subattr "cache" typeString)
+                        (subattr "discard" typeString)
+                      ] [ ]
+                    )
+                  ] ++
+                  backingStuff ++
+                  [
+                    targetelem
+                    (subelem "readonly" [ ] [ ])
+                    addresselem
+                    (subelem "boot" [ (subattr "order" typeInt) ] [ ])
+                  ]
+                )
               )
               (subelem "filesystem" [ (subattr "type" typeString) (subattr "accessmode" typeString) ]
                 [
