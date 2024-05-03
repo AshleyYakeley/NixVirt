@@ -41,10 +41,10 @@ let
         ])
 
         (subelem "sysinfo" [ (subattr "type" typeString) ] [
-          (subelem "bios" [] [
+          (subelem "bios" [ ] [
             (subelem "entry" [ (subattr "name" typeString) ] (sub "value" typeString))
           ])
-          (subelem "system" [] [
+          (subelem "system" [ ] [
             (subelem "entry" [ (subattr "name" typeString) ] (sub "value" typeString))
           ])
         ])
@@ -65,7 +65,7 @@ let
             (subelem "kernel" [ ] (sub "path" typePath))
             (subelem "initrd" [ ] (sub "path" typePath))
             (subelem "cmdline" [ ] (sub "options" typeString))
-            (subelem "smbios" [ (subattr "mode" typeString) ] [])
+            (subelem "smbios" [ (subattr "mode" typeString) ] [ ])
           ]
         )
         (subelem "memoryBacking" [ ]
@@ -142,11 +142,11 @@ let
             (subelem "cache" [
               (subattr "level" typeInt)
               (subattr "mode" typeString)
-            ][])
+            ] [ ])
             (subelem "feature" [
               (subattr "policy" typeString)
               (subattr "name" typeString)
-            ][])
+            ] [ ])
           ]
         )
         (subelem "clock"
@@ -251,7 +251,7 @@ let
                   targetelem
                   (subelem "readonly" [ ] [ ])
                   addresselem
-                  (subelem "boot" [ (subattr "order" typeInt) ][])
+                  (subelem "boot" [ (subattr "order" typeInt) ] [ ])
                 ]
               )
               (subelem "filesystem" [ (subattr "type" typeString) (subattr "accessmode" typeString) ]
@@ -290,8 +290,8 @@ let
                   (subattr "managed" typeBoolYesNo)
                 ]
                 [
-                  (subelem "source" [] [ addresselem ])
-                  (subelem "boot" [ (subattr "order" typeInt) ][])
+                  (subelem "source" [ ] [ addresselem ])
+                  (subelem "boot" [ (subattr "order" typeInt) ] [ ])
                 ]
               )
               (subelem "shmem"
@@ -299,7 +299,7 @@ let
                   (subattr "name" typeString)
                 ]
                 [
-                  (subelem "model" [ (subattr "type" typeString) ] [])
+                  (subelem "model" [ (subattr "type" typeString) ] [ ])
                   (subelem "size" [ (subattr "unit" typeString) ] (sub "count" typeInt))
                 ]
               )
