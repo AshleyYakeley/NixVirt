@@ -386,7 +386,13 @@ let
                   (subelem "backend" [ (subattr "model" typeString) ] (sub "source" typePath))
                   addresselem
                 ])
-              (subelem "memballoon" [ (subattr "model" typeString) ] [ addresselem ])
+              (subelem "memballoon"
+                [
+                  (subattr "model" typeString)
+                  (subattr "autodeflate" typeBoolOnOff)
+                  (subattr "freePageReporting" typeBoolOnOff)
+                ]
+                [ addresselem ])
             ]
         )
         (sub "qemu-commandline" (elem "commandline"
