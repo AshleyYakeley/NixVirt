@@ -12,6 +12,7 @@
         * Update section `clock`
         * Allow in feature section, customization of the `ioapic` option
         * add section `cputune`
+        * add section `qemu:override`
 
 ## [0.5.0]
 * Lib:

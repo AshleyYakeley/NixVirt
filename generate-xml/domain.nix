@@ -401,6 +401,22 @@ let
             (subelem "arg" [ (subattr "value" typeString) ] [ ])
             (subelem "env" [ (subattr "name" typeString) (subattr "value" typeString) ] [ ])
           ]))
+        (sub "qemu-override" (elem "override"
+          [ (attr "xmlns" (typeConstant "http://libvirt.org/schemas/domain/qemu/1.0")) ]
+          [
+            (subelem "device"
+              [
+                (subattr "alias" typeString)
+              ]
+              [
+                (subelem "frontend" [ ]
+                  [
+                    (subelem "property"
+                      [ (subattr "name" typeString) (subattr "type" typeString) (subattr "value" typeString) ]
+                      [ ])
+                  ])
+              ])
+          ]))
       ];
 
 in
