@@ -310,6 +310,7 @@ let
                 [
                   (subelem "source" [ ] [ addresselem ])
                   (subelem "boot" [ (subattr "order" typeInt) ] [ ])
+                  addresselem
                 ]
               )
               (subelem "shmem"

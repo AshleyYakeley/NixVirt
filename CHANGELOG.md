@@ -13,6 +13,7 @@
         * Allow in feature section, customization of the `ioapic` option
         * add section `cputune`
         * add section `qemu:override`
+        * Updated section `hostdev`
 
 ## [0.5.0]
 * Lib:
