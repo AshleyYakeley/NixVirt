@@ -32,6 +32,7 @@ in
 
   domain-empty = test testlib.domain domain/empty;
   domain-linux = test testlib.domain domain/template-linux;
+  domain-lxc = test testlib.domain domain/template-lxc;
   domain-windows-1 = test testlib.domain domain/template-windows-1;
   domain-windows-2 = test testlib.domain domain/template-windows-2;
   domain-windows-3 = test testlib.domain domain/template-windows-3;
