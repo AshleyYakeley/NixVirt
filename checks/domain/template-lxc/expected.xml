@@ -1,0 +1,54 @@
+<domain>
+  <name>test-lxc</name>
+  <uuid>b208ceff-2501-4903-98eb-7421a4e1a895</uuid>
+  <os>
+    <type arch='x86_64'>exe</type>
+    <init>/bin/systemd</init>
+    <initarg>--unit emergency.service</initarg>
+  </os>
+  <features>
+    <privnet/>
+    <capabilities policy='default'>
+      <audit_control state='off'/>
+      <audit_read state='on'/>
+      <audit_write state='off'/>
+      <block_suspend state='off'/>
+      <bpf state='off'/>
+      <checkpoint_restore state='off'/>
+      <dac_override state='off'/>
+      <dac_read_search state='off'/>
+      <fowner state='off'/>
+      <fsetid state='off'/>
+      <ipc_lock state='off'/>
+      <ipc_owner state='off'/>
+      <kill state='on'/>
+      <lease state='off'/>
+      <linux_immutable state='off'/>
+      <mac_admin state='off'/>
+      <mac_override state='off'/>
+      <mknod state='off'/>
+      <net_admin state='off'/>
+      <net_bind_service state='off'/>
+      <net_broadcast state='on'/>
+      <net_raw state='off'/>
+      <perfmon state='off'/>
+      <setfcap state='off'/>
+      <setgid state='off'/>
+      <setpcap state='off'/>
+      <setuid state='on'/>
+      <syslog state='on'/>
+      <sys_admin state='on'/>
+      <sys_boot state='off'/>
+      <sys_chroot state='off'/>
+      <sys_module state='off'/>
+      <sys_nice state='on'/>
+      <sys_pacct state='off'/>
+      <sys_ptrace state='off'/>
+      <sys_rawio state='off'/>
+      <sys_resource state='off'/>
+      <sys_time state='on'/>
+      <sys_tty_config state='off'/>
+      <wake_alarm state='off'/>
+    </capabilities>
+  </features>
+</domain>
