@@ -4,7 +4,7 @@ stuff@{ packages, packages-ovmf, guest-install, ... }:
 { name
 , uuid
 , memory ? { count = 4; unit = "GiB"; }
-, storage_vol
+, storage_vol ? null
 , install_vol ? null
 , nvram_path
 , virtio_net ? false
@@ -69,33 +69,32 @@ base //
     };
   devices = base.devices //
   {
-    disk =
+    disk = (if builtins.isNull storage_vol then [ ] else [ (basestuff.mkstorage virtio_drive storage_vol) ]) ++
+    [
+      {
+        type = "file";
+        device = "cdrom";
+        driver = { name = "qemu"; type = "raw"; };
+        source =
+          if builtins.isNull install_vol then null else
+          {
+            file = install_vol;
+            startupPolicy = "mandatory";
+          };
+        target = { bus = "sata"; dev = "hdc"; };
+        readonly = true;
+      }
+    ] ++ (if install_virtio then
       [
-        (basestuff.mkstorage virtio_drive storage_vol)
         {
           type = "file";
           device = "cdrom";
           driver = { name = "qemu"; type = "raw"; };
-          source =
-            if builtins.isNull install_vol then null else
-            {
-              file = install_vol;
-              startupPolicy = "mandatory";
-            };
-          target = { bus = "sata"; dev = "hdc"; };
+          source = { file = "${guest-install.virtio-win.iso}"; };
+          target = { bus = "sata"; dev = "hdd"; };
           readonly = true;
         }
-      ] ++ (if install_virtio then
-        [
-          {
-            type = "file";
-            device = "cdrom";
-            driver = { name = "qemu"; type = "raw"; };
-            source = { file = "${guest-install.virtio-win.iso}"; };
-            target = { bus = "sata"; dev = "hdd"; };
-            readonly = true;
-          }
-        ] else [ ]);
+      ] else [ ]);
     channel = base.devices.channel ++
     [
       {

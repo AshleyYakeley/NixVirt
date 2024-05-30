@@ -30,7 +30,7 @@ let
     { name
     , uuid
     , memory ? { count = 2; unit = "GiB"; }
-    , storage_vol
+    , storage_vol ? null
     , install_vol ? null
     , virtio_drive ? true
     , virtio_net ? false
@@ -67,9 +67,8 @@ let
       devices =
         {
           emulator = "${packages.qemu}/bin/qemu-system-x86_64";
-          disk =
+          disk = (if builtins.isNull storage_vol then [ ] else [ (mkstorage virtio_drive storage_vol) ]) ++
             [
-              (mkstorage virtio_drive storage_vol)
               {
                 type = mksourcetype install_vol;
                 device = "cdrom";
