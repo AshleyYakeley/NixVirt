@@ -2,7 +2,7 @@ stuff@{ packages, ... }:
 { name
 , uuid
 , memory ? { count = 4; unit = "GiB"; }
-, storage_vol
+, storage_vol ? null
 , install_vol ? null
 , virtio_drive ? true
 , virtio_video ? true
