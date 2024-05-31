@@ -9,7 +9,7 @@
     initarg = "--unit emergency.service";
   };
   features = {
-    privnet = {};
+    privnet = { };
     capabilities = {
       policy = "default";
       audit_control.state = false;
