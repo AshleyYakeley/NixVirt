@@ -4,6 +4,7 @@ import sys, argparse, uuid, lxml.etree, json, libvirt, nixvirt
 parser = argparse.ArgumentParser(prog='nixvirt-module-helper',description='Define and control a collection of libvirt objects idempotently.')
 parser.add_argument('-v', '--verbose', action='store_true', help='report actions to stderr')
 parser.add_argument('--connect', action='store', required=True, metavar='URI', help='connection URI (e.g. qemu:///session)')
+parser.add_argument('--forceredefine', action='store_true', help='Force redefine the resource even if it is running')
 parser.add_argument('settingspath', action='store', metavar='PATH', help='path to JSON file of settings')
 args = parser.parse_args()
 
@@ -13,7 +14,7 @@ with open(args.settingspath,"r") as f:
 class TypeSpec:
     def __init__(self,session,type,itemlist):
         self.oc = nixvirt.getObjectConnection(session,type)
-        self.specList = [nixvirt.ObjectSpec.fromDefinitionFile(self.oc,item["definition"],item.get("active"),item) for item in itemlist]
+        self.specList = [nixvirt.ObjectSpec.fromDefinitionFile(self.oc,item["definition"],item.get("active"),args.forceredefine,item) for item in itemlist]
 
     def deleteOld(self):
         allObjects = self.oc.getAll()

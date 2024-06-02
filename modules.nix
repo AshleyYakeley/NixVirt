@@ -36,6 +36,12 @@ let
               default = false;
               description = "Enable management of libvirt objects";
             };
+          forceRedefine = lib.mkOption
+            {
+              type = bool;
+              default = true;
+              description = "Force refresh the resource even if it is running";
+            };
           verbose = lib.mkOption
             {
               type = bool;
@@ -122,7 +128,7 @@ let
                 jsonFile = packages.writeText "nixvirt module script" (builtins.toJSON opts);
                 verboseFlag = if cfg.verbose then "-v" else "";
               in
-              "${moduleHelperFile} ${verboseFlag} --connect ${connection} ${jsonFile}\n";
+              "${moduleHelperFile} ${verboseFlag} ${if cfg.forceRedefine then "--forceredefine" else ""} --connect ${connection} ${jsonFile}\n";
 
             extraPackages = [ packages.qemu-utils ] ++ (if cfg.swtpm.enable then [ packages.swtpm ] else [ ]);
             extraPaths = concatStrMap (p: "${p}/bin:") extraPackages;

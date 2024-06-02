@@ -309,7 +309,7 @@ class VObject:
 # what we want for an object
 class ObjectSpec:
 
-    def __init__(self,oc,specUUID = None,specName = None,specDefXML = None,active = None,extra = None):
+    def __init__(self,oc,specUUID = None,specName = None,specDefXML = None,active = None, forceRedefine = False, extra = None):
         if specUUID is not None:
             self.subject = oc.fromUUIDOrNone(specUUID)
         elif specName is not None:
@@ -328,6 +328,7 @@ class ObjectSpec:
         self.specUUID = specUUID
         self.active = active
         self.extra = extra
+        self.forceRedefine = forceRedefine
 
     def vreport(self,msg):
         self.oc.vreport(self.specUUID,msg)
@@ -338,18 +339,18 @@ class ObjectSpec:
     def fromName(oc,specName,active):
         return ObjectSpec(oc,specName = specName,active = active)
 
-    def fromDefinition(oc,specDefXML,active,extra = None):
+    def fromDefinition(oc,specDefXML,active,forceRedefine = False,extra = None):
         specDefETree = xmlToETree(specDefXML)
         specUUID = uuid.UUID(specDefETree.find("uuid").text).bytes
         specName = specDefETree.find("name").text
         fixedDefETree = oc._fixDefinitionETree(specUUID,specDefETree)
         if fixedDefETree is not None:
             specDefXML = eTreeToXML(fixedDefETree)
-        return ObjectSpec(oc,specUUID = specUUID,specName = specName,specDefXML = specDefXML,active = active, extra = extra)
+        return ObjectSpec(oc,specUUID = specUUID,specName = specName,specDefXML = specDefXML,active = active,forceRedefine = forceRedefine,extra = extra)
 
-    def fromDefinitionFile(oc,path,active,extra = None):
+    def fromDefinitionFile(oc,path,active,forceRedefine = False,extra = None):
         specDefXML = oc.getFile(path)
-        return ObjectSpec.fromDefinition(oc,specDefXML,active, extra = extra)
+        return ObjectSpec.fromDefinition(oc,specDefXML,active,forceRedefine,extra = extra)
 
     def define(self):
         if self.specDefXML is not None:
@@ -363,14 +364,15 @@ class ObjectSpec:
                 newvobject = self.oc._fromXML(self.specDefXML)
                 newDefETree = newvobject.descriptionETree()
                 self.oc._cleanDefETree(self.specDefXML,newDefETree)
-                diff = xmldiff.main.diff_trees(oldDefETree,newDefETree)
-                if len(diff) > 0:
-                    if self.oc.session.verbose:
-                        difftext = xmldiff.main.diff_trees(oldDefETree,newDefETree,formatter=xmldiff.formatting.DiffFormatter())
-                        self.vreport("changed:\n" + difftext)
-                    self.subject._deactivate()
-                else:
-                    self.vreport("unchanged")
+                if self.forceRedefine is True:
+                    diff = xmldiff.main.diff_trees(oldDefETree,newDefETree)
+                    if len(diff) > 0:
+                        if self.oc.session.verbose:
+                            difftext = xmldiff.main.diff_trees(oldDefETree,newDefETree,formatter=xmldiff.formatting.DiffFormatter())
+                            self.vreport("changed:\n" + difftext)
+                        self.subject._deactivate()
+                    else:
+                        self.vreport("unchanged")
                 self.subject = newvobject
             else:
                 self.vreport("define new")
