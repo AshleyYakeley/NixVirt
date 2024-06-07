@@ -393,7 +393,21 @@ let
                   targetelem
                   addresselem
                 ])
-              (subelem "input" [ (subattr "type" typeString) (subattr "bus" typeString) ] [ addresselem ])
+              (subelem "input"
+                [
+                  (subattr "type" typeString)
+                  (subattr "bus" typeString)
+                ]
+                [
+                  (subelem "source"
+                    [
+                      (subattr "dev" typeString)
+                      (subattr "grab" typeString)
+                      (subattr "grabToggle" typeString)
+                      (subattr "repeat" typeBoolOnOff)
+                    ] [ ])
+                  addresselem
+                ])
               (subelem "tpm" [ (subattr "model" typeString) ]
                 [
                   (subelem "backend" [ (subattr "type" typeString) (subattr "version" typeString) ] [ ])
