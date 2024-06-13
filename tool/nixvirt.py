@@ -169,13 +169,14 @@ class NetworkConnection(ObjectConnection):
     def _fixDefinitionETree(self,objid,specDefETree):
         addresses = specDefETree.xpath("/network/mac/@address")
         if len(addresses) == 0:
-            addr = self._assignMacAddress(objid,0)
-            mac = lxml.etree.Element("mac")
-            mac.attrib["address"] = addr
-            specDefETree.append(mac)
-            return specDefETree
-        else:
-            return None
+            fwdMode = specDefETree.xpath("/network/forward/@mode")
+            if fwdMode in [None, 'route', 'nat']:
+                addr = self._assignMacAddress(objid,0)
+                mac = lxml.etree.Element("mac")
+                mac.attrib["address"] = addr
+                specDefETree.append(mac)
+                return specDefETree        
+        return None
 
 # https://libvirt.org/html/libvirt-libvirt-storage.html
 class PoolConnection(ObjectConnection):
