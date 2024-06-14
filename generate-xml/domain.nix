@@ -14,7 +14,7 @@ let
 
         (subelem "memory" [ (subattr "unit" typeString) ] (sub "count" typeInt))
         (subelem "currentMemory" [ (subattr "unit" typeString) ] (sub "count" typeInt))
-        (subelem "vcpu" [ (subattr "placement" typeString) ] (sub "count" typeInt))
+        (subelem "vcpu" [ (subattr "placement" typeString) (subattr "cpuset" typeString) ] (sub "count" typeInt))
         (subelem "iothreads" [ ] (sub "count" typeInt))
         (subelem "cputune" [ ] [
           (subelem "vcpupin" [ (subattr "vcpu" typeInt) (subattr "cpuset" typeString) ] [ ])
@@ -86,8 +86,10 @@ let
         (subelem "features" [ ]
           [
             (subelem "acpi" [ ] [ ])
-            (subelem "apic" [ ] [ ])
+            (subelem "apic" [ (subattr "eoi" typeBoolOnOff) ] [ ])
+            (subelem "pae" [ ] [ ])
             (subelem "privnet" [ ] [ ])
+            (subelem "pvspinlock" [ (subattr "state" typeBoolOnOff) ] [ ])
             (subelem "hyperv" [ (subattr "mode" typeString) ]
               [
                 (subelem "relaxed" [ (subattr "state" typeBoolOnOff) ] [ ])
@@ -262,7 +264,13 @@ let
           subelem "devices" [ (subattr "type" typeString) ]
             [
               (subelem "emulator" [ ] typePath)
-              (subelem "disk" [ (subattr "type" typeString) (subattr "device" typeString) ]
+              (subelem "disk"
+                [
+                  (subattr "type" typeString)
+                  (subattr "device" typeString)
+                  (subattr "model" typeString)
+                  (subattr "snapshot" typeBoolYesNo)
+                ]
                 (
                   let
                     backingStuff =
@@ -275,6 +283,7 @@ let
                             (subattr "name" typeString)
                             (subattr "query" typeString)
                             (subattr "dev" typePath)
+                            (subattr "index" typeInt)
                             (subattr "pool" typeString)
                             (subattr "volume" typeString)
                             (subattr "dir" typePath)
@@ -305,6 +314,7 @@ let
                         (subattr "name" typeString)
                         (subattr "type" typeString)
                         (subattr "cache" typeString)
+                        (subattr "io" typeString)
                         (subattr "discard" typeString)
                       ] [ ]
                     )
@@ -354,6 +364,7 @@ let
                   (subattr "managed" typeBoolYesNo)
                 ]
                 [
+                  (subelem "driver" [ (subattr "name" typeString) (subattr "model" typeString) ] [ ])
                   (subelem "source" [ ] [ addresselem ])
                   (subelem "boot" [ (subattr "order" typeInt) ] [ ])
                   addresselem
@@ -382,6 +393,7 @@ let
                       (subattr "network" typeString)
                     ] [ addresselem ])
                   (subelem "model" [ (subattr "type" typeString) ] [ ])
+                  targetelem
                   addresselem
                 ])
               (subelem "smartcard" [ (subattr "mode" typeString) (subattr "type" typeString) ] [ addresselem ])
@@ -454,6 +466,11 @@ let
                   (subattr "freePageReporting" typeBoolOnOff)
                 ]
                 [ addresselem ])
+              (subelem "vsock" [ (subattr "model" typeString) ]
+                [
+                  (subelem "cid" [ (subattr "auto" typeBoolYesNo) (subattr "address" typeInt) ] [ ])
+                  addresselem
+                ])
             ]
         )
         (sub "qemu-commandline" (elem "commandline"
