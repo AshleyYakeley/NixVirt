@@ -364,6 +364,7 @@ let
                   (subattr "managed" typeBoolYesNo)
                 ]
                 [
+                  (subelem "driver" [ (subattr "name" typeString) (subattr "model" typeString) ] [ ])
                   (subelem "source" [ ] [ addresselem ])
                   (subelem "boot" [ (subattr "order" typeInt) ] [ ])
                   addresselem
