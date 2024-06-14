@@ -264,7 +264,13 @@ let
           subelem "devices" [ (subattr "type" typeString) ]
             [
               (subelem "emulator" [ ] typePath)
-              (subelem "disk" [ (subattr "type" typeString) (subattr "device" typeString) ]
+              (subelem "disk"
+                [
+                  (subattr "type" typeString)
+                  (subattr "device" typeString)
+                  (subattr "model" typeString)
+                  (subattr "snapshot" typeBoolYesNo)
+                ]
                 (
                   let
                     backingStuff =
@@ -277,6 +283,7 @@ let
                             (subattr "name" typeString)
                             (subattr "query" typeString)
                             (subattr "dev" typePath)
+                            (subattr "index" typeInt)
                             (subattr "pool" typeString)
                             (subattr "volume" typeString)
                             (subattr "dir" typePath)
@@ -307,6 +314,7 @@ let
                         (subattr "name" typeString)
                         (subattr "type" typeString)
                         (subattr "cache" typeString)
+                        (subattr "io" typeString)
                         (subattr "discard" typeString)
                       ] [ ]
                     )
