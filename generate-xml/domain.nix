@@ -393,6 +393,7 @@ let
                       (subattr "network" typeString)
                     ] [ addresselem ])
                   (subelem "model" [ (subattr "type" typeString) ] [ ])
+                  targetelem
                   addresselem
                 ])
               (subelem "smartcard" [ (subattr "mode" typeString) (subattr "type" typeString) ] [ addresselem ])
