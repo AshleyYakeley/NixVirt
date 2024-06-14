@@ -86,8 +86,10 @@ let
         (subelem "features" [ ]
           [
             (subelem "acpi" [ ] [ ])
-            (subelem "apic" [ ] [ ])
+            (subelem "apic" [ (subattr "eoi" typeBoolOnOff) ] [ ])
+            (subelem "pae" [ ] [ ])
             (subelem "privnet" [ ] [ ])
+            (subelem "pvspinlock" [ (subattr "state" typeBoolOnOff) ] [ ])
             (subelem "hyperv" [ (subattr "mode" typeString) ]
               [
                 (subelem "relaxed" [ (subattr "state" typeBoolOnOff) ] [ ])
