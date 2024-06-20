@@ -176,7 +176,7 @@ let
               [
                 (subattr "fallback" typeInt)
               ]
-              [ (subelem name [ ] typeString) ]
+              [ (subelem "name" [ ] typeString) ]
             )
             (subelem "topology"
               [
