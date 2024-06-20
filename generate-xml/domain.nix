@@ -174,7 +174,7 @@ let
           [
             (subelem "model"
               [
-                (subattr "fallback" typeInt)
+                (subattr "fallback" typeString)
               ]
               [ (subelem "name" [ ] typeString) ]
             )
