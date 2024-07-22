@@ -11,6 +11,7 @@ stuff@{ packages, packages-ovmf, guest-install, ... }:
 , virtio_drive ? false
 , virtio_video ? true
 , install_virtio ? false
+, vcpu_count ? 2
 , ...
 }:
 let
@@ -22,7 +23,7 @@ let
 in
 base //
 {
-  vcpu.count = 2;
+  vcpu.count = vcpu_count;
   os = base.os //
   {
     loader =
