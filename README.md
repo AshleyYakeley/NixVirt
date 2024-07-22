@@ -242,6 +242,7 @@ These are the arguments:
 * `name`: the libvirt name (string, required)
 * `uuid`: the libvirt identifier (UUID string, required)
 * `memory`: amount of RAM (set with `count` (integer) and `unit` (string) attributes, default `{ count = 4; unit = "GiB"; }`)
+* `memory`: the number of virtual CPU (integer, default `2`)
 * `storage_vol`: source element or path to a QCOW2 volume for storage, or null (set, string or path, default `null`)
 * `install_vol`: source element or path to an ISO image for an inserted CDROM, or null (set, string or path, default `null`)
 * `nvram_path`: path to a file for storing NVRAM, this file will be created if missing (string or path, required)
