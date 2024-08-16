@@ -432,7 +432,7 @@ let
                 [
                   (subelem "listen" [ (subattr "type" typeString) ] [ ])
                   (subelem "image" [ (subattr "compression" typeBoolOnOff) ] [ ])
-                  (subelem "gl" [ (subattr "enable" typeBoolYesNo) ] [ ])
+                  (subelem "gl" [ (subattr "enable" typeBoolYesNo) (subattr "rendernode" typeString) ] [ ])
                 ])
               (subelem "sound" [ (subattr "model" typeString) ] [ addresselem ])
               (subelem "audio" [ (subattr "id" typeInt) (subattr "type" typeString) ] [ ])
