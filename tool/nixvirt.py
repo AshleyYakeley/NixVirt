@@ -20,9 +20,10 @@ class NixVirtError(Exception):
         return msg
 
 class Session:
-    def __init__(self,uri,verbose):
+    def __init__(self, *, uri, verbose, deactivate):
         self.conn = libvirt.open(uri)
         self.verbose = verbose
+        self.deactivate = deactivate
 
     def vreport(self,msg):
         if self.verbose:
@@ -369,7 +370,8 @@ class ObjectSpec:
                     if self.oc.session.verbose:
                         difftext = xmldiff.main.diff_trees(oldDefETree,newDefETree,formatter=xmldiff.formatting.DiffFormatter())
                         self.vreport("changed:\n" + difftext)
-                    self.subject._deactivate()
+                    if self.oc.session.deactivate:
+                        self.subject._deactivate()
                 else:
                     self.vreport("unchanged")
                 self.subject = newvobject

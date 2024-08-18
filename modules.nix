@@ -55,6 +55,19 @@ let
                   {
                     options =
                       {
+                        deleteOldIfChanged = lib.mkOption
+                          {
+                            type = bool;
+                            default = true;
+                            description = ''
+                              Destroy and recreate old libvirt objects if a NixOS configuration switch changes
+                              the nixvirt service unit (e.g. by defining a new domain).
+
+                              Note that, if enabled, all domains, networks and storage pools will be forcefully
+                              shutdown and restarted upon deploying a new configuration. Otherwise, the same result
+                              can be accomplished by manually restarting `nixvirt.service`.
+                            '';
+                          };
                         domains = mkObjectOption
                           {
                             singular = "domain";
@@ -116,23 +129,34 @@ let
             concatStr = builtins.concatStringsSep "";
             concatStrMap = f: x: concatStr (builtins.map f x);
 
-            scriptForConnection = with builtins; connection:
+            scriptForConnection = with builtins; { connection, opts, reload }:
               let
-                opts = getAttr connection cfg.connections;
                 jsonFile = packages.writeText "nixvirt module script" (builtins.toJSON opts);
                 verboseFlag = if cfg.verbose then "-v" else "";
+                deleteOldFlag = if !reload || opts.deleteOldIfChanged then "--delete-old" else "";
               in
-              "${moduleHelperFile} ${verboseFlag} --connect ${connection} ${jsonFile}\n";
+              "${moduleHelperFile} ${verboseFlag} ${deleteOldFlag} --connect ${connection} ${jsonFile}";
 
             extraPackages = [ packages.qemu-utils ] ++ (if cfg.swtpm.enable then [ packages.swtpm ] else [ ]);
             extraPaths = concatStrMap (p: "${p}/bin:") extraPackages;
-            script = "PATH=${extraPaths}$PATH\n" + concatStrMap scriptForConnection (builtins.attrNames cfg.connections);
+
+            script = { reload }:
+              let
+                pathLine = "PATH=${extraPaths}$PATH";
+
+                connectionLines = lib.mapAttrsToList
+                  (connection: opts: scriptForConnection {
+                    inherit connection opts reload;
+                  })
+                  cfg.connections;
+              in
+              lib.concatLines ([ pathLine ] ++ connectionLines);
           in
           if isHomeManager
           then
             {
               home.packages = extraPackages;
-              home.activation.NixVirt = lib.hm.dag.entryAfter [ "installPackages" ] script;
+              home.activation.NixVirt = lib.hm.dag.entryAfter [ "installPackages" ] (script { reload = false; });
             }
           else
             {
@@ -144,12 +168,22 @@ let
                 };
               systemd.services.nixvirt =
                 {
-                  serviceConfig.Type = "oneshot";
+                  serviceConfig = {
+                    Type = "oneshot";
+                    RemainAfterExit = true;
+                  };
+
                   description = "Configure libvirt objects";
                   wantedBy = [ "multi-user.target" ];
                   requires = [ "libvirtd.service" ];
                   after = [ "libvirtd.service" ];
-                  inherit script;
+                  path = extraPackages;
+
+                  reload = script { reload = true; };
+                  script = script { reload = false; };
+
+                  reloadIfChanged = true;
+                  restartIfChanged = false;
                 };
             }
         );

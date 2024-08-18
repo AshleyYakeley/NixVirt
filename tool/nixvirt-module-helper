@@ -4,6 +4,7 @@ import sys, argparse, uuid, lxml.etree, json, libvirt, nixvirt
 parser = argparse.ArgumentParser(prog='nixvirt-module-helper',description='Define and control a collection of libvirt objects idempotently.')
 parser.add_argument('-v', '--verbose', action='store_true', help='report actions to stderr')
 parser.add_argument('--connect', action='store', required=True, metavar='URI', help='connection URI (e.g. qemu:///session)')
+parser.add_argument('--delete-old', action='store_true', help='destroy and recreate libvirt objects, might restart domains')
 parser.add_argument('settingspath', action='store', metavar='PATH', help='path to JSON file of settings')
 args = parser.parse_args()
 
@@ -37,7 +38,7 @@ class TypeSpec:
             objspec.setActive()
 
 try:
-    session = nixvirt.Session(args.connect,args.verbose)
+    session = nixvirt.Session(uri=args.connect, verbose=args.verbose, deactivate=args.delete_old)
 
     types = [("network","networks"),("pool","pools"),("domain","domains")]
 
@@ -49,9 +50,10 @@ try:
             typeSpecs.append(TypeSpec(session,type,itemlist))
 
     # delete old stuff
-    session.vreport("Deleting old objects")
-    for typeSpec in typeSpecs:
-        typeSpec.deleteOld()
+    if args.delete_old:
+        session.vreport("Deleting old objects")
+        for typeSpec in typeSpecs:
+            typeSpec.deleteOld()
 
     # define new stuff
     session.vreport("Defining new objects")
