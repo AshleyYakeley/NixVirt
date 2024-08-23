@@ -141,6 +141,13 @@ let
                 {
                   enable = true;
                   package = lib.mkDefault packages.libvirt;
+                  qemu.swtpm =
+                    if cfg.swtpm.enable then
+                      {
+                        enable = true;
+                        package = packages.swtpm;
+                      }
+                    else { };
                 };
               systemd.services.nixvirt =
                 {
