@@ -200,6 +200,7 @@ let
         (subelem "clock"
           [
             (subattr "offset" typeString)
+            (subattr "timezone" typeString)
           ]
           [
             (subelem "timer"
