@@ -1,30 +1,29 @@
 stuff: mklib:
 let
   lib = mklib stuff;
-  teststuff =
-    {
-      packages =
-        {
-          writeTextFile = stuff.packages.writeTextFile;
-          runCommand = name: args: script: "BUILD " + name;
-          qemu = "QEMU_PATH";
-        };
-      packages-ovmf =
-        {
-          OVMFFull.fd = "OVMFFull_FD_PATH";
-        };
+  teststuff = {
+    packages = {
+      writeTextFile = stuff.packages.writeTextFile;
+      runCommand =
+        name: args: script:
+        "BUILD " + name;
+      qemu = "QEMU_PATH";
     };
+    packages-ovmf = {
+      OVMFFull.fd = "OVMFFull_FD_PATH";
+    };
+  };
   testlib = mklib teststuff;
-  test = xlib: dirpath:
+  test =
+    xlib: dirpath:
     let
       found = xlib.writeXML (import "${dirpath}/input.nix" testlib);
       expected = "${dirpath}/expected.xml";
     in
-    stuff.packages.runCommand "check" { }
-      ''
-        diff -u ${expected} ${found}
-        echo "pass" > $out
-      '';
+    stuff.packages.runCommand "check" { } ''
+      diff -u ${expected} ${found}
+      echo "pass" > $out
+    '';
 in
 {
   network-empty = test testlib.network network/empty;
@@ -44,11 +43,9 @@ in
 
   virtio-iso = lib.guest-install.virtio-win.iso;
 
-  ovmf-secboot =
-    stuff.packages.runCommand "ovmf-secboot" { }
-      ''
-        test -f ${stuff.packages-ovmf.OVMFFull.fd}/FV/OVMF_CODE.ms.fd
-        test -f ${stuff.packages-ovmf.OVMFFull.fd}/FV/OVMF_VARS.ms.fd
-        echo "pass" > $out
-      '';
+  ovmf-secboot = stuff.packages.runCommand "ovmf-secboot" { } ''
+    test -f ${stuff.packages-ovmf.OVMFFull.fd}/FV/OVMF_CODE.ms.fd
+    test -f ${stuff.packages-ovmf.OVMFFull.fd}/FV/OVMF_VARS.ms.fd
+    echo "pass" > $out
+  '';
 }
