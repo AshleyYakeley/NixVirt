@@ -70,7 +70,7 @@
           program = "${moduleHelperFile}";
         };
 
-      formatter.x86_64-linux = packages.nixpkgs-fmt;
+      formatter.x86_64-linux = packages.nixfmt-rfc-style;
 
       packages.x86_64-linux.default = packages.runCommand "NixVirt" { }
         ''
