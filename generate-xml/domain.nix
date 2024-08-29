@@ -339,7 +339,7 @@ let
                       (subattr "discard" typeString)
                     ] [ ]
                   )
-                  (subelem "binary" [ (subattr "path" typePath) ] [ ])
+                  (subelem "binary" [ (subattr "path" typePath) (subattr "xattr" typeBoolOnOff) ] [ ])
                   (subelem "source" [ (subattr "dir" typePath) (subattr "name" typeString) ] [ ])
                   (subelem "target" [ (subattr "dir" typePath) ] [ ])
                   (subelem "readonly" [ ] [ ])
