@@ -6,18 +6,7 @@
     * Improve change detection for domain restarts.
     * Add per-object "restart" option to control restarts.
 * Lib:
-    * XML domain generation:
-        * Allow in feature section, customization of the `smbios` option
-        * Allow in cpu section, customization of the `feature` and `cache` option
-        * Add section `sysinfo`
-        * add bootorder for device `disk` and `hostdev`
-        * add section `iothreads`
-        * Updated section `memoryBacking`
-        * Update section `clock`
-        * Allow in feature section, customization of the `ioapic` option
-        * add section `cputune`
-        * add section `qemu:override`
-        * Updated section `hostdev`
+    * XML domain generation: lots of improvements
 
 ## [0.5.0]
 * Lib:
