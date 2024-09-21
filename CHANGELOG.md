@@ -1,6 +1,10 @@
 # Changelog
 
 ## [UNRELEASED]
+
+* Modules:
+    * Improve change detection for domain restarts.
+    * Add per-object "restart" option to control restarts.
 * Lib:
     * XML domain generation:
         * Allow in feature section, customization of the `smbios` option

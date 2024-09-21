@@ -57,6 +57,9 @@ Each set represents a libvirt domain, and has these attributes:
   * `active` (bool or `null`, default `null`)  
   State to put the domain in (running/stopped), or null to ignore.  
 
+  * `restart` (bool or `null`, default `null`)  
+  Whether to restart the domain, or null to restart only if its definition has changed.  
+
   :warning: If this option is specified and not null, any libvirt domain not defined in the list will be deleted.
   Deleting a domain will not delete its volumes, NVRAM, or TPM state.
 
@@ -70,6 +73,9 @@ Each set represents a libvirt network, and has these attributes:
   * `active` (bool or `null`, default `null`)  
   State to put the network in, or null to ignore.  
 
+  * `restart` (bool or `null`, default `null`)  
+  Whether to restart the network, or null to restart only if its definition has changed.  
+
   :warning: If this option is specified and not null, any libvirt network not defined in the list will be deleted.
 
 * `virtualisation.libvirt.connections.<connection>.pools` (list of sets or `null`, default `null`)  
@@ -81,6 +87,9 @@ Each set represents a libvirt storage pool, and has these attributes:
 
   * `active` (bool or `null`, default `null`)  
   State to put the pool in, or null to ignore.  
+
+  * `restart` (bool or `null`, default `null`)  
+  Whether to restart the pool, or null to restart only if its definition has changed.  
 
   * `volumes` (list of sets, default `[]`)  
   Volumes to create if not already existing.

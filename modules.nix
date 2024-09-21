@@ -21,6 +21,12 @@ let
                       default = null;
                       description = "state to put the " + singular + " in (or null for ignore)";
                     };
+                  restart = lib.mkOption
+                    {
+                      type = nullOr bool;
+                      default = null;
+                      description = "whether to restart on activation (or null to only restart when changed)";
+                    };
                 };
             }));
           default = null;

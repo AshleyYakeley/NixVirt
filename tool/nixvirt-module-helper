@@ -13,7 +13,7 @@ with open(args.settingspath,"r") as f:
 class TypeSpec:
     def __init__(self,session,type,itemlist):
         self.oc = nixvirt.getObjectConnection(session,type)
-        self.specList = [nixvirt.ObjectSpec.fromDefinitionFile(self.oc,item["definition"],item.get("active"),item) for item in itemlist]
+        self.specList = [nixvirt.ObjectSpec.fromDefinitionFile(self.oc,item["definition"],item.get("active"),item.get("restart"),item) for item in itemlist]
 
     def deleteOld(self):
         allObjects = self.oc.getAll()

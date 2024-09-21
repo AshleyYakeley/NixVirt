@@ -316,7 +316,7 @@ class VObject:
 # what we want for an object
 class ObjectSpec:
 
-    def __init__(self,oc,specUUID = None,specName = None,specDefXML = None,active = None,extra = None):
+    def __init__(self,oc,specUUID = None,specName = None,specDefXML = None,active = None,restart = None,extra = None):
         if specUUID is not None:
             self.subject = oc.fromUUIDOrNone(specUUID)
         elif specName is not None:
@@ -335,28 +335,29 @@ class ObjectSpec:
         self.specUUID = specUUID
         self.active = active
         self.extra = extra
+        self.restart = restart
 
     def vreport(self,msg):
         self.oc.vreport(self.specUUID,msg)
 
-    def fromUUID(oc,specUUID,active):
-        return ObjectSpec(oc,specUUID = specUUID,active = active)
+    def fromUUID(oc,specUUID,active,restart):
+        return ObjectSpec(oc,specUUID = specUUID,active = active,restart = restart)
 
-    def fromName(oc,specName,active):
-        return ObjectSpec(oc,specName = specName,active = active)
+    def fromName(oc,specName,active,restart):
+        return ObjectSpec(oc,specName = specName,active = active,restart = restart)
 
-    def fromDefinition(oc,specDefXML,active,extra = None):
+    def fromDefinition(oc,specDefXML,active,restart,extra = None):
         specDefETree = xmlToETree(specDefXML)
         specUUID = uuid.UUID(specDefETree.find("uuid").text).bytes
         specName = specDefETree.find("name").text
         fixedDefETree = oc._fixDefinitionETree(specUUID,specDefETree)
         if fixedDefETree is not None:
             specDefXML = eTreeToXML(fixedDefETree)
-        return ObjectSpec(oc,specUUID = specUUID,specName = specName,specDefXML = specDefXML,active = active, extra = extra)
+        return ObjectSpec(oc,specUUID = specUUID,specName = specName,specDefXML = specDefXML,active = active,restart = restart, extra = extra)
 
-    def fromDefinitionFile(oc,path,active,extra = None):
+    def fromDefinitionFile(oc,path,active,restart,extra = None):
         specDefXML = oc.getFile(path)
-        return ObjectSpec.fromDefinition(oc,specDefXML,active, extra = extra)
+        return ObjectSpec.fromDefinition(oc,specDefXML,active,restart, extra = extra)
 
     def define(self):
         if self.specDefXML is not None:
@@ -368,16 +369,24 @@ class ObjectSpec:
                 self.oc._cleanDefETree(self.specDefXML,oldDefETree)
                 self.vreport("redefine")
                 newvobject = self.oc._fromXML(self.specDefXML)
-                newDefETree = newvobject.descriptionETree()
-                self.oc._cleanDefETree(self.specDefXML,newDefETree)
-                diff = xmldiff.main.diff_trees(oldDefETree,newDefETree)
-                if len(diff) > 0:
-                    if self.oc.session.verbose:
-                        difftext = xmldiff.main.diff_trees(oldDefETree,newDefETree,formatter=xmldiff.formatting.DiffFormatter())
-                        self.vreport("changed:\n" + difftext)
-                    self.subject._deactivate()
-                else:
-                    self.vreport("unchanged")
+                match self.restart:
+                    case True:
+                        self.vreport("always restart")
+                        self.subject._deactivate()
+                    case False:
+                        self.vreport("never restart")
+                    case None:
+                        self.vreport("detect restart")
+                        newDefETree = newvobject.descriptionETree()
+                        self.oc._cleanDefETree(self.specDefXML,newDefETree)
+                        diff = xmldiff.main.diff_trees(oldDefETree,newDefETree)
+                        if len(diff) > 0:
+                            if self.oc.session.verbose:
+                                difftext = xmldiff.main.diff_trees(oldDefETree,newDefETree,formatter=xmldiff.formatting.DiffFormatter())
+                                self.vreport("changed:\n" + difftext)
+                            self.subject._deactivate()
+                        else:
+                            self.vreport("unchanged")
                 self.subject = newvobject
             else:
                 self.vreport("define new")
