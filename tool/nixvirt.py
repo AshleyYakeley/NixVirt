@@ -132,6 +132,12 @@ class DomainConnection(ObjectConnection):
             return specDefETree
         else:
             return None
+    def _relevantDefETree(self,specDefXML,defETree):
+        specDefETree = xmlToETree(specDefXML)
+        def sortnode(p):
+            for node in defETree.xpath(p):
+                node[:] = sorted(node,key=eTreeToXML)
+        sortnode("/domain/devices")
 
 class NetworkConnection(ObjectConnection):
     def __init__(self,session):
@@ -175,7 +181,7 @@ class NetworkConnection(ObjectConnection):
                 mac = lxml.etree.Element("mac")
                 mac.attrib["address"] = addr
                 specDefETree.append(mac)
-                return specDefETree        
+                return specDefETree
         return None
 
 # https://libvirt.org/html/libvirt-libvirt-storage.html
