@@ -37,6 +37,10 @@ Whether to use NixVirt.
 Switching this on will also switch on `virtualisation.libvirtd.enable`,
 and set by default `virtualisation.libvirtd.package` to match libvirt version.
 
+* `virtualisation.libvirt.verbose` (bool, default `false`)  
+Output trace of changes during activation, for debugging.
+This is particularly useful for figuring out why NixVirt thinks a domain definition has changed.
+
 * `virtualisation.libvirt.swtpm.enable` (bool, default `false`)  
 Whether to make swtpm (software TPM emulator) available.
 
