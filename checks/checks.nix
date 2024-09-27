@@ -9,9 +9,9 @@ let
           runCommand = name: args: script: "BUILD " + name;
           qemu = "QEMU_PATH";
         };
-      packages-ovmf =
+      OVMFFull =
         {
-          OVMFFull.fd = "OVMFFull_FD_PATH";
+          fd = "OVMFFull_FD_PATH";
         };
     };
   testlib = mklib teststuff;
@@ -47,8 +47,8 @@ in
   ovmf-secboot =
     stuff.packages.runCommand "ovmf-secboot" { }
       ''
-        test -f ${stuff.packages-ovmf.OVMFFull.fd}/FV/OVMF_CODE.ms.fd
-        test -f ${stuff.packages-ovmf.OVMFFull.fd}/FV/OVMF_VARS.ms.fd
+        test -f ${stuff.OVMFFull.fd}/FV/OVMF_CODE.ms.fd
+        test -f ${stuff.OVMFFull.fd}/FV/OVMF_VARS.ms.fd
         echo "pass" > $out
       '';
 }
