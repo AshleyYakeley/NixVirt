@@ -8,9 +8,6 @@ let
           writeTextFile = stuff.packages.writeTextFile;
           runCommand = name: args: script: "BUILD " + name;
           qemu = "QEMU_PATH";
-        };
-      packages-ovmf =
-        {
           OVMFFull.fd = "OVMFFull_FD_PATH";
         };
     };
@@ -47,8 +44,8 @@ in
   ovmf-secboot =
     stuff.packages.runCommand "ovmf-secboot" { }
       ''
-        test -f ${stuff.packages-ovmf.OVMFFull.fd}/FV/OVMF_CODE.ms.fd
-        test -f ${stuff.packages-ovmf.OVMFFull.fd}/FV/OVMF_VARS.ms.fd
+        test -f ${stuff.packages.OVMFFull.fd}/FV/OVMF_CODE.ms.fd
+        test -f ${stuff.packages.OVMFFull.fd}/FV/OVMF_VARS.ms.fd
         echo "pass" > $out
       '';
 }

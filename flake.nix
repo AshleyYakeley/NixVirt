@@ -8,22 +8,13 @@
           type = "github";
           owner = "NixOS";
           repo = "nixpkgs";
-          ref = "nixos-23.11";
-        };
-
-      nixpkgs-ovmf =
-        {
-          type = "github";
-          owner = "NixOS";
-          repo = "nixpkgs";
-          ref = "nixos-unstable";
+          ref = "nixos-24.05";
         };
     };
 
-  outputs = { self, nixpkgs, nixpkgs-ovmf }:
+  outputs = { self, nixpkgs }:
     let
       packages = import nixpkgs { system = "x86_64-linux"; };
-      packages-ovmf = import nixpkgs-ovmf { system = "x86_64-linux"; };
 
       nixvirtPythonModulePackage = packages.runCommand "nixvirtPythonModulePackage" { }
         ''
@@ -52,7 +43,7 @@
 
       modules = import ./modules.nix { inherit packages moduleHelperFile; };
 
-      stuff = { inherit packages packages-ovmf; };
+      stuff = { inherit packages; };
     in
     {
       lib = mklib stuff;

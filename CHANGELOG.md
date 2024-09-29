@@ -2,6 +2,7 @@
 
 ## [UNRELEASED]
 
+* Switch to NixPkgs 24.05, eliminate separate OVMF NixPkgs input
 * Modules:
     * Improve change detection for domain restarts.
     * Add per-object "restart" option to control restarts.
