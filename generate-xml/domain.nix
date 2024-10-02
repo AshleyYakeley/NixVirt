@@ -389,6 +389,7 @@ let
               (subelem "interface"
                 [
                   (subattr "type" typeString)
+                  (subattr "trustGuestRxFilters" typeBoolYesNo)
                 ]
                 [
                   (subelem "mac" [ (subattr "address" typeString) ] [ ])
