@@ -326,6 +326,7 @@ let
                     (subelem "readonly" [ ] [ ])
                     addresselem
                     (subelem "boot" [ (subattr "order" typeInt) ] [ ])
+                    (subelem "serial" [ ] typeString)
                   ]
                 )
               )
