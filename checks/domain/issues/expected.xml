@@ -1,0 +1,6 @@
+<domain>
+  <name>issues</name>
+  <cpu>
+    <model>test</model>
+  </cpu>
+</domain>
