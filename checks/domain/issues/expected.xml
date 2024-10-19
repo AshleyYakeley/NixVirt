@@ -3,4 +3,11 @@
   <cpu>
     <model>test</model>
   </cpu>
+  <devices>
+    <interface type='vhostuser'>
+      <source mode='client' type='unix' path='/tmp/vhost.sock'>
+        <reconnect enabled='yes' timeout='10'/>
+      </source>
+    </interface>
+  </devices>
 </domain>

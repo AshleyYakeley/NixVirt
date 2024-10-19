@@ -400,8 +400,14 @@ let
                       (subattr "dev" typeString)
                       (subattr "mode" typeString)
                       (subattr "network" typeString)
-                    ] [ addresselem ])
-                  (subelem "model" [ (subattr "type" typeString) ] [ ])
+                      (subattr "type" typeString)
+                      # this typically points to a socket (/tmp/my.sock), so don't use typePath, which only allows in-store elements.
+                      (subattr "path" typeString)
+                    ] [
+                    addresselem
+                    (subelem "reconnect" [ (subattr "enabled" typeBoolYesNo) (subattr "timeout" typeInt) ] [ ])
+                  ])
+                 (subelem "model" [ (subattr "type" typeString) ] [ ])
                   targetelem
                   addresselem
                 ])
