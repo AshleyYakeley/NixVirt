@@ -393,6 +393,35 @@ let
                   (subattr "trustGuestRxFilters" typeBoolYesNo)
                 ]
                 [
+                  (subelem "driver" [
+                    (subattr "name" typeString)
+                    (subattr "txmode" typeString)
+                    (subattr "ioeventfd" typeBoolOnOff)
+                    (subattr "event_idx" typeBoolOnOff)
+                    (subattr "queues" typeInt)
+                    (subattr "rx_queue_size" typeInt)
+                    (subattr "tx_queue_size" typeInt)
+                  ]
+                    (
+                      let
+                        nicOpts = [
+                          (subattr "csum" typeBoolOnOff)
+                          (subattr "tso4" typeBoolOnOff)
+                          (subattr "tso6" typeBoolOnOff)
+                          (subattr "ecn" typeBoolOnOff)
+                          (subattr "ufo" typeBoolOnOff)
+                        ];
+
+                        nicHostOpts = [
+                          (subattr "gso" typeBoolOnOff)
+                          (subattr "mrg_rxbuf" typeBoolOnOff)
+                        ];
+                      in
+                      [
+                        (subelem "host" (nicHostOpts ++ nicOpts) [ ])
+                        (subelem "guest" nicOpts [ ])
+                      ]
+                    ))
                   (subelem "mac" [ (subattr "address" typeString) ] [ ])
                   (subelem "source"
                     [
@@ -407,7 +436,7 @@ let
                     addresselem
                     (subelem "reconnect" [ (subattr "enabled" typeBoolYesNo) (subattr "timeout" typeInt) ] [ ])
                   ])
-                 (subelem "model" [ (subattr "type" typeString) ] [ ])
+                  (subelem "model" [ (subattr "type" typeString) ] [ ])
                   targetelem
                   addresselem
                 ])
