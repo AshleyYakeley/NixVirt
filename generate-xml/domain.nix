@@ -41,7 +41,7 @@ let
         ])
         (subelem "numatune" [ ] [
           (subelem "memory" [ (subattr "mode" typeString) (subattr "nodeset" typeString) ] [ ])
-          (subelem "memnode" [ (subattr "mode" typeString) (subattr "nodeset" typeString) (subattr "cellid" typeString) ]  [ ])
+          (subelem "memnode" [ (subattr "mode" typeString) (subattr "nodeset" typeString) (subattr "cellid" typeInt) ]  [ ])
         ])
 
         (subelem "sysinfo" [ (subattr "type" typeString) ] [
@@ -201,7 +201,7 @@ let
             ] [ ])
             (subelem "numa" [ ] [
                 (subelem "cell" [
-                  (subattr "id" typeString) 
+                  (subattr "id" typeInt) 
                   (subattr "cpus" typeString) 
                   (subattr "memory" typeInt) 
                   (subattr "unit" typeString) 
