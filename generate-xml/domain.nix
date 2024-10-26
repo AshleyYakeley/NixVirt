@@ -39,6 +39,10 @@ let
             (subelem "node" [ (subattr "id" typeInt) (subattr "bandwidth" typeInt) ] [ ])
           ])
         ])
+        (subelem "numatune" [ ] [
+          (subelem "memory" [ (subattr "mode" typeString) (subattr "nodeset" typeString) ] [ ])
+          (subelem "memnode" [ (subattr "mode" typeString) (subattr "nodeset" typeString) (subattr "cellid" typeInt) ]  [ ])
+        ])
 
         (subelem "sysinfo" [ (subattr "type" typeString) ] [
           (subelem "bios" [ ] [
@@ -195,6 +199,14 @@ let
               (subattr "policy" typeString)
               (subattr "name" typeString)
             ] [ ])
+            (subelem "numa" [ ] [
+                (subelem "cell" [
+                  (subattr "id" typeInt) 
+                  (subattr "cpus" typeString) 
+                  (subattr "memory" typeInt) 
+                  (subattr "unit" typeString) 
+                ] [ ])
+            ])
           ]
         )
         (subelem "clock"
