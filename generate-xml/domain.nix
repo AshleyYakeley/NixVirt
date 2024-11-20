@@ -490,8 +490,32 @@ let
                   (subelem "image" [ (subattr "compression" typeBoolOnOff) ] [ ])
                   (subelem "gl" [ (subattr "enable" typeBoolYesNo) (subattr "rendernode" typeString) ] [ ])
                 ])
-              (subelem "sound" [ (subattr "model" typeString) ] [ addresselem ])
-              (subelem "audio" [ (subattr "id" typeInt) (subattr "type" typeString) ] [ ])
+              (subelem "sound" [ (subattr "model" typeString) ] 
+                [
+                  (subelem "codec" [ (subattr "type" typeString) ] [ ])
+                  (subelem "audio" [ (subattr "id" typeInt) ] [ ])
+                  addresselem 
+                ])
+              (subelem "audio" 
+                [ 
+                  (subattr "id" typeInt) 
+                  (subattr "type" typeString) 
+                  (subattr "runtimeDir" typePath)
+                ] 
+                [ 
+                  (subelem "input" 
+                    [
+                      (subattr "name" typeString) 
+                      (subattr "streamName" typeString) 
+                      (subattr "latency" typeInt) 
+                    ] [ ])
+                  (subelem "output" 
+                    [
+                      (subattr "name" typeString) 
+                      (subattr "streamName" typeString) 
+                      (subattr "latency" typeInt) 
+                    ] [ ])
+                ])
               (subelem "video" [ ]
                 [
                   (subelem "model"
