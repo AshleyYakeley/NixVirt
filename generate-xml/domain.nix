@@ -387,6 +387,13 @@ let
                     ]
                   )
                   (subelem "boot" [ (subattr "order" typeInt) ] [ ])
+                  (subelem "rom"
+                    [
+                      (subattr "bar" typeBoolOnOff)
+                      (subattr "enabled" typeBoolYesNo) 
+                      (subattr "file" typePath)
+                    ] [ ]
+                  )
                   addresselem
                 ]
               )
