@@ -152,7 +152,7 @@ let
               virtualisation.libvirtd =
                 {
                   enable = true;
-                  package = cfg.package;
+                  package = lib.mkDefault cfg.package;
                   qemu.swtpm =
                     if cfg.swtpm.enable then
                       {
