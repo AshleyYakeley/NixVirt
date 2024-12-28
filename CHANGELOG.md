@@ -6,6 +6,7 @@
 * Modules:
     * Improve change detection for domain restarts.
     * Add per-object "restart" option to control restarts.
+    * Add `package` option used for both libvirtd and the module-helper script
 * Lib:
     * XML domain generation: lots of improvements
 

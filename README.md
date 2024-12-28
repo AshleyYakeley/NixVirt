@@ -39,7 +39,7 @@ and set `virtualisation.libvirtd.package` (see next item).
 
 * `virtualisation.libvirt.package` (package, default `packages.libvirt`)  
 The libvirt package to use.
-This will also set `virtualisation.libvirtd.package`.
+This will also set `virtualisation.libvirtd.package` for you.
 
 * `virtualisation.libvirt.verbose` (bool, default `false`)  
 Output trace of changes during activation, for debugging.
