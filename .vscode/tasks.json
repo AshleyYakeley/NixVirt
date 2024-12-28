@@ -18,7 +18,7 @@
             },
             "label": "Format & Check",
             "type": "shell",
-            "command": "nix fmt && nix flake check && git rev-parse HEAD && echo Done!"
+            "command": "nix fmt && nix flake check && git rev-parse HEAD"
         }
     ]
 }

@@ -44,7 +44,7 @@ let
         ])
         (subelem "numatune" [ ] [
           (subelem "memory" [ (subattr "mode" typeString) (subattr "nodeset" typeString) ] [ ])
-          (subelem "memnode" [ (subattr "mode" typeString) (subattr "nodeset" typeString) (subattr "cellid" typeInt) ]  [ ])
+          (subelem "memnode" [ (subattr "mode" typeString) (subattr "nodeset" typeString) (subattr "cellid" typeInt) ] [ ])
         ])
 
         (subelem "sysinfo" [ (subattr "type" typeString) ] [
@@ -203,12 +203,12 @@ let
               (subattr "name" typeString)
             ] [ ])
             (subelem "numa" [ ] [
-                (subelem "cell" [
-                  (subattr "id" typeInt) 
-                  (subattr "cpus" typeString) 
-                  (subattr "memory" typeInt) 
-                  (subattr "unit" typeString) 
-                ] [ ])
+              (subelem "cell" [
+                (subattr "id" typeInt)
+                (subattr "cpus" typeString)
+                (subattr "memory" typeInt)
+                (subattr "unit" typeString)
+              ] [ ])
             ])
           ]
         )
@@ -393,7 +393,7 @@ let
                   (subelem "rom"
                     [
                       (subattr "bar" typeBoolOnOff)
-                      (subattr "enabled" typeBoolYesNo) 
+                      (subattr "enabled" typeBoolYesNo)
                       (subattr "file" typePath)
                     ] [ ]
                   )
@@ -500,30 +500,30 @@ let
                   (subelem "image" [ (subattr "compression" typeBoolOnOff) ] [ ])
                   (subelem "gl" [ (subattr "enable" typeBoolYesNo) (subattr "rendernode" typeString) ] [ ])
                 ])
-              (subelem "sound" [ (subattr "model" typeString) ] 
+              (subelem "sound" [ (subattr "model" typeString) ]
                 [
                   (subelem "codec" [ (subattr "type" typeString) ] [ ])
                   (subelem "audio" [ (subattr "id" typeInt) ] [ ])
-                  addresselem 
+                  addresselem
                 ])
-              (subelem "audio" 
-                [ 
-                  (subattr "id" typeInt) 
-                  (subattr "type" typeString) 
+              (subelem "audio"
+                [
+                  (subattr "id" typeInt)
+                  (subattr "type" typeString)
                   (subattr "runtimeDir" typePath)
-                ] 
-                [ 
-                  (subelem "input" 
+                ]
+                [
+                  (subelem "input"
                     [
-                      (subattr "name" typeString) 
-                      (subattr "streamName" typeString) 
-                      (subattr "latency" typeInt) 
+                      (subattr "name" typeString)
+                      (subattr "streamName" typeString)
+                      (subattr "latency" typeInt)
                     ] [ ])
-                  (subelem "output" 
+                  (subelem "output"
                     [
-                      (subattr "name" typeString) 
-                      (subattr "streamName" typeString) 
-                      (subattr "latency" typeInt) 
+                      (subattr "name" typeString)
+                      (subattr "streamName" typeString)
+                      (subattr "latency" typeInt)
                     ] [ ])
                 ])
               (subelem "video" [ ]
