@@ -42,6 +42,12 @@ let
               default = false;
               description = "Enable management of libvirt objects";
             };
+          package = lib.mkOption
+            {
+              type = package;
+              default = packages.libvirt;
+              description = "libvirt package to use";
+            };
           verbose = lib.mkOption
             {
               type = bool;
@@ -128,7 +134,7 @@ let
                 jsonFile = packages.writeText "nixvirt module script" (builtins.toJSON opts);
                 verboseFlag = if cfg.verbose then "-v" else "";
               in
-              "${moduleHelperFile} ${verboseFlag} --connect ${connection} ${jsonFile}\n";
+              "${moduleHelperFile cfg.package} ${verboseFlag} --connect ${connection} ${jsonFile}\n";
 
             extraPackages = [ packages.qemu-utils ] ++ (if cfg.swtpm.enable then [ packages.swtpm ] else [ ]);
             extraPaths = concatStrMap (p: "${p}/bin:") extraPackages;
@@ -146,7 +152,7 @@ let
               virtualisation.libvirtd =
                 {
                   enable = true;
-                  package = lib.mkDefault packages.libvirt;
+                  package = cfg.package;
                   qemu.swtpm =
                     if cfg.swtpm.enable then
                       {

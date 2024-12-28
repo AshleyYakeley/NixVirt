@@ -22,17 +22,17 @@
           ln -s ${tool/nixvirt.py} $out/lib/python3.11/site-packages/nixvirt.py
         '' // { pythonModule = packages.python311; };
 
-      pythonInterpreterPackage = packages.python311.withPackages (ps:
+      pythonInterpreterPackage = libvirt: packages.python311.withPackages (ps:
         [
-          ps.libvirt
+          (ps.libvirt.override { inherit libvirt; })
           ps.lxml
           ps.xmldiff
           nixvirtPythonModulePackage
         ]);
 
-      setShebang = name: path: packages.runCommand name { }
+      setShebang = name: path: libvirt: packages.runCommand name { }
         ''
-          sed -e "1s|.*|\#\!${pythonInterpreterPackage}/bin/python3|" ${path} > $out
+          sed -e "1s|.*|\#\!${pythonInterpreterPackage libvirt}/bin/python3|" ${path} > $out
           chmod 755 $out
         '';
 
@@ -51,14 +51,14 @@
       apps.x86_64-linux.virtdeclare =
         {
           type = "app";
-          program = "${virtdeclareFile}";
+          program = "${virtdeclareFile packages.libvirt}";
         };
 
       # for debugging
       apps.x86_64-linux.nixvirt-module-helper =
         {
           type = "app";
-          program = "${moduleHelperFile}";
+          program = "${moduleHelperFile packages.libvirt}";
         };
 
       formatter.x86_64-linux = packages.nixpkgs-fmt;
@@ -66,7 +66,7 @@
       packages.x86_64-linux.default = packages.runCommand "NixVirt" { }
         ''
           mkdir -p $out/bin
-          ln -s ${virtdeclareFile} $out/bin/virtdeclare
+          ln -s ${virtdeclareFile packages.libvirt} $out/bin/virtdeclare
         '';
 
       homeModules.default = modules.homeModule;

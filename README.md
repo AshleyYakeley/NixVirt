@@ -35,7 +35,11 @@ A NixOS module with these options:
 * `virtualisation.libvirt.enable` (bool, default `false`)  
 Whether to use NixVirt.
 Switching this on will also switch on `virtualisation.libvirtd.enable`,
-and set by default `virtualisation.libvirtd.package` to match libvirt version.
+and set `virtualisation.libvirtd.package` (see next item).
+
+* `virtualisation.libvirt.package` (package, default `packages.libvirt`)  
+The libvirt package to use.
+This will also set `virtualisation.libvirtd.package`.
 
 * `virtualisation.libvirt.verbose` (bool, default `false`)  
 Output trace of changes during activation, for debugging.
