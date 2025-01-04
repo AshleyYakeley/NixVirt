@@ -144,7 +144,6 @@ let
           then
             {
               home.packages = extraPackages;
-              home.activation.NixVirt = lib.hm.dag.entryAfter [ "installPackages" ] script;
               systemd.user.services.nixvirt = {
                 Unit = {
                   Description = "Configure libvirt objects";
