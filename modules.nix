@@ -144,6 +144,7 @@ let
           then
             {
               home.packages = extraPackages;
+              home.activation.NixVirt = lib.hm.dag.entryAfter [ "installPackages" ] script;
               systemd.user.services.nixvirt = {
                 Unit = {
                   Description = "Configure libvirt objects";
@@ -155,7 +156,7 @@ let
                   Type = "oneshot";
                 };
                 Install = {
-                  WantedBy = "default.target";
+                  WantedBy = ["default.target"];
                 };
               }; 
             }
