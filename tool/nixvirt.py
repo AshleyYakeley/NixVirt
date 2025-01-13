@@ -23,10 +23,11 @@ class Session:
     def __init__(self,uri,verbose):
         self.conn = libvirt.open(uri)
         self.verbose = verbose
+        self.driver = self.conn.getType()
 
     def vreport(self,msg):
         if self.verbose:
-            print (msg, file=sys.stderr)
+            print (self.driver + " " + msg, file=sys.stderr)
 
 class ObjectConnection:
     def __init__(self,type,session):
