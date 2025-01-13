@@ -27,7 +27,7 @@ class Session:
 
     def vreport(self,msg):
         if self.verbose:
-            print (self.driver + " " + msg, file=sys.stderr)
+            print ("NixVirt: " + self.driver + ": " + msg, file=sys.stderr)
 
 class ObjectConnection:
     def __init__(self,type,session):
