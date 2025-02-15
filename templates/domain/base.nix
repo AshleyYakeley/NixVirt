@@ -8,7 +8,14 @@ let
     src:
     if isString src || isPath src then { file = src; }
     else src;
-  mkstorage = virtio_drive: storage_vol:
+  mkbackingstore = with builtins;
+    backing:
+    (if isNull backing then null else {
+      type = mksourcetype backing;
+      format = { type = "qcow2"; };
+      source = mksource backing;
+    });
+  mkstorage = virtio_drive: storage_vol: backing_vol:
     {
       type = mksourcetype storage_vol;
       device = "disk";
@@ -20,6 +27,7 @@ let
           discard = "unmap";
         };
       source = mksource storage_vol;
+      backingStore = mkbackingstore backing_vol;
       target =
         if virtio_drive
         then { dev = "vda"; bus = "virtio"; }
@@ -31,6 +39,7 @@ let
     , uuid
     , memory ? { count = 2; unit = "GiB"; }
     , storage_vol ? null
+    , backing_vol ? null
     , install_vol ? null
     , virtio_drive ? true
     , virtio_net ? false
@@ -67,7 +76,7 @@ let
       devices =
         {
           emulator = "${packages.qemu}/bin/qemu-system-x86_64";
-          disk = (if builtins.isNull storage_vol then [ ] else [ (mkstorage virtio_drive storage_vol) ]) ++
+          disk = (if builtins.isNull storage_vol then [ ] else [ (mkstorage virtio_drive storage_vol backing_vol) ]) ++
             [
               {
                 type = mksourcetype install_vol;
