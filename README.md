@@ -32,82 +32,82 @@ These are the available outputs:
 
 A NixOS module with these options:
 
-* `virtualisation.libvirt.enable` (bool, default `false`)  
+* `virtualisation.libvirt.enable` (bool, default `false`)
 Whether to use NixVirt.
 Switching this on will also switch on `virtualisation.libvirtd.enable`,
 and set `virtualisation.libvirtd.package` (see next item).
 
-* `virtualisation.libvirt.package` (package, default `packages.libvirt`)  
+* `virtualisation.libvirt.package` (package, default `packages.libvirt`)
 The libvirt package to use.
 This will also set by default `virtualisation.libvirtd.package` for you.
 
-* `virtualisation.libvirt.verbose` (bool, default `false`)  
+* `virtualisation.libvirt.verbose` (bool, default `false`)
 Output trace of changes during activation, for debugging.
 This is particularly useful for figuring out why NixVirt thinks a domain definition has changed.
 
-* `virtualisation.libvirt.swtpm.enable` (bool, default `false`)  
+* `virtualisation.libvirt.swtpm.enable` (bool, default `false`)
 Whether to make swtpm (software TPM emulator) available.
 
-* `virtualisation.libvirt.connections.<connection>` (set)  
-`<connection>` is the hypervisor connection URI, typically `"qemu:///system"`.  
+* `virtualisation.libvirt.connections.<connection>` (set)
+`<connection>` is the hypervisor connection URI, typically `"qemu:///system"`.
 
-* `virtualisation.libvirt.connections.<connection>.domains` (list of sets or `null`, default `null`)  
+* `virtualisation.libvirt.connections.<connection>.domains` (list of sets or `null`, default `null`)
 Each set represents a libvirt domain, and has these attributes:
 
-  * `definition` (path)  
+  * `definition` (path)
   Path to a [domain definition XML](https://libvirt.org/formatdomain.html) file.
   You can obtain this for your existing domains with `virsh dumpxml`.
 
-  * `active` (bool or `null`, default `null`)  
-  State to put the domain in (running/stopped), or null to ignore.  
+  * `active` (bool or `null`, default `null`)
+  State to put the domain in (running/stopped), or null to ignore.
 
-  * `restart` (bool or `null`, default `null`)  
-  Whether to restart the domain, or null to restart only if its definition has changed.  
+  * `restart` (bool or `null`, default `null`)
+  Whether to restart the domain, or null to restart only if its definition has changed.
 
   :warning: If this option is specified and not null, any libvirt domain not defined in the list will be deleted.
   Deleting a domain will not delete its volumes, NVRAM, or TPM state.
 
-* `virtualisation.libvirt.connections.<connection>.networks` (list of sets or `null`, default `null`)  
+* `virtualisation.libvirt.connections.<connection>.networks` (list of sets or `null`, default `null`)
 Each set represents a libvirt network, and has these attributes:
 
-  * `definition` (path)  
+  * `definition` (path)
   Path to a [network definition XML](https://libvirt.org/formatnetwork.html) file.
   You can obtain this for your existing networks with `virsh net-dumpxml`.
 
-  * `active` (bool or `null`, default `null`)  
-  State to put the network in, or null to ignore.  
+  * `active` (bool or `null`, default `null`)
+  State to put the network in, or null to ignore.
 
-  * `restart` (bool or `null`, default `null`)  
-  Whether to restart the network, or null to restart only if its definition has changed.  
+  * `restart` (bool or `null`, default `null`)
+  Whether to restart the network, or null to restart only if its definition has changed.
 
   :warning: If this option is specified and not null, any libvirt network not defined in the list will be deleted.
 
-* `virtualisation.libvirt.connections.<connection>.pools` (list of sets or `null`, default `null`)  
+* `virtualisation.libvirt.connections.<connection>.pools` (list of sets or `null`, default `null`)
 Each set represents a libvirt storage pool, and has these attributes:
 
-  * `definition` (path)  
+  * `definition` (path)
   Path to a [pool definition XML](https://libvirt.org/formatstorage.html) file.
   You can obtain this for your existing pools with `virsh pool-dumpxml`.
 
-  * `active` (bool or `null`, default `null`)  
-  State to put the pool in, or null to ignore.  
+  * `active` (bool or `null`, default `null`)
+  State to put the pool in, or null to ignore.
 
-  * `restart` (bool or `null`, default `null`)  
-  Whether to restart the pool, or null to restart only if its definition has changed.  
+  * `restart` (bool or `null`, default `null`)
+  Whether to restart the pool, or null to restart only if its definition has changed.
 
-  * `volumes` (list of sets, default `[]`)  
+  * `volumes` (list of sets, default `[]`)
   Volumes to create if not already existing.
   Existing volumes not listed will be ignored (not deleted);
   to delete a volume, set `present = false`.
   Each set has this attribute:
 
-    * `present` (bool, default `true`)  
+    * `present` (bool, default `true`)
     Whether the volume with the specified name should exist.
 
-    * `definition` (path, default `null`)  
+    * `definition` (path, default `null`)
     Path to a [volume definition XML](https://libvirt.org/formatstorage.html) file.
 
-    * `name` (string, default `null`)  
+    * `name` (string, default `null`)
     Name of volume, can be used instead of `definition` when `present = false`.
 
     At least one of `definition` and `name` should exist (non-null); if they both do, the names must match.
