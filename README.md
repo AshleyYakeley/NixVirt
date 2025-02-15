@@ -196,6 +196,7 @@ These are the arguments:
 * `uuid`: the libvirt identifier (UUID string, required)
 * `memory`: amount of RAM (set with `count` (integer) and `unit` (string) attributes, default `{ count = 2; unit = "GiB"; }`)
 * `storage_vol`: source element or path to a QCOW2 volume for storage, or null (set, string or path, default `null`)
+* `backing_vol`: source element or path to a QCOW2 volume for backingStore, or null (set, string or path, default `null`)
 * `install_vol`: source element or path to an ISO image for an inserted CDROM, or null (set, string or path, default `null`)
 * `virtio_net`: whether to use VirtIO for networking (faster, but may require special guest drivers) (bool, default `false`)
 * `virtio_video`: whether to use VirtIO for graphics (bool, default `true`)
@@ -211,6 +212,7 @@ These are the arguments:
 * `uuid`: the libvirt identifier (UUID string, required)
 * `memory`: amount of RAM (set with `count` (integer) and `unit` (string) attributes, default `{ count = 2; unit = "GiB"; }`)
 * `storage_vol`: source element or path to a QCOW2 volume for storage, or null (set, string or path, default `null`)
+* `backing_vol`: source element or path to a QCOW2 volume for backingStore, or null (set, string or path, default `null`)
 * `install_vol`: source element or path to an ISO image for an inserted CDROM, or null (set, string or path, default `null`)
 * `virtio_net`: whether to use VirtIO for networking (faster, but may require special guest drivers) (bool, default `false`)
 * `virtio_video`: whether to use VirtIO for graphics (bool, default `true`)
@@ -226,6 +228,7 @@ These are the arguments:
 * `uuid`: the libvirt identifier (UUID string, required)
 * `memory`: amount of RAM (set with `count` (integer) and `unit` (string) attributes, default `{ count = 4; unit = "GiB"; }`)
 * `storage_vol`: source element or path to a QCOW2 volume for storage, or null (set, string or path, default `null`)
+* `backing_vol`: source element or path to a QCOW2 volume for backingStore, or null (set, string or path, default `null`)
 * `install_vol`: source element or path to an ISO image for an inserted CDROM, or null (set, string or path, default `null`)
 * `virtio_video`: whether to use VirtIO for graphics (bool, default `true`)
 * `virtio_drive`: whether to use VirtIO for the storage device (bool, default `true`)
@@ -244,6 +247,7 @@ virtualisation.libvirt.connections."qemu:///session".domains =
           uuid = "cc7439ed-36af-4696-a6f2-1f0c4474d87e";
           memory = { count = 6; unit = "GiB"; };
           storage_vol = { pool = "MyPool"; volume = "Penguin.qcow2"; }
+          backing_vol = /home/ashley/VM-Storage/Base.qcow2;
         });
     }
   ];
@@ -260,6 +264,7 @@ These are the arguments:
 * `uuid`: the libvirt identifier (UUID string, required)
 * `memory`: amount of RAM (set with `count` (integer) and `unit` (string) attributes, default `{ count = 4; unit = "GiB"; }`)
 * `storage_vol`: source element or path to a QCOW2 volume for storage, or null (set, string or path, default `null`)
+* `backing_vol`: source element or path to a QCOW2 volume for backingStore, or null (set, string or path, default `null`)
 * `install_vol`: source element or path to an ISO image for an inserted CDROM, or null (set, string or path, default `null`)
 * `nvram_path`: path to a file for storing NVRAM, this file will be created if missing (string or path, required)
 * `virtio_net`: whether to use VirtIO for networking: this is faster, but requires installing a driver during Windows 11 installation (bool, default `false`)
@@ -282,6 +287,7 @@ virtualisation.libvirt.connections."qemu:///session".domains =
           uuid = "def734bb-e2ca-44ee-80f5-0ea0f2593aaa";
           memory = { count = 8; unit = "GiB"; };
           storage_vol = { pool = "MyPool"; volume = "Bellevue.qcow2"; };
+          backing_vol = /home/ashley/VM-Storage/Base.qcow2;
           install_vol = /home/ashley/VM-Storage/Win11_23H2_EnglishInternational_x64v2.iso;
           nvram_path = /home/ashley/VM-Storage/Bellevue.nvram;
           virtio_net = true;
