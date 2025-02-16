@@ -7,11 +7,12 @@ let
     if builtins.isString src || builtins.isPath src then { file = src; }
     else src;
   mkbackingstore = backing:
-    if builtins.isNull backing then null
+    if builtins.isAttrs backing || builtins.isNull backing then backing
     else {
       type = mksourcetype backing;
       format = { type = "qcow2"; };
       source = mksource backing;
+      backingStore = { };
     };
   mkstorage = virtio_drive: storage_vol: backing_vol:
     {
