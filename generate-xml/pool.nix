@@ -11,7 +11,7 @@ let
 
         (subelem "features" [ ]
           [
-            (subelem "cow" [ subattr "state" typeBoolYesNo ] [ ])
+            (subelem "cow" [ (subattr "state" typeBoolYesNo) ] [ ])
           ])
         (subelem "source" [ ]
           [
