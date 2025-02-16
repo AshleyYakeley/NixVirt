@@ -128,9 +128,9 @@ let
             concatStr = builtins.concatStringsSep "";
             concatStrMap = f: x: concatStr (builtins.map f x);
 
-            scriptForConnection = with builtins; connection:
+            scriptForConnection = connection:
               let
-                opts = getAttr connection cfg.connections;
+                opts = builtins.getAttr connection cfg.connections;
                 jsonFile = packages.writeText "nixvirt module script" (builtins.toJSON opts);
                 verboseFlag = if cfg.verbose then "-v" else "";
               in

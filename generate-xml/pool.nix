@@ -8,27 +8,33 @@ let
       [
         (subelem "name" [ ] typeString)
         (subelem "uuid" [ ] typeString)
-
         (subelem "features" [ ]
           [
             (subelem "cow" [ (subattr "state" typeBoolYesNo) ] [ ])
-          ])
+          ]
+        )
         (subelem "source" [ ]
           [
             (subelem "device"
               [
                 (subattr "path" typeString)
-              ] [ ])
+              ]
+              [ ]
+            )
             (subelem "dir"
               [
                 (subattr "path" typeString)
-              ] [ ])
-          ])
+              ]
+              [ ]
+            )
+          ]
+        )
         (subelem "target" [ ]
           [
             (subelem "path" [ ] typeString)
             (subelem "permissions" [ ] [ ])
-          ])
+          ]
+        )
       ];
 
 in

@@ -1,20 +1,18 @@
 { packages, ... }:
 let
-  mksourcetype = with builtins;
-    src:
-    if isAttrs src && src ? "volume" then "volume"
+  mksourcetype = src:
+    if builtins.isAttrs src && src ? "volume" then "volume"
     else "file";
-  mksource = with builtins;
-    src:
-    if isString src || isPath src then { file = src; }
+  mksource = src:
+    if builtins.isString src || builtins.isPath src then { file = src; }
     else src;
-  mkbackingstore = with builtins;
-    backing:
-    (if isNull backing then null else {
+  mkbackingstore = backing:
+    if builtins.isNull backing then null
+    else {
       type = mksourcetype backing;
       format = { type = "qcow2"; };
       source = mksource backing;
-    });
+    };
   mkstorage = virtio_drive: storage_vol: backing_vol:
     {
       type = mksourcetype storage_vol;
