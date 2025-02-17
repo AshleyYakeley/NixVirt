@@ -5,7 +5,9 @@ stuff@{ packages, guest-install, ... }:
 , uuid
 , memory ? { count = 4; unit = "GiB"; }
 , storage_vol ? null
+, backing_vol ? null
 , install_vol ? null
+, bridge_name ? "virbr0"
 , nvram_path
 , virtio_net ? false
 , virtio_drive ? false
@@ -17,7 +19,7 @@ let
   basestuff = import ./base.nix stuff;
   base = basestuff.q35
     {
-      inherit name uuid memory storage_vol install_vol virtio_net virtio_video;
+      inherit name uuid memory storage_vol backing_vol install_vol bridge_name virtio_net virtio_video;
     };
 in
 base //
@@ -69,7 +71,7 @@ base //
     };
   devices = base.devices //
   {
-    disk = (if builtins.isNull storage_vol then [ ] else [ (basestuff.mkstorage virtio_drive storage_vol) ]) ++
+    disk = (if builtins.isNull storage_vol then [ ] else [ (basestuff.mkstorage virtio_drive storage_vol backing_vol) ]) ++
     [
       {
         type = "file";
