@@ -43,6 +43,7 @@ let
     , storage_vol ? null
     , backing_vol ? null
     , install_vol ? null
+    , bridge_name ? "virbr0"
     , virtio_drive ? true
     , virtio_net ? false
     , virtio_video ? true
@@ -97,7 +98,7 @@ let
             {
               type = "bridge";
               model = if virtio_net then { type = "virtio"; } else null;
-              source = { bridge = "virbr0"; };
+              source = { bridge = bridge_name; };
             };
           channel =
             [
