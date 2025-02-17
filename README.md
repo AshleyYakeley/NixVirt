@@ -198,6 +198,7 @@ These are the arguments:
 * `storage_vol`: source element or path to a QCOW2 volume for storage, or null (set, string or path, default `null`)
 * `backing_vol`: source element or path to a QCOW2 volume for backingStore, or null (set, string or path, default `null`)
 * `install_vol`: source element or path to an ISO image for an inserted CDROM, or null (set, string or path, default `null`)
+* `bridge_name`: the name of the network bridge to connect to (string, default `"virbr0"`)
 * `virtio_net`: whether to use VirtIO for networking (faster, but may require special guest drivers) (bool, default `false`)
 * `virtio_video`: whether to use VirtIO for graphics (bool, default `true`)
 * `virtio_drive`: whether to use VirtIO for the storage device (bool, default `true`)
@@ -214,6 +215,7 @@ These are the arguments:
 * `storage_vol`: source element or path to a QCOW2 volume for storage, or null (set, string or path, default `null`)
 * `backing_vol`: source element or path to a QCOW2 volume for backingStore, or null (set, string or path, default `null`)
 * `install_vol`: source element or path to an ISO image for an inserted CDROM, or null (set, string or path, default `null`)
+* `bridge_name`: the name of the network bridge to connect to (string, default `"virbr0"`)
 * `virtio_net`: whether to use VirtIO for networking (faster, but may require special guest drivers) (bool, default `false`)
 * `virtio_video`: whether to use VirtIO for graphics (bool, default `true`)
 * `virtio_drive`: whether to use VirtIO for the storage device (bool, default `true`)
@@ -230,6 +232,7 @@ These are the arguments:
 * `storage_vol`: source element or path to a QCOW2 volume for storage, or null (set, string or path, default `null`)
 * `backing_vol`: source element or path to a QCOW2 volume for backingStore, or null (set, string or path, default `null`)
 * `install_vol`: source element or path to an ISO image for an inserted CDROM, or null (set, string or path, default `null`)
+* `bridge_name`: the name of the network bridge to connect to (string, default `"virbr0"`)
 * `virtio_video`: whether to use VirtIO for graphics (bool, default `true`)
 * `virtio_drive`: whether to use VirtIO for the storage device (bool, default `true`)
 
@@ -266,6 +269,7 @@ These are the arguments:
 * `storage_vol`: source element or path to a QCOW2 volume for storage, or null (set, string or path, default `null`)
 * `backing_vol`: source element or path to a QCOW2 volume for backingStore, or null (set, string or path, default `null`)
 * `install_vol`: source element or path to an ISO image for an inserted CDROM, or null (set, string or path, default `null`)
+* `bridge_name`: the name of the network bridge to connect to (string, default `"virbr0"`)
 * `nvram_path`: path to a file for storing NVRAM, this file will be created if missing (string or path, required)
 * `virtio_net`: whether to use VirtIO for networking: this is faster, but requires installing a driver during Windows 11 installation (bool, default `false`)
 * `virtio_video`: whether to use VirtIO for graphics (bool, default `true`)
@@ -289,6 +293,7 @@ virtualisation.libvirt.connections."qemu:///session".domains =
           storage_vol = { pool = "MyPool"; volume = "Bellevue.qcow2"; };
           backing_vol = /home/ashley/VM-Storage/Base.qcow2;
           install_vol = /home/ashley/VM-Storage/Win11_23H2_EnglishInternational_x64v2.iso;
+          bridge_name = "virbr0";
           nvram_path = /home/ashley/VM-Storage/Bellevue.nvram;
           virtio_net = true;
           virtio_drive = true;
