@@ -6,6 +6,7 @@ stuff@{ packages, ... }:
 , backing_vol ? null
 , install_vol ? null
 , bridge_name ? "virbr0"
+, net_iface_mac ? null
 , virtio_drive ? true
 , virtio_video ? true
 , ...
@@ -13,7 +14,7 @@ stuff@{ packages, ... }:
 let
   base = (import ./base.nix stuff).q35
     {
-      inherit name uuid memory storage_vol backing_vol install_vol bridge_name virtio_drive virtio_video;
+      inherit name uuid memory storage_vol backing_vol install_vol bridge_name net_iface_mac virtio_drive virtio_video;
       virtio_net = true;
     };
 in

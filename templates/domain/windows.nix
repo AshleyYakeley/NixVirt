@@ -8,6 +8,7 @@ stuff@{ packages, guest-install, ... }:
 , backing_vol ? null
 , install_vol ? null
 , bridge_name ? "virbr0"
+, net_iface_mac ? null
 , nvram_path
 , virtio_net ? false
 , virtio_drive ? false
@@ -19,7 +20,7 @@ let
   basestuff = import ./base.nix stuff;
   base = basestuff.q35
     {
-      inherit name uuid memory storage_vol backing_vol install_vol bridge_name virtio_net virtio_video;
+      inherit name uuid memory storage_vol backing_vol install_vol bridge_name net_iface_mac virtio_net virtio_video;
     };
 in
 base //

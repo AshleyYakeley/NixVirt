@@ -44,6 +44,7 @@ let
     , backing_vol ? null
     , install_vol ? null
     , bridge_name ? "virbr0"
+    , net_iface_mac ? null
     , virtio_drive ? true
     , virtio_net ? false
     , virtio_video ? true
@@ -98,6 +99,7 @@ let
             {
               type = "bridge";
               model = if virtio_net then { type = "virtio"; } else null;
+              mac = if builtins.isNull net_iface_mac then null else { address = net_iface_mac; };
               source = { bridge = bridge_name; };
             };
           channel =
