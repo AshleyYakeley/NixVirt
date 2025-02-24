@@ -56,10 +56,10 @@ let
           ])
         ])
 
-        (subelem "os" [ ]
+        (subelem "os" [ (subattr "firmware" typeString) ]
           [
             (elem "type" [ (subattr "arch" typeString) (subattr "machine" typeString) ] (sub "type" typeString))
-            (subelem "loader" [ (subattr "readonly" typeBoolYesNo) (subattr "type" typeString) ] (sub "path" typePath))
+            (subelem "loader" [ (subattr "readonly" typeBoolYesNo) (subattr "stateless" typeBoolYesNo) (subattr "type" typeString) ] (sub "path" typePath))
             (subelem "nvram"
               [
                 (subattr "template" typePath)
