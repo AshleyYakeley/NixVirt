@@ -1,14 +1,20 @@
 { packages, ... }:
 let
-  mksourcetype = with builtins;
-    src:
-    if isAttrs src && src ? "volume" then "volume"
+  mksourcetype = src:
+    if builtins.isAttrs src && src ? "volume" then "volume"
     else "file";
-  mksource = with builtins;
-    src:
-    if isString src || isPath src then { file = src; }
+  mksource = src:
+    if builtins.isString src || builtins.isPath src then { file = src; }
     else src;
-  mkstorage = virtio_drive: storage_vol:
+  mkbackingstore = backing:
+    if builtins.isAttrs backing || builtins.isNull backing then backing
+    else {
+      type = mksourcetype backing;
+      format = { type = "qcow2"; };
+      source = mksource backing;
+      backingStore = { };
+    };
+  mkstorage = virtio_drive: storage_vol: backing_vol:
     {
       type = mksourcetype storage_vol;
       device = "disk";
@@ -20,6 +26,7 @@ let
           discard = "unmap";
         };
       source = mksource storage_vol;
+      backingStore = mkbackingstore backing_vol;
       target =
         if virtio_drive
         then { dev = "vda"; bus = "virtio"; }
@@ -31,7 +38,9 @@ let
     , uuid
     , memory ? { count = 2; unit = "GiB"; }
     , storage_vol ? null
+    , backing_vol ? null
     , install_vol ? null
+    , bridge_name ? "virbr0"
     , virtio_drive ? true
     , virtio_net ? false
     , virtio_video ? true
@@ -67,7 +76,7 @@ let
       devices =
         {
           emulator = "${packages.qemu}/bin/qemu-system-x86_64";
-          disk = (if builtins.isNull storage_vol then [ ] else [ (mkstorage virtio_drive storage_vol) ]) ++
+          disk = (if builtins.isNull storage_vol then [ ] else [ (mkstorage virtio_drive storage_vol backing_vol) ]) ++
             [
               {
                 type = mksourcetype install_vol;
@@ -86,7 +95,7 @@ let
             {
               type = "bridge";
               model = if virtio_net then { type = "virtio"; } else null;
-              source = { bridge = "virbr0"; };
+              source = { bridge = bridge_name; };
             };
           channel =
             [

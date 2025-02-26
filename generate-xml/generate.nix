@@ -2,32 +2,47 @@ let
   xml = import ./xml.nix;
 
   many = contents: subject: xml.many (map1 contents subject);
-  yesno = t: if t then "yes" else "no";
-  onoff = t: if t then "on" else "off";
-  map1 = f: x: if builtins.isList x then builtins.map f x else [ (f x) ];
+  yesno = t:
+    if t then "yes"
+    else "no";
+  onoff = t:
+    if t then "on"
+    else "off";
+  map1 = f: x:
+    if builtins.isList x then builtins.map f x
+    else [ (f x) ];
   id = x: x;
 
   typeCheck = tname: test: x:
-    if test x then x else builtins.abort ("NixVirt: expected " + tname + ", found " + builtins.typeOf x);
+    if test x then x
+    else builtins.abort ("NixVirt: expected " + tname + ", found " + builtins.typeOf x);
 
   typeConvert = tname: test: conv: x: conv (typeCheck tname test x);
 
   attrOrNull = a: subject:
-    if builtins.hasAttr a subject then builtins.getAttr a subject else null;
+    if builtins.hasAttr a subject then builtins.getAttr a subject
+    else null;
 
-  checkNull = f: x: xml.opt (!(isNull x)) (f x);
+  checkNull = f: x: xml.opt (!(builtins.isNull x)) (f x);
 
 in
 rec
 {
-  sub = with builtins;
-    a: contents: checkNull (x: checkNull contents (attrOrNull a (typeCheck "set or null" isAttrs x)));
+  sub = a: contents: checkNull (
+    x: checkNull contents (
+      attrOrNull a (
+        typeCheck "set or null" builtins.isAttrs x
+      )
+    )
+  );
 
-  elem = with builtins;
-    etype: attrs: contents: subject:
+  elem = etype: attrs: contents: subject:
       xml.elem etype
-        (map (a: a subject) attrs)
-        (if isList contents then map (c: c subject) contents else contents subject);
+        (builtins.map (a: a subject) attrs)
+        (
+          if builtins.isList contents then builtins.map (c: c subject) contents
+          else contents subject
+        );
 
   subelemraw = etype: attrs: sub etype (elem etype attrs id);
 

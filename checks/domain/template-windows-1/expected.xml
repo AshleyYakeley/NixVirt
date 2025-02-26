@@ -47,6 +47,11 @@
     <disk type='file' device='disk'>
       <driver name='qemu' type='qcow2' cache='none' discard='unmap'/>
       <source file='/Storage/MyHD.qcow2'/>
+      <backingStore type='file'>
+        <format type='qcow2'/>
+        <source file='/Storage/Base.qcow2'/>
+        <backingStore/>
+      </backingStore>
       <target dev='sda' bus='sata'/>
     </disk>
     <disk type='file' device='cdrom'>
