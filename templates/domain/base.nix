@@ -119,17 +119,30 @@ let
             {
               type = "spice";
               autoport = true;
-              listen = { type = "none"; };
+              listen =
+                if builtins.isBool virtio_video && virtio_video then
+                  { type = "none"; }
+                else
+                  { type = "address"; address = "127.0.0.1"; };
               image = { compression = false; };
-              gl = { enable = virtio_video; };
+              gl =
+                if builtins.isNull virtio_video then
+                  null
+                else
+                  { enable = virtio_video; };
             };
           sound = { model = "ich9"; };
           audio = { id = 1; type = "spice"; };
           video =
             {
               model =
-                if virtio_video
-                then
+                if builtins.isNull virtio_video then
+                  {
+                    type = "virtio";
+                    heads = 1;
+                    primary = true;
+                  }
+                else if virtio_video then
                   {
                     type = "virtio";
                     heads = 1;
