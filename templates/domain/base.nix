@@ -39,6 +39,7 @@ let
   base = machinetype: cdtarget:
     { name
     , uuid
+    , vcpu ? { count = 2; }
     , memory ? { count = 2; unit = "GiB"; }
     , storage_vol ? null
     , backing_vol ? null
@@ -52,7 +53,7 @@ let
     }:
     {
       type = "kvm";
-      inherit name uuid memory;
+      inherit name uuid vcpu memory;
 
       os =
         {

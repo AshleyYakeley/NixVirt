@@ -2,6 +2,7 @@
   <name>test-q35</name>
   <uuid>2904419d-b283-4cfd-9f2c-7c3713ff809f</uuid>
   <memory unit='GiB'>6</memory>
+  <vcpu>4</vcpu>
   <os>
     <type arch='x86_64' machine='q35'>hvm</type>
     <boot dev='cdrom'/>
