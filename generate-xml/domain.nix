@@ -63,6 +63,7 @@ let
             (subelem "nvram"
               [
                 (subattr "template" typePath)
+                (subattr "templateFormat" typeString)
                 (subattr "type" typeString)
                 (subattr "format" typeString)
               ]
