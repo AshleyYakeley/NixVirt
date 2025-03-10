@@ -1,6 +1,6 @@
 stuff:
 {
-  bridge = { name ? "default", uuid, bridge_name ? "virbr0", subnet_byte }:
+  bridge = { name ? "default", uuid, bridge_name ? "virbr0", subnet_byte, dhcp_hosts ? null }:
     let
       prefix = "192.168.${builtins.toString subnet_byte}.";
     in
@@ -30,6 +30,7 @@ stuff:
                   start = "${prefix}2";
                   end = "${prefix}254";
                 };
+                host = dhcp_hosts;
             };
         };
     };
