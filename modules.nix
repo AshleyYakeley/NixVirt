@@ -163,6 +163,8 @@ let
                       WantedBy = [ "default.target" ];
                     };
                 };
+              home.activation.NixVirt = lib.hm.dag.entryAfter [ "installPackages" ]
+                "${packages.systemctl}/bin/systemd --user start nixvirt.service";
             }
           else
             {
