@@ -144,21 +144,25 @@ let
           then
             {
               home.packages = extraPackages;
-              systemd.user.services.nixvirt = {
-                Unit = {
-                  Description = "Configure libvirt objects";
-                  # Its missing the wantedBy etc but it should be fine 
-                  # since those other services _should_ start before the 
-                  # any of the user services start running,
+              systemd.user.services.nixvirt =
+                {
+                  Unit =
+                    {
+                      Description = "Configure libvirt objects";
+                      # Its missing the wantedBy etc but it should be fine
+                      # since those other services _should_ start before the
+                      # any of the user services start running,
+                    };
+                  Service =
+                    {
+                      ExecStart = packages.writeShellScript "nixvirt-start" script;
+                      Type = "oneshot";
+                    };
+                  Install =
+                    {
+                      WantedBy = [ "default.target" ];
+                    };
                 };
-                Service = {
-                  ExecStart = packages.writeShellScript "nixvirt-start" script;
-                  Type = "oneshot";
-                };
-                Install = {
-                  WantedBy = ["default.target"];
-                };
-              }; 
             }
           else
             {
