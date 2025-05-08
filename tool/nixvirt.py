@@ -23,10 +23,11 @@ class Session:
     def __init__(self,uri,verbose):
         self.conn = libvirt.open(uri)
         self.verbose = verbose
+        self.driver = self.conn.getType()
 
     def vreport(self,msg):
         if self.verbose:
-            print (msg, file=sys.stderr)
+            print ("NixVirt: " + self.driver + ": " + msg, file=sys.stderr)
 
 class ObjectConnection:
     def __init__(self,type,session):
@@ -114,10 +115,17 @@ class DomainConnection(ObjectConnection):
         return lvobj.XMLDesc(flags=2)
     def _undefine(self,lvobj):
         # https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainUndefineFlagsValues
-        # VIR_DOMAIN_UNDEFINE_MANAGED_SAVE
-        # VIR_DOMAIN_UNDEFINE_KEEP_NVRAM
-        # VIR_DOMAIN_UNDEFINE_KEEP_TPM
-        lvobj.undefineFlags(flags=73)
+        match self.session.driver:
+            case "QEMU":
+                # VIR_DOMAIN_UNDEFINE_MANAGED_SAVE
+                # VIR_DOMAIN_UNDEFINE_KEEP_NVRAM
+                # VIR_DOMAIN_UNDEFINE_KEEP_TPM
+                flags=73
+            case "LXC":
+                flags=0  # LXC doesn't support undefine flags
+            case _:
+                flags=73  # best guess, same as QEMU
+        lvobj.undefineFlags(flags=flags)
     def _fixDefinitionETree(self,objid,specDefETree):
         interfaces = specDefETree.xpath("/domain/devices/interface")
         index = 0
