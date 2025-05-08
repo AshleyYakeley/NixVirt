@@ -154,6 +154,7 @@ let
                 Service = {
                   ExecStart = packages.writeShellScript "nixvirt-start" script;
                   Type = "oneshot";
+                  RestartIfChanged = true;
                 };
                 Install = {
                   WantedBy = ["default.target"];
