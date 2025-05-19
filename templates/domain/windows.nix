@@ -3,7 +3,7 @@
 stuff@{ packages, guest-install, ... }:
 { name
 , uuid
-, vcpu ? { count = 4; }
+, vcpu ? { count = 2; }
 , memory ? { count = 4; unit = "GiB"; }
 , storage_vol ? null
 , backing_vol ? null
