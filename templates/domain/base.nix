@@ -8,7 +8,16 @@ let
     src:
     if isString src || isPath src then { file = src; }
     else src;
-  mkstorage = virtio_drive: storage_vol:
+  mkbackingstore = with builtins;
+    backing:
+    if isAttrs backing || isNull backing then backing
+    else {
+      type = mksourcetype backing;
+      format = { type = "qcow2"; };
+      source = mksource backing;
+      backingStore = { };
+    };
+  mkstorage = virtio_drive: storage_vol: backing_vol:
     {
       type = mksourcetype storage_vol;
       device = "disk";
@@ -20,6 +29,7 @@ let
           discard = "unmap";
         };
       source = mksource storage_vol;
+      backingStore = mkbackingstore backing_vol;
       target =
         if virtio_drive
         then { dev = "vda"; bus = "virtio"; }
@@ -29,9 +39,13 @@ let
   base = machinetype: cdtarget:
     { name
     , uuid
+    , vcpu ? { count = 2; }
     , memory ? { count = 2; unit = "GiB"; }
     , storage_vol ? null
+    , backing_vol ? null
     , install_vol ? null
+    , bridge_name ? "virbr0"
+    , net_iface_mac ? null
     , virtio_drive ? true
     , virtio_net ? false
     , virtio_video ? true
@@ -39,7 +53,7 @@ let
     }:
     {
       type = "kvm";
-      inherit name uuid memory;
+      inherit name uuid vcpu memory;
 
       os =
         {
@@ -67,7 +81,7 @@ let
       devices =
         {
           emulator = "${packages.qemu}/bin/qemu-system-x86_64";
-          disk = (if builtins.isNull storage_vol then [ ] else [ (mkstorage virtio_drive storage_vol) ]) ++
+          disk = (if builtins.isNull storage_vol then [ ] else [ (mkstorage virtio_drive storage_vol backing_vol) ]) ++
             [
               {
                 type = mksourcetype install_vol;
@@ -86,7 +100,8 @@ let
             {
               type = "bridge";
               model = if virtio_net then { type = "virtio"; } else null;
-              source = { bridge = "virbr0"; };
+              mac = if builtins.isNull net_iface_mac then null else { address = net_iface_mac; };
+              source = { bridge = bridge_name; };
             };
           channel =
             [
@@ -105,17 +120,30 @@ let
             {
               type = "spice";
               autoport = true;
-              listen = { type = "none"; };
+              listen =
+                if builtins.isBool virtio_video && virtio_video then
+                  { type = "none"; }
+                else
+                  { type = "address"; address = "127.0.0.1"; };
               image = { compression = false; };
-              gl = { enable = virtio_video; };
+              gl =
+                if builtins.isNull virtio_video then
+                  null
+                else
+                  { enable = virtio_video; };
             };
           sound = { model = "ich9"; };
           audio = { id = 1; type = "spice"; };
           video =
             {
               model =
-                if virtio_video
-                then
+                if builtins.isNull virtio_video then
+                  {
+                    type = "virtio";
+                    heads = 1;
+                    primary = true;
+                  }
+                else if virtio_video then
                   {
                     type = "virtio";
                     heads = 1;

@@ -497,7 +497,7 @@ let
                   (subattr "autoport" typeBoolYesNo)
                 ]
                 [
-                  (subelem "listen" [ (subattr "type" typeString) ] [ ])
+                  (subelem "listen" [ (subattr "type" typeString) (subattr "address" typeString) ] [ ])
                   (subelem "image" [ (subattr "compression" typeBoolOnOff) ] [ ])
                   (subelem "gl" [ (subattr "enable" typeBoolYesNo) (subattr "rendernode" typeString) ] [ ])
                 ])

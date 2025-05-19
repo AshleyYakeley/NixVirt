@@ -2,6 +2,7 @@
   <name>test-q35</name>
   <uuid>2904419d-b283-4cfd-9f2c-7c3713ff809f</uuid>
   <memory unit='GiB'>6</memory>
+  <vcpu>6</vcpu>
   <os>
     <type arch='x86_64' machine='q35'>hvm</type>
     <boot dev='cdrom'/>
@@ -22,6 +23,11 @@
     <disk type='file' device='disk'>
       <driver name='qemu' type='qcow2' cache='none' discard='unmap'/>
       <source file='/Storage/MyHD.qcow2'/>
+      <backingStore type='file'>
+        <format type='qcow2'/>
+        <source file='/Storage/Base.qcow2'/>
+        <backingStore/>
+      </backingStore>
       <target dev='vda' bus='virtio'/>
     </disk>
     <disk type='file' device='cdrom'>
@@ -43,16 +49,13 @@
     <input type='mouse' bus='ps2'/>
     <input type='keyboard' bus='ps2'/>
     <graphics type='spice' autoport='yes'>
-      <listen type='none'/>
+      <listen type='address' address='127.0.0.1'/>
       <image compression='off'/>
-      <gl enable='yes'/>
     </graphics>
     <sound model='ich9'/>
     <audio id='1' type='spice'/>
     <video>
-      <model type='virtio' heads='1' primary='yes'>
-        <acceleration accel3d='yes'/>
-      </model>
+      <model type='virtio' heads='1' primary='yes'/>
     </video>
     <redirdev bus='usb' type='spicevmc'/>
     <redirdev bus='usb' type='spicevmc'/>
