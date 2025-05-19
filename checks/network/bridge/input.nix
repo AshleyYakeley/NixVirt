@@ -11,7 +11,7 @@ lib: lib.network.templates.bridge
       ip = "192.168.74.11";
     }
     {
-      name ="host2";
+      name = "host2";
       ip = "192.168.74.12";
     }
     {

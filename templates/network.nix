@@ -30,7 +30,7 @@ stuff:
                   start = "${prefix}2";
                   end = "${prefix}254";
                 };
-                host = dhcp_hosts;
+              host = dhcp_hosts;
             };
         };
     };
