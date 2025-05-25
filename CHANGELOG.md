@@ -1,6 +1,6 @@
 # Changelog
 
-## [UNRELEASED]
+## [0.6.0] - 2025-05-24
 
 * Switch to NixPkgs 24.05, eliminate separate OVMF NixPkgs input
 * Modules:
