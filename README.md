@@ -415,3 +415,50 @@ Various functions for creating XML text.
 #### `lib.guest-install.virtio-win.iso`
 
 ISO disc image of `virtio-win`, for installing paravirtualised drivers, etc., inside Windows guests.
+
+## Tips & Tricks
+
+### Usermode QEMU Networking
+
+If you're using NixVirt's Home Manager module, you're almost certainly using QEMU in usermode with `qemu:///session`.
+Since attaching a VM to a bridge requires root, QEMU provides a setuid program `qemu-bridge-helper` to let usermode VMs do this when they activate and deactivate.
+
+You can create a libvirt network bridge as root using NixVirt's NixOS module, however, such bridges cannot control your network card.
+
+```
+virtualisation.libvirt.connections."qemu:///system".networks =
+  with nixvirtlib.network;
+  [
+    {
+    definition = writeXML (templates.bridge
+      {
+      uuid = "6bbe6459-51b6-4fa8-849e-eb0179523243";  # pick your own UUID
+      subnet_byte = 75;  # will run DHCP on the network for 192.168.75.0/24
+      });
+    active = true;
+    }
+  ];
+virtualisation.libvirtd.allowedBridges = [ "virbr0" ];  # actually unnecessary in this case, since this is the default value
+```
+
+Alternatively, you can create a bridge using systemd and attach to that:
+
+```
+networking =
+  {
+    bridges.br0.interfaces = [ "enp4s0" ];  # controls your network card
+    interfaces.br0.useDHCP = true;
+    interfaces.enp4s0.useDHCP = false;
+  };
+systemd.network.networks."20-br0" =
+  {
+    matchConfig.Name = "br0";
+    networkConfig.DHCP = "yes";
+    dhcpV4Config.UseDomains = "yes";  # get .lan etc working
+  };
+virtualisation.libvirtd.allowedBridges = [ "br0" ];
+```
+
+Either way, if you want usermode VMs to be able to attach to your bridge using `qemu-bridge-helper`, you must include the bridge name in `virtualisation.libvirtd.allowedBridges`.
+
+If you get `'qemu-bridge-helper' is not a suitable bridge helper: No such file or directory` errors, try killing the usermode `virtqemud` process.
