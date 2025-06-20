@@ -55,6 +55,12 @@ let
           (subelem "system" [ ] [
             (subelem "entry" [ (subattr "name" typeString) ] (sub "value" typeString))
           ])
+          (subelem "baseBoard" [ ] [
+            (subelem "entry" [ (subattr "name" typeString) ] (sub "value" typeString))
+          ])
+          (subelem "chassis" [ ] [
+            (subelem "entry" [ (subattr "name" typeString) ] (sub "value" typeString))
+          ])
         ])
 
         (subelem "os" [ (subattr "firmware" typeString) ]
