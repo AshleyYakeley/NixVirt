@@ -171,6 +171,9 @@ let
               (subelem "dirty-ring" [ (subattr "state" typeBoolOnOff) (subattr "size" typeInt) ] [ ])
             ])
             (subelem "ioapic" [ (subattr "driver" typeString) ] [ ])
+            (subelem "smm" [ (subattr "state" typeBoolOnOff) ] [
+              (subelem "tseg" [ (subattr "unit" typeString) ] (sub "count" typeInt))
+            ])
           ]
         )
         (subelem "cpu"
