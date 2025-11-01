@@ -520,6 +520,7 @@ let
                   (subattr "id" typeInt)
                   (subattr "type" typeString)
                   (subattr "runtimeDir" typePath)
+                  (subattr "serverName" typeString)
                 ]
                 [
                   (subelem "input"
