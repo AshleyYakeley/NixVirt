@@ -461,6 +461,12 @@ let
                     addresselem
                     (subelem "reconnect" [ (subattr "enabled" typeBoolYesNo) (subattr "timeout" typeInt) ] [ ])
                   ])
+                  (subelem "target"
+                    [
+                      (subattr "dev" typeString)
+                      (subattr "managed" typeBoolYesNo)
+                    ] [ ]
+                  )
                   (subelem "model" [ (subattr "type" typeString) ] [ ])
                   targetelem
                   addresselem
