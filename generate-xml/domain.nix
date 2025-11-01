@@ -467,6 +467,17 @@ let
                     addresselem
                     (subelem "reconnect" [ (subattr "enabled" typeBoolYesNo) (subattr "timeout" typeInt) ] [ ])
                   ])
+                  (subelem "vlan"
+                    [
+                      (subattr "trunk" typeBoolYesNo)
+                    ]
+                    [
+                      (subelem "tag"
+                        [
+                          (subattr "id" typeInt)
+                          (subattr "nativeMode" typeString)
+                        ] [ ])
+                    ])
                   (subelem "model" [ (subattr "type" typeString) ] [ ])
                   targetelem
                   addresselem
