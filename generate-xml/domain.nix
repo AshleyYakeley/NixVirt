@@ -66,7 +66,7 @@ let
         (subelem "os" [ (subattr "firmware" typeString) ]
           [
             (elem "type" [ (subattr "arch" typeString) (subattr "machine" typeString) ] (sub "type" typeString))
-            (subelem "loader" [ (subattr "readonly" typeBoolYesNo) (subattr "stateless" typeBoolYesNo) (subattr "type" typeString) ] (sub "path" typePath))
+            (subelem "loader" [ (subattr "readonly" typeBoolYesNo) (subattr "stateless" typeBoolYesNo) (subattr "secure" typeBoolYesNo) (subattr "type" typeString) ] (sub "path" typePath))
             (subelem "nvram"
               [
                 (subattr "template" typePath)
@@ -177,6 +177,9 @@ let
               (subelem "dirty-ring" [ (subattr "state" typeBoolOnOff) (subattr "size" typeInt) ] [ ])
             ])
             (subelem "ioapic" [ (subattr "driver" typeString) ] [ ])
+            (subelem "smm" [ (subattr "state" typeBoolOnOff) ] [
+              (subelem "tseg" [ (subattr "unit" typeString) ] (sub "count" typeInt))
+            ])
           ]
         )
         (subelem "cpu"
