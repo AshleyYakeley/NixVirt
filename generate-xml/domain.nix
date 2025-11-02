@@ -55,12 +55,18 @@ let
           (subelem "system" [ ] [
             (subelem "entry" [ (subattr "name" typeString) ] (sub "value" typeString))
           ])
+          (subelem "baseBoard" [ ] [
+            (subelem "entry" [ (subattr "name" typeString) ] (sub "value" typeString))
+          ])
+          (subelem "chassis" [ ] [
+            (subelem "entry" [ (subattr "name" typeString) ] (sub "value" typeString))
+          ])
         ])
 
         (subelem "os" [ (subattr "firmware" typeString) ]
           [
             (elem "type" [ (subattr "arch" typeString) (subattr "machine" typeString) ] (sub "type" typeString))
-            (subelem "loader" [ (subattr "readonly" typeBoolYesNo) (subattr "stateless" typeBoolYesNo) (subattr "type" typeString) ] (sub "path" typePath))
+            (subelem "loader" [ (subattr "readonly" typeBoolYesNo) (subattr "stateless" typeBoolYesNo) (subattr "secure" typeBoolYesNo) (subattr "type" typeString) ] (sub "path" typePath))
             (subelem "nvram"
               [
                 (subattr "template" typePath)
@@ -171,6 +177,9 @@ let
               (subelem "dirty-ring" [ (subattr "state" typeBoolOnOff) (subattr "size" typeInt) ] [ ])
             ])
             (subelem "ioapic" [ (subattr "driver" typeString) ] [ ])
+            (subelem "smm" [ (subattr "state" typeBoolOnOff) ] [
+              (subelem "tseg" [ (subattr "unit" typeString) ] (sub "count" typeInt))
+            ])
           ]
         )
         (subelem "cpu"
@@ -384,7 +393,10 @@ let
                 ]
                 [
                   (subelem "driver" [ (subattr "name" typeString) (subattr "model" typeString) ] [ ])
-                  (subelem "source" [ ]
+                  (subelem "source"
+                    [
+                      (subattr "startupPolicy" typeString)
+                    ]
                     [
                       (subelem "vendor" [ (subattr "id" typeInt) ] [ ])
                       (subelem "product" [ (subattr "id" typeInt) ] [ ])
@@ -467,6 +479,17 @@ let
                       (subattr "managed" typeBoolYesNo)
                     ] [ ]
                   )
+                  (subelem "vlan"
+                    [
+                      (subattr "trunk" typeBoolYesNo)
+                    ]
+                    [
+                      (subelem "tag"
+                        [
+                          (subattr "id" typeInt)
+                          (subattr "nativeMode" typeString)
+                        ] [ ])
+                    ])
                   (subelem "model" [ (subattr "type" typeString) ] [ ])
                   targetelem
                   addresselem
@@ -520,6 +543,7 @@ let
                   (subattr "id" typeInt)
                   (subattr "type" typeString)
                   (subattr "runtimeDir" typePath)
+                  (subattr "serverName" typeString)
                 ]
                 [
                   (subelem "input"

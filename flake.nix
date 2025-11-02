@@ -74,5 +74,10 @@
       nixosModules.default = modules.nixosModule;
 
       checks.x86_64-linux = import checks/checks.nix stuff mklib;
+
+      devShells.x86_64-linux.default = packages.mkShell
+        {
+          buildInputs = with packages; [ bashInteractive just ];
+        };
     };
 }
