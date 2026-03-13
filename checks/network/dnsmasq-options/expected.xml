@@ -1,0 +1,19 @@
+<network xmlns:dnsmasq='http://libvirt.org/schemas/network/dnsmasq/1.0'>
+  <name>test-dnsmasq-options</name>
+  <uuid>7f3caa98-cf49-4a7a-8796-a950723571a4</uuid>
+  <bridge name='virbr1'/>
+  <forward mode='nat'>
+    <nat>
+      <port start='1024' end='65535'/>
+    </nat>
+  </forward>
+  <dns enable='no'/>
+  <ip address='192.168.1.0' netmask='255.255.255.0'>
+    <dhcp>
+      <range start='192.168.1.2' end='192.168.1.254'/>
+    </dhcp>
+  </ip>
+  <dnsmasq:options>
+    <dnsmasq:option value='dhcp-option=6,9.9.9.10'/>
+  </dnsmasq:options>
+</network>
