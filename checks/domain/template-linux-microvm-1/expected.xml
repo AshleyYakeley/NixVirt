@@ -24,12 +24,6 @@
       <source file='/Storage/MyHD.qcow2'/>
       <target dev='vda' bus='virtio'/>
     </disk>
-    <disk type='file' device='disk'>
-      <driver name='qemu' type='raw'/>
-      <source file='/Storage/cloud-init.img'/>
-      <target dev='vdb' bus='virtio'/>
-      <readonly/>
-    </disk>
     <interface type='bridge'>
       <source bridge='virbr0'/>
       <model type='virtio'/>

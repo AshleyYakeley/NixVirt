@@ -5,7 +5,6 @@ stuff@{ packages, ... }:
 , memory ? { count = 2; unit = "GiB"; }
 , storage_vol ? null
 , backing_vol ? null
-, cloud_init_vol ? null
 , bridge_name ? "virbr0"
 , net_iface_mac ? null
 , ...
@@ -13,10 +12,6 @@ stuff@{ packages, ... }:
 let
   base = import ./base.nix stuff;
   inherit (base) mkstorage;
-  mksourcetype = src:
-    if builtins.isAttrs src && src ? "volume" then "volume" else "file";
-  mksource = src:
-    if builtins.isString src || builtins.isPath src then { file = src; } else src;
 in
 {
   type = "kvm";
@@ -49,22 +44,7 @@ in
     {
       emulator = "${packages.qemu}/bin/qemu-system-x86_64";
       disk =
-        (if builtins.isNull storage_vol then [ ] else [ (mkstorage true storage_vol backing_vol) ]) ++
-        (if builtins.isNull cloud_init_vol then [ ] else
-          [
-            {
-              type = mksourcetype cloud_init_vol;
-              device = "disk";
-              driver =
-                {
-                  name = "qemu";
-                  type = "raw";
-                };
-              source = mksource cloud_init_vol;
-              target = { dev = "vdb"; bus = "virtio"; };
-              readonly = true;
-            }
-          ]);
+        (if builtins.isNull storage_vol then [ ] else [ (mkstorage true storage_vol backing_vol) ]);
       interface =
         {
           type = "bridge";
