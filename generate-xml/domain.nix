@@ -593,6 +593,7 @@ let
                   addresselem
                 ])
               (subelem "redirdev" [ (subattr "bus" typeString) (subattr "type" typeString) ] [ addresselem ])
+              (subelem "hub" [ (subattr "type" typeString) ] [ addresselem ])
               (subelem "watchdog" [ (subattr "model" typeString) (subattr "action" typeString) ] [ ])
               (subelem "rng" [ (subattr "model" typeString) ]
                 [
