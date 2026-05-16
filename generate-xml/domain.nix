@@ -209,6 +209,14 @@ let
               (subattr "level" typeInt)
               (subattr "mode" typeString)
             ] [ ])
+            (subelem "maxphysaddr"
+              [
+                (subattr "mode" typeString)
+                (subattr "bits" typeInt)
+                (subattr "limit" typeInt)
+              ]
+              [ ]
+            )
             (subelem "feature" [
               (subattr "policy" typeString)
               (subattr "name" typeString)
