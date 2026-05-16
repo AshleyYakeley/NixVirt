@@ -391,6 +391,7 @@ let
                   (subattr "ports" typeInt)
                 ]
                 [
+                  (subelem "driver" [ (subattr "queues" typeInt) (subattr "iothread" typeInt) ] [ ])
                   (subelem "master" [ (subattr "startport" typeInt) ] [ ])
                   targetelem
                   addresselem
