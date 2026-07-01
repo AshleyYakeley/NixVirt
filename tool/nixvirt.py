@@ -183,7 +183,8 @@ class NetworkConnection(ObjectConnection):
     def _fixDefinitionETree(self,objid,specDefETree):
         addresses = specDefETree.xpath("/network/mac/@address")
         if len(addresses) == 0:
-            fwdMode = specDefETree.xpath("/network/forward/@mode")
+            fwdModes = specDefETree.xpath("/network/forward/@mode")
+            fwdMode = fwdModes[0] if len(fwdModes) >= 1 else None
             if fwdMode in [None, 'route', 'nat']:
                 addr = self._assignMacAddress(objid,0)
                 mac = lxml.etree.Element("mac")
