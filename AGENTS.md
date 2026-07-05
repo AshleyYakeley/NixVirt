@@ -15,11 +15,15 @@ NixVirt is a Nix flake for declaring libvirt objects. Top-level Nix entry points
 
 ## Coding Style & Naming Conventions
 
-Use `nixpkgs-fmt` for all Nix code. Keep the existing two-space indentation and attrset style. In XML generator files, prefer names that mirror libvirt XML element and attribute names, such as `currentMemory`, `startupPolicy`, or `mac`. Test case directories use lower-kebab names, for example `template-windows-1`. Python helpers should follow the local style in `tool/nixvirt.py`; avoid broad style-only rewrites when changing behavior.
+Use `nixpkgs-fmt` for all Nix code. Keep the existing two-space indentation and attrset style. In XML generator files, prefer names that mirror libvirt XML element and attribute names, such as `currentMemory`, `startupPolicy`, or `mac`. Test case directories use lower-kebab names, for example `template-windows-1`. Python helpers should follow the local style in `tool/nixvirt.py`.
+
+## XML Format References
+
+XML generation should match the official libvirt format documentation: domain XML at `https://libvirt.org/formatdomain.html`, network XML at `https://libvirt.org/formatnetwork.html`, and storage pool/volume XML at `https://libvirt.org/formatstorage.html`. Use these references when adding elements or attributes in `generate-xml/`, then validate behavior with golden tests and, where possible, `virt-xml-validate`.
 
 ## Testing Guidelines
 
-Add or update golden tests for changes to XML generation. Create a new directory such as `checks/domain/my-case/` with `input.nix` and `expected.xml`, then register it in `checks/checks.nix`. Run `nix flake check` before submitting. If the change affects the `virtdeclare` behavior, document manual validation steps because these paths depend on a live libvirt connection.
+Add or update golden tests for XML generation changes. Create a new directory such as `checks/domain/my-case/` with `input.nix` and `expected.xml`, then register it in `checks/checks.nix`. Run `nix flake check` before submitting. If the change affects `virtdeclare`, document manual validation steps because these paths depend on a live libvirt connection.
 
 ## Commit & Pull Request Guidelines
 
