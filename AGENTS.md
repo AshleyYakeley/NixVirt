@@ -20,15 +20,3 @@ Use `nixpkgs-fmt` for all Nix code. Keep the existing two-space indentation and 
 ## XML Format References
 
 XML generation should match the official libvirt format documentation: domain XML at `https://libvirt.org/formatdomain.html`, network XML at `https://libvirt.org/formatnetwork.html`, and storage pool/volume XML at `https://libvirt.org/formatstorage.html`. Use these references when adding elements or attributes in `generate-xml/`, then validate behavior with golden tests and, where possible, `virt-xml-validate`.
-
-## Testing Guidelines
-
-Add or update golden tests for XML generation changes. Create a new directory such as `checks/domain/my-case/` with `input.nix` and `expected.xml`, then register it in `checks/checks.nix`. Run `nix flake check` before submitting. If the change affects `virtdeclare`, document manual validation steps because these paths depend on a live libvirt connection.
-
-## Commit & Pull Request Guidelines
-
-Recent history uses concise imperative commits, sometimes with Conventional Commit scopes such as `feat(domain): add missing attributes to <graphics> element`. Prefer that style for feature work; short plain commits are acceptable for maintenance. Pull requests should describe the changed libvirt surface, list tests run, and call out any generated XML differences or compatibility concerns. Link issues when applicable.
-
-## Agent-Specific Notes
-
-Do not edit `.direnv/` or other local environment artifacts. Keep changes focused on repository sources, tests, and documentation.
