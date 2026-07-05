@@ -14,7 +14,7 @@ _: {
     name = "virbr1";
   };
   ip = {
-    address = "192.168.1.0";
+    address = "192.168.1.1";
     netmask = "255.255.255.0";
     dhcp = {
       range = {
@@ -26,7 +26,6 @@ _: {
   dns = {
     enable = false;
   };
-  "xmlns:dnsmasq" = "http://libvirt.org/schemas/network/dnsmasq/1.0";
   "dnsmasq:options" = {
     "dnsmasq:option" = [
       { value = "dhcp-option=6,9.9.9.10"; }

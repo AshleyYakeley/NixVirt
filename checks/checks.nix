@@ -36,6 +36,7 @@ in
   network-empty = test testlib.network network/empty;
   network-bridge = test testlib.network network/bridge;
   network-dnsmasq-options = test testlib.network network/dnsmasq-options;
+  network-dnsmasq-options-validate = validate "network" testlib.network network/dnsmasq-options;
 
   domain-empty = test testlib.domain domain/empty;
   domain-linux-1 = test testlib.domain domain/template-linux-1;

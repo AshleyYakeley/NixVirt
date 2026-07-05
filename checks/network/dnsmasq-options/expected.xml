@@ -8,7 +8,7 @@
     </nat>
   </forward>
   <dns enable='no'/>
-  <ip address='192.168.1.0' netmask='255.255.255.0'>
+  <ip address='192.168.1.1' netmask='255.255.255.0'>
     <dhcp>
       <range start='192.168.1.2' end='192.168.1.254'/>
     </dhcp>

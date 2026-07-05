@@ -2,6 +2,11 @@ let
   xml = import ./xml.nix;
   generate = import ./generate.nix;
   bandwidthElem = import ./netbandwidth.nix;
+  dnsmasqNamespace = "http://libvirt.org/schemas/network/dnsmasq/1.0";
+  dnsmasqNamespaceAttr = subject:
+    xml.opt
+      (builtins.hasAttr "dnsmasq:options" subject && builtins.getAttr "dnsmasq:options" subject != null)
+      (xml.attr "xmlns:dnsmasq" dnsmasqNamespace);
 
   # https://libvirt.org/formatnetwork.html
   process = with generate;
@@ -9,7 +14,7 @@ let
       [
         (subattr "ipv6" typeBoolYesNo)
         (subattr "trustGuestRxFilters" typeBoolYesNo)
-        (subattr "xmlns:dnsmasq" typeString)
+        dnsmasqNamespaceAttr
       ]
       [
         (subelem "name" [ ] typeString)
