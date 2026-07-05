@@ -209,6 +209,14 @@ let
               (subattr "level" typeInt)
               (subattr "mode" typeString)
             ] [ ])
+            (subelem "maxphysaddr"
+              [
+                (subattr "mode" typeString)
+                (subattr "bits" typeInt)
+                (subattr "limit" typeInt)
+              ]
+              [ ]
+            )
             (subelem "feature" [
               (subattr "policy" typeString)
               (subattr "name" typeString)
@@ -343,6 +351,8 @@ let
                         (subattr "cache" typeString)
                         (subattr "io" typeString)
                         (subattr "discard" typeString)
+                        (subattr "queues" typeInt)
+                        (subattr "iothread" typeInt)
                       ] [ ]
                     )
                   ] ++
@@ -381,6 +391,7 @@ let
                   (subattr "ports" typeInt)
                 ]
                 [
+                  (subelem "driver" [ (subattr "queues" typeInt) (subattr "iothread" typeInt) ] [ ])
                   (subelem "master" [ (subattr "startport" typeInt) ] [ ])
                   targetelem
                   addresselem
@@ -582,6 +593,7 @@ let
                   addresselem
                 ])
               (subelem "redirdev" [ (subattr "bus" typeString) (subattr "type" typeString) ] [ addresselem ])
+              (subelem "hub" [ (subattr "type" typeString) ] [ addresselem ])
               (subelem "watchdog" [ (subattr "model" typeString) (subattr "action" typeString) ] [ ])
               (subelem "rng" [ (subattr "model" typeString) ]
                 [
