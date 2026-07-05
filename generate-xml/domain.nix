@@ -14,6 +14,12 @@ let
         (subelemraw "metadata" [ ])
 
         (subelem "memory" [ (subattr "unit" typeString) ] (sub "count" typeInt))
+        (subelem "memtune" [ ] [
+          (subelem "hard_limit" [ (subattr "unit" typeString) ] (sub "count" typeInt))
+          (subelem "soft_limit" [ (subattr "unit" typeString) ] (sub "count" typeInt))
+          (subelem "swap_hard_limit" [ (subattr "unit" typeString) ] (sub "count" typeInt))
+          (subelem "min_guarantee" [ (subattr "unit" typeString) ] (sub "count" typeInt))
+        ])
         (subelem "currentMemory" [ (subattr "unit" typeString) ] (sub "count" typeInt))
         (subelem "vcpu" [ (subattr "placement" typeString) (subattr "cpuset" typeString) (subattr "current" typeInt) ] (sub "count" typeInt))
         (subelem "vcpus" [ ] [
