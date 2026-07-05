@@ -5,7 +5,12 @@ let
 
   # https://libvirt.org/formatnetwork.html
   process = with generate;
-    elem "network" [ (subattr "ipv6" typeBoolYesNo) (subattr "trustGuestRxFilters" typeBoolYesNo) ]
+    elem "network"
+      [
+        (subattr "ipv6" typeBoolYesNo)
+        (subattr "trustGuestRxFilters" typeBoolYesNo)
+        (subattr "xmlns:dnsmasq" typeString)
+      ]
       [
         (subelem "name" [ ] typeString)
         (subelem "uuid" [ ] typeString)
@@ -195,6 +200,9 @@ let
                   ] [ ])
               ])
           ])
+        (subelem "dnsmasq:options" [ ] [
+          (subelem "dnsmasq:option" [ (subattr "value" typeString) ] [ ])
+        ])
       ];
 
 in
