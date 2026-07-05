@@ -19,4 +19,4 @@ Use `nixpkgs-fmt` for all Nix code. Keep the existing two-space indentation and 
 
 ## XML Format References
 
-XML generation should match the official libvirt format documentation: domain XML at `https://libvirt.org/formatdomain.html`, network XML at `https://libvirt.org/formatnetwork.html`, and storage pool/volume XML at `https://libvirt.org/formatstorage.html`. Use these references when adding elements or attributes in `generate-xml/`, then validate behavior with golden tests and, where possible, `virt-xml-validate`.
+XML generation should match the official libvirt format documentation: domain XML at `https://libvirt.org/formatdomain.html`, network XML at `https://libvirt.org/formatnetwork.html`, and storage pool/volume XML at `https://libvirt.org/formatstorage.html`. Use these references when adding elements or attributes in `generate-xml/`.
