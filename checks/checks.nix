@@ -22,6 +22,15 @@ let
         diff -u ${expected} ${found}
         echo "pass" > $out
       '';
+  validate = schema: xlib: dirpath:
+    let
+      found = xlib.writeXML (import "${dirpath}/input.nix" testlib);
+    in
+    stuff.packages.runCommand "validate-${schema}" { }
+      ''
+        ${stuff.packages.libvirt}/bin/virt-xml-validate ${found} ${schema}
+        echo "pass" > $out
+      '';
 in
 {
   network-empty = test testlib.network network/empty;
@@ -36,6 +45,8 @@ in
   domain-windows-3 = test testlib.domain domain/template-windows-3;
   domain-win11 = test testlib.domain domain/win11;
   domain-issues = test testlib.domain domain/issues;
+  domain-schema-valid = test testlib.domain domain/schema-valid;
+  domain-schema-valid-validate = validate "domain" testlib.domain domain/schema-valid;
 
   pool-empty = test testlib.pool pool/empty;
 

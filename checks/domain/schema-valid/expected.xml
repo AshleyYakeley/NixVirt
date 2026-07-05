@@ -1,0 +1,30 @@
+<domain type='kvm'>
+  <name>schema-valid</name>
+  <memory unit='KiB'>1048576</memory>
+  <vcpu>2</vcpu>
+  <iothreads>2</iothreads>
+  <os>
+    <type>hvm</type>
+  </os>
+  <cpu>
+    <cache mode='passthrough'/>
+    <maxphysaddr mode='emulate' bits='48'/>
+  </cpu>
+  <devices>
+    <emulator>/usr/bin/qemu-system-x86_64</emulator>
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='qcow2' queues='2' iothread='1'/>
+      <source file='/var/lib/libvirt/images/schema-valid.qcow2'/>
+      <target dev='vda' bus='virtio'/>
+      <address type='pci' domain='0' bus='0' slot='6' function='0'/>
+    </disk>
+    <controller type='usb' index='0' model='qemu-xhci'/>
+    <controller type='scsi' index='0' model='virtio-scsi'>
+      <driver queues='2' iothread='2'/>
+      <address type='pci' domain='0' bus='0' slot='5' function='0'/>
+    </controller>
+    <hub type='usb'>
+      <address type='usb' bus='0' port='1'/>
+    </hub>
+  </devices>
+</domain>
