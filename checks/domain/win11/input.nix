@@ -315,7 +315,7 @@
         {
           type = "spice";
           listen = { type = "none"; };
-          image = { compression = false; };
+          image = { compression = "off"; };
           gl = { enable = false; };
         };
       sound =
