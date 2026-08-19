@@ -78,5 +78,9 @@
         port = 1;
       };
     };
+
+    panic = [
+      { model = "pvpanic"; }
+    ];
   };
 }

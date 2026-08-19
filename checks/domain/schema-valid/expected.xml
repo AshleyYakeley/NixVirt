@@ -26,5 +26,6 @@
     <hub type='usb'>
       <address type='usb' bus='0' port='1'/>
     </hub>
+    <panic model='pvpanic'/>
   </devices>
 </domain>
