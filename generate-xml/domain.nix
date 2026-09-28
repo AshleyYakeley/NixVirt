@@ -287,6 +287,7 @@ let
                 (subattr "port" typeInt)
                 (subattr "function" typeInt)
                 (subattr "multifunction" typeBoolOnOff)
+                (subattr "iobase" typeString)
               ]
               [ ];
             targetelem = subelem "target"

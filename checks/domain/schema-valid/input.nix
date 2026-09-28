@@ -81,6 +81,13 @@
 
     panic = [
       { model = "pvpanic"; }
+      {
+        model = "isa";
+        address = {
+          type = "isa";
+          iobase = "0x506";
+        };
+      }
     ];
   };
 }

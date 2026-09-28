@@ -27,5 +27,8 @@
       <address type='usb' bus='0' port='1'/>
     </hub>
     <panic model='pvpanic'/>
+    <panic model='isa'>
+      <address type='isa' iobase='0x506'/>
+    </panic>
   </devices>
 </domain>
