@@ -626,6 +626,7 @@ let
                   (subattr "freePageReporting" typeBoolOnOff)
                 ]
                 [ addresselem ])
+              (subelem "panic" [ (subattr "model" typeString) ] [ addresselem ])
               (subelem "vsock" [ (subattr "model" typeString) ]
                 [
                   (subelem "cid" [ (subattr "auto" typeBoolYesNo) (subattr "address" typeInt) ] [ ])
