@@ -360,6 +360,8 @@ let
                         (subattr "discard" typeString)
                         (subattr "queues" typeInt)
                         (subattr "iothread" typeInt)
+                        (subattr "error_policy" typeString)
+                        (subattr "rerror_policy" typeString)
                       ] [ ]
                     )
                   ] ++
@@ -509,6 +511,7 @@ let
                         ] [ ])
                     ])
                   (subelem "model" [ (subattr "type" typeString) ] [ ])
+                  (subelem "boot" [ (subattr "order" typeInt) ] [ ])
                   targetelem
                   addresselem
                 ])
