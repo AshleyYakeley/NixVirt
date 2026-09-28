@@ -125,7 +125,7 @@ let
                   { type = "none"; }
                 else
                   { type = "address"; address = "127.0.0.1"; };
-              image = { compression = false; };
+              image = { compression = "off"; };
               gl =
                 if builtins.isNull virtio_video then
                   null
