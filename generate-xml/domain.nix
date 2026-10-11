@@ -511,6 +511,10 @@ let
                         ] [ ])
                     ])
                   (subelem "model" [ (subattr "type" typeString) ] [ ])
+                  (subelem "filterref" [ (subattr "filter" typeString) ]
+                    [
+                      (subelem "parameter" [ (subattr "name" typeString) (subattr "value" typeString) ] [ ])
+                    ])
                   (subelem "boot" [ (subattr "order" typeInt) ] [ ])
                   targetelem
                   addresselem

@@ -70,6 +70,24 @@
       }
     ];
 
+    interface = {
+      type = "network";
+      source.network = "default";
+      filterref = {
+        filter = "clean-traffic";
+        parameter = [
+          {
+            name = "IP";
+            value = "10.0.0.1";
+          }
+          {
+            name = "IP";
+            value = "10.0.0.2";
+          }
+        ];
+      };
+    };
+
     hub = {
       type = "usb";
       address = {
