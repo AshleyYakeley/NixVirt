@@ -16,13 +16,15 @@
     let
       packages = import nixpkgs { system = "x86_64-linux"; };
 
+      python = packages.python3;
+
       nixvirtPythonModulePackage = packages.runCommand "nixvirtPythonModulePackage" { }
         ''
-          mkdir  -p $out/lib/python3.11/site-packages/
-          ln -s ${tool/nixvirt.py} $out/lib/python3.11/site-packages/nixvirt.py
-        '' // { pythonModule = packages.python311; };
+          mkdir  -p $out/${python.sitePackages}/
+          ln -s ${tool/nixvirt.py} $out/${python.sitePackages}/nixvirt.py
+        '' // { pythonModule = python; };
 
-      pythonInterpreterPackage = libvirt: packages.python311.withPackages (ps:
+      pythonInterpreterPackage = libvirt: python.withPackages (ps:
         [
           (ps.libvirt.override { inherit libvirt; })
           ps.lxml
